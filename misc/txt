@@ -1,0 +1,29 @@
+require(lme4)
+require(plot3D)
+
+all <- merge(protein_stand_D14, climate_locs)
+
+all$photoStrat <- all$Light_reactions/all$Calvin_cycle
+
+lm1 <- lmer(photoStrat ~ prec + (1|gap), data = all, REML=F)
+lm2 <- lmer(photoStrat ~ (1|gap), data = all, REML=F)
+summary(lm1)
+summary(lm2)
+anova(lm1,lm2)
+
+
+plot(all$photoStrat ~ all$prec)
+abline(lm(all$photoStrat ~ all$prec))
+summary(lm(all$photoStrat ~ all$prec))
+
+all$cover <- 100 - all$gap
+
+plot(all$photoStrat ~ all$cover)
+abline(lm(all$photoStrat ~ all$cover))
+summary(lm(all$photoStrat ~ all$cover))
+
+cor(na.omit(all)$cover, na.omit(all)$prec)
+plot(na.omit(all)$prec, na.omit(all)$cover)
+
+
+

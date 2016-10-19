@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Linear regressions: absolute [protein] vs. Photosynthetic rate / area (@ 400 ppm CO2)</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h2>Linear regressions: absolute [protein] vs. Photosynthetic rate / area (@ 400 ppm CO2)</h2>
+
+<h1>Summary stats for linear models</h1>
+
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;photo_amb&#39; not found
+</code></pre>
+
+<table><thead>
+<tr>
+<th align="left"></th>
+<th align="left">submodel</th>
+<th align="left">R2</th>
+<th align="left">pval</th>
+<th align="left">p.adj</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">2</td>
+<td align="left">lipid_metabolism</td>
+<td align="left">0.134</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">abiotic_stress</td>
+<td align="left">0.105</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">27</td>
+<td align="left">stress</td>
+<td align="left">0.092</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">biotic_stress</td>
+<td align="left">0.070</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">7</td>
+<td align="left">protein</td>
+<td align="left">0.060</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">21</td>
+<td align="left">DNA</td>
+<td align="left">0.059</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">22</td>
+<td align="left">HSPs</td>
+<td align="left">0.054</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">signalling</td>
+<td align="left">0.041</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">secondary_metabolism</td>
+<td align="left">0.038</td>
+<td align="left">0.00</td>
+<td align="left">0.000000</td>
+</tr>
+<tr>
+<td align="left">18</td>
+<td align="left">polyamine_metabolism</td>
+<td align="left">0.037</td>
+<td align="left">0.01</td>
+<td align="left">0.023333</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">PSII</td>
+<td align="left">0.036</td>
+<td align="left">0.01</td>
+<td align="left">0.023333</td>
+</tr>
+<tr>
+<td align="left">12</td>
+<td align="left">Photosystems</td>
+<td align="left">0.029</td>
+<td align="left">0.01</td>
+<td align="left">0.023333</td>
+</tr>
+<tr>
+<td align="left">25</td>
+<td align="left">protein_folding</td>
+<td align="left">0.020</td>
+<td align="left">0.04</td>
+<td align="left">0.086154</td>
+</tr>
+<tr>
+<td align="left">26</td>
+<td align="left">Light_reactions</td>
+<td align="left">0.018</td>
+<td align="left">0.05</td>
+<td align="left">0.100000</td>
+</tr>
+<tr>
+<td align="left">17</td>
+<td align="left">Rubisco</td>
+<td align="left">0.017</td>
+<td align="left">0.06</td>
+<td align="left">0.112000</td>
+</tr>
+<tr>
+<td align="left">19</td>
+<td align="left">Photorespiration</td>
+<td align="left">0.008</td>
+<td align="left">0.19</td>
+<td align="left">0.332500</td>
+</tr>
+<tr>
+<td align="left">13</td>
+<td align="left">glycolysis</td>
+<td align="left">0.007</td>
+<td align="left">0.21</td>
+<td align="left">0.345880</td>
+</tr>
+<tr>
+<td align="left">14</td>
+<td align="left">Calvin_cycle</td>
+<td align="left">0.006</td>
+<td align="left">0.27</td>
+<td align="left">0.378000</td>
+</tr>
+<tr>
+<td align="left">16</td>
+<td align="left">TCA_org_transformation</td>
+<td align="left">0.006</td>
+<td align="left">0.25</td>
+<td align="left">0.378000</td>
+</tr>
+<tr>
+<td align="left">23</td>
+<td align="left">PSI</td>
+<td align="left">0.006</td>
+<td align="left">0.26</td>
+<td align="left">0.378000</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">redox</td>
+<td align="left">0.005</td>
+<td align="left">0.33</td>
+<td align="left">0.440000</td>
+</tr>
+<tr>
+<td align="left">28</td>
+<td align="left">ATP_synthase_chloroplastic</td>
+<td align="left">0.004</td>
+<td align="left">0.39</td>
+<td align="left">0.496360</td>
+</tr>
+<tr>
+<td align="left">11</td>
+<td align="left">electron_transport_minATPsynth</td>
+<td align="left">0.002</td>
+<td align="left">0.54</td>
+<td align="left">0.657390</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">Cytochrome_b6f</td>
+<td align="left">0.001</td>
+<td align="left">0.63</td>
+<td align="left">0.735000</td>
+</tr>
+<tr>
+<td align="left">15</td>
+<td align="left">hormone_metabolism</td>
+<td align="left">0.001</td>
+<td align="left">0.66</td>
+<td align="left">0.739200</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">mitochondrial_electron_transport_ATP_synthesis</td>
+<td align="left">0.000</td>
+<td align="left">0.89</td>
+<td align="left">0.890000</td>
+</tr>
+<tr>
+<td align="left">20</td>
+<td align="left">total_protein</td>
+<td align="left">0.000</td>
+<td align="left">0.77</td>
+<td align="left">0.798520</td>
+</tr>
+<tr>
+<td align="left">24</td>
+<td align="left">RNA</td>
+<td align="left">0.000</td>
+<td align="left">0.77</td>
+<td align="left">0.798520</td>
+</tr>
+</tbody></table>
+
+<h1>Linear regressions</h1>
+
+<pre><code>## Error in eval(expr, envir, enclos): object &#39;photo_amb&#39; not found
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAA1BMVEX///+nxBvIAAAACXBIWXMAAAsSAAALEgHS3X78AAABDUlEQVR4nO3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOBv4mUAASET0xEAAAAASUVORK5CYII=" alt="plot of chunk unnamed-chunk-2"/></p>
+
+</body>
+
+</html>

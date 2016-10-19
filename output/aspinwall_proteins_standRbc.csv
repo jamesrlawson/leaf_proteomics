@@ -1,0 +1,8 @@
+variable,mean,CV
+Rubisco,1,NA
+Calvin_cycle,1.65639642447167,NA
+Cytochrome_b6f,0.036723739813765,NA
+PSI,0.343302837714891,NA
+PSII,0.80187738127663,NA
+ATP_synthase_chloroplastic,0.312990047045287,NA
+electron_transport_minATPsynth,0.0754229475365142,NA
