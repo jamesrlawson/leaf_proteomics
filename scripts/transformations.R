@@ -89,7 +89,7 @@ rm(LMA_LWC)
 
 # photosynthesis
 
-licor <- read.csv('data/licor/licor_data_canon.csv', header=TRUE, stringsAsFactors = FALSE)
+licor <- read.csv('data/licor/licor_data_canon2.csv', header=TRUE, stringsAsFactors = FALSE)
 licor <- na.omit(licor)
 
 licor <- licor[licor$sample %in% climate_locs$sample,]

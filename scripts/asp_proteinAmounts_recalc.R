@@ -202,6 +202,47 @@ for(i in 1:nrow(peptide_areas_ov)) {
   
 }
 
+
+# top2top3 ovalbumin: Fraction of ovalbumin (MS) vs Ovalbumin % of assay protein
+
+ion_areas_ov <- subset(ion_areas, Protein == "sp|OVAL_CHICK" & Peptide %in% ov_peps)
+
+ion_areas_ov_ <-  ion_areas_ov %>% 
+  group_by(Peptide, Protein) %>% 
+  summarise_at(vars(matches("sample")), top2) %>%
+  ungroup() %>%
+  summarise_at(vars(matches("sample")), top3)
+
+ov_top2top3 <-  as.vector(as.numeric(ion_areas_ov[1,10:105]))/colSums(protein_areas[,cols])
+
+y <- data.frame(cbind(ov_top2top3,names(ov_top2top3)))
+names(y) <- c('fraction_oval_MS', 'sample')
+y$fraction_oval_MS <- as.numeric(as.character(y$fraction_oval_MS))
+y$sample <- as.character(y$sample)
+
+for(i in 1:96) {
+  
+  name_split <- unlist(str_split(y$sample[i], " "))[1]
+  y$sample[i] <- name_split
+  
+}
+
+
+j <- merge(blah, y, by = 'sample')
+
+names(j)[4] <- 'fraction_oval_MS'
+j$fraction_oval_MS <- as.numeric(as.character(j$fraction_oval_MS))
+
+plot(j$fraction_oval_MS ~ j$X.Ovalbumin.of.Total.Protein, main = "top2top3 ovalb", ylab = 'Fraction of ovalbumin (MS)', xlab = 'Ovalbumin % of assay protein')
+model <- lm(j$fraction_oval_MS ~ j$X.Ovalbumin.of.Total.Protein)
+abline(model)
+summary(model)
+
+
+
+
+
+
 # myoglobin MS amounts calculated from 
 
 ion_areas_myo <- subset(ion_areas, Protein == "sp|MYG_HORSE")

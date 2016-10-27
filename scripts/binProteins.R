@@ -15,9 +15,12 @@ require(plyr)
 mercator <- read_csv('data/asp_mercator.csv')
 mercator_bins <- read_csv('data/asp_mercator_bins.csv')
 
-#total_protein_asp <- getTotalProtein(protein_samples_asp)
-
-#protein_samples_asp <- getProteinBins(protein_samples_asp, mercator)
+# note that for this to work, all bincodes in asp_mercator.csv and mercator_bins.csv must be prefixed and suffixed by '_'
+# the following is a hierarchically ordered list of bincodes to be grepped over, where the first string in each list element defines the top level, 
+# and therefore a grep using this element as the pattern will only find proteins in the top level of the hierarchy,
+# while the second element allows the grep call to find all proteins below the top category
+# it is essential that elements in this list are ordered sequentially in a hierarchical fashion (i.e. higher levels must come before lower levels)
+# the order of elements which are at the same level is not relevant
 
 bin_arch.list <- list(
 
@@ -54,43 +57,10 @@ bin_arch.list <- list(
   c('_28_','_28.'),
   c('_27_','_27.'))
 
-#protein_bins_asp <- populateProteinBins(protein_samples_asp, bin_arch.list)
-
-# absolute quants, unstandardised
-
-#protein_asp <- na.omit(protein_bins_asp[,c('sample','bin_arch_name','sum')])
-#protein_asp <- protein_asp[!protein_asp$sample %in% c('BINCODE','NAME'),]
-#protein_asp <- protein_asp[!duplicated(protein_asp[,c('sample', 'bin_arch_name')]),]
-#protein_asp <- spread(protein_asp, key = bin_arch_name, value=sum)
-#protein_asp <- protein_asp[!protein_asp$sample %in% c('BINCODE', 'NAME'),]
-#protein_asp$total_protein <- total_protein_asp$total_protein
-
-# relative quants, standardised by total_protein
-
-#protein_bins_asp_spread <- na.omit(protein_bins_asp[,c('sample','bin_arch_name','sum')])
-#protein_bins_asp_spread <- spread(protein_bins_asp_spread, key = bin_arch_name, value=sum)
-#protein_bins_asp_spread <- protein_bins_asp_spread[!protein_bins_asp_spread$sample %in% c('BINCODE', 'NAME'),]
-
-#protein_stand_asp <- merge(protein_bins_asp_spread, total_protein_asp, by = 'sample')
-#protein_stand_asp[,2:26] <- protein_stand_asp[,2:26]/protein_stand_asp$total_protein
-#rm(protein_bins_asp_spread)
-
-# relative quants, standardised by Rubisco
-
-#protein_bins_asp <- protein_bins_asp[,c('sample', 'bin_arch_name','sum')]
-#protein_bins_asp <- na.omit(protein_bins_asp)
-#protein_bins_asp <- spread(protein_bins_asp, key = bin_arch_name, value=sum)
-#protein_bins_asp[,2:26] <- protein_bins_asp[,2:26]/protein_bins_asp$Rubisco
-
-#protein_RbcStand_asp <- ddply(melt(protein_bins_asp[,c('Rubisco','Calvin_cycle','Cytochrome_b6f','PSI','PSII','ATP_synthase_chloroplastic', 'electron_transport_minATPsynth')]), 
-#                                  .(variable), 
-#                                  summarise,
-#                                  mean = mean(value, na.rm=TRUE),
-#                                  CV = CV(value))
-
 ## DISCOVERY DATA ##
 
-protein_samples_D14 <- read_csv('data/D14_protein_sites.csv')
+#protein_samples_D14 <- read_csv('data/D14_protein_sites.csv') # these are protein amounts calculated using ovalbumin equivalents
+protein_samples_D14 <- read_csv('data/protein_amounts_by_signal_fraction_perArea_D14.csv') # these are protein amounts calculated using signal intensity fraction
 
 total_protein_D14 <- getTotalProtein(protein_samples_D14)
 

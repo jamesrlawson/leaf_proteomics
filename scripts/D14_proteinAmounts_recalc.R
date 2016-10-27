@@ -164,3 +164,55 @@ output <- rbind(x, do.call(rbind, my.list))
 output <- output %>% mutate(R2 = as.numeric(as.character(R2))) %>% arrange(desc(R2))
 
 
+# avg of ovalb peptides with top 4 R2 # 
+
+ovalb_top4 <- c(#'DEDTQAMPFR',
+                'GGLEPINFQTAADQAR',
+                'LTEWTSSNVMEER',
+                'YPILPEYLQC[Pye]VK')
+
+ovalb_top4avg <- peptide_areas_ov %>% filter(Peptide %in% ovalb_top4) %>%
+                                      summarise_at(cols, mean)
+                            
+blah <- protein_assay %>% select(sample, percent_ovalb_of_total_protein) %>% mutate(percent_ovalb_of_total_protein = percent_ovalb_of_total_protein / 100) %>%
+  arrange(sample)
+
+y <- data.frame(cbind(fraction_oval_MS = t(ovalb_top4avg), sample = names(ovalb_top4avg)))
+
+j <- merge(blah, y, by = 'sample')
+
+names(j)[3] <- 'fraction_oval_MS'
+j$fraction_oval_MS <- as.numeric(as.character(j$fraction_oval_MS))
+
+plot(j$fraction_oval_MS ~ j$percent_ovalb_of_total_protein, main = "avg of 4 ovalb peptides with strongest model fits", ylab = 'Fraction of ovalbumin (MS)', xlab = 'Ovalbumin % of assay protein')
+model <- lm(j$fraction_oval_MS ~ j$percent_ovalb_of_total_protein)
+abline(model)
+summary(model)
+
+
+
+## some bias here (and spurious values of 'fraction_oval_MS' may be due to peptides (?) not being identified & counted 
+## because they have no matches in the ion library
+## how well are individual samples matched to the ion library?
+## a good diagnostic is: samplewise, ion area used in top2/top3 calculations vs total ion area
+## wait I don't understand this properly
+## but here's the code..
+
+sumtop3 <- function(x) {
+  sum(sort(x, decreasing = TRUE)[1:3], na.rm=TRUE)
+}
+
+sum_ion_areas_in_top2top3   <-  ion_areas %>% 
+                                group_by(Peptide, Protein) %>% 
+                                summarise_at(vars(matches("sample")), top2) %>%
+                                group_by(Protein) %>%
+                                summarise_at(vars(matches("sample")), sumtop3) %>%
+                                summarise_at(vars(matches("sample")), sum)
+
+sum_ion_areas_all <- ion_areas %>% 
+                     summarise_at(vars(matches("sample")), sum, na.rm=TRUE)
+
+
+x <-  t(sum_ion_areas_in_top2top3) / t(sum_ion_areas_all)
+rownames(x) <- names(ion_areas)[10:323]
+hist(x, main = 'sum of ion areas used in top2top3 / sum of all ion areas')

@@ -80,14 +80,16 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   protein_bins <- ddply(protein_bins, .(bin_arch, sample), summarise, sum = sum(as.numeric(value), na.rm=TRUE), nprot=length(value))
   protein_bins <- na.omit(protein_bins)
   
-  # recombobulate arch categories
+  # recombobulate arch categories (where lower levels need to be incorporated into an higher level)
   protein_bins$sample <- as.character(protein_bins$sample)
   
   protein_bins[protein_bins$bin_arch == '_1.1_',]$sum <-     protein_bins[protein_bins$bin_arch == '_1.1_',]$sum +
     protein_bins[protein_bins$bin_arch == '_1.1.1_',]$sum +
     protein_bins[protein_bins$bin_arch == '_1.1.2_',]$sum +
     protein_bins[protein_bins$bin_arch == '_1.1.3_',]$sum +
-    protein_bins[protein_bins$bin_arch == '_1.1.4_',]$sum
+    protein_bins[protein_bins$bin_arch == '_1.1.4_',]$sum +
+    protein_bins[protein_bins$bin_arch == '_1.1.5_',]$sum +
+    protein_bins[protein_bins$bin_arch == '_1.1.6_',]$sum 
   
   protein_bins[protein_bins$bin_arch == '_1.3_',]$sum <-     protein_bins[protein_bins$bin_arch == '_1.3_',]$sum +
     protein_bins[protein_bins$bin_arch == '_1.3.1_',]$sum +
@@ -101,6 +103,9 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
     protein_bins[protein_bins$bin_arch == '_20.2_',]$sum +
     protein_bins[protein_bins$bin_arch == '_20.2.1_',]$sum
   
+  #depends if we want to include heat stress with abiotic stress
+  protein_bins[protein_bins$bin_arch == '_20.2_',]$sum <- protein_bins[protein_bins$bin_arch == '_20.2_',]$sum +
+  protein_bins[protein_bins$bin_arch == '_20.2.1_',]$sum 
   
   # add some summed bins for special cases
   
