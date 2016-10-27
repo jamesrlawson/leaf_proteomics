@@ -56,13 +56,26 @@ protein_amounts <- merge(protein_amounts, protein_assay, by = "sample")
 
 protein_amounts$protein_per_dry_weight <- protein_amounts$protein_fraction * protein_amounts$assay_protein_per_area_mg_per_g
 
-protein_amounts$protein_per_leaf_area <- protein_amounts$protein_fraction * protein_amounts$assay_protein_per_area_mg_per_m2 * 10000
+protein_amounts$protein_per_leaf_area <- protein_amounts$protein_fraction * protein_amounts$assay_protein_per_area_mg_per_m2
 
 protein_per_dw <- spread(protein_amounts[,c('Protein', 'sample', 'protein_per_dry_weight')], key = 'sample', value= 'protein_per_dry_weight')                
 protein_per_leaf_area <- spread(protein_amounts[,c('Protein', 'sample', 'protein_per_leaf_area')], key = 'sample', value= 'protein_per_leaf_area')                
 
 write_csv(protein_per_dw, 'output/protein_amounts_by_signal_fraction_perDW_D14.csv')
 write_csv(protein_per_leaf_area, 'output/protein_amounts_by_signal_fraction_perArea_D14.csv')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## ovalb correction factors
