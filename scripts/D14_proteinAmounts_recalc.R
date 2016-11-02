@@ -182,6 +182,8 @@ output <- rbind(x, do.call(rbind, my.list))
 output <- output %>% mutate(R2 = as.numeric(as.character(R2))) %>% arrange(desc(R2))
 
 
+output <- write.csv(output, 'output/ovalb_peptide_standards_oldIonLibrary.csv')
+
 # avg of ovalb peptides with top 4 R2 # 
 
 ovalb_top4 <- c(#'DEDTQAMPFR',
