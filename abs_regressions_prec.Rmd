@@ -1,10 +1,10 @@
-## Linear regressions: relative [protein] vs. vs. leaf N (%)
+## Linear regressions: absolute [protein] vs. mean annual precip (mm)
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 source('scripts/transformations.R')
 
-tab <- regression_output(na.omit(protein_climate_D14_stand), N, sum)
+tab <- regression_output(na.omit(protein_climate_D14), prec, sum)
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
 
@@ -16,14 +16,14 @@ modelorder <- read_csv('output/modelorder.csv')
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 modelorder <- modelorder[!modelorder$submodel %in% 'total_protein',]
-blah <- na.omit(merge(protein_stand_D14_age, climate_locs, all=TRUE))
+blah <- na.omit(merge(protein_D14_age, climate_locs, all=TRUE))
 
 for(i in modelorder$submodel) {
   
 prot <- blah[,c(3:29)][[i]]
 protname <- names(blah[,c(3:29)][i])
 
-g <- ggplot(blah, aes(x = N_per_area, y = prot)) + geom_point() 
+g <- ggplot(blah, aes(x = prec, y = prot)) + geom_point() 
 g <- g + geom_smooth(method = 'lm', se=FALSE) + ylab(protname) + ggtitle(paste0(protname))
 g <- g  + theme_bw()
 g <- g + theme(panel.grid.major = element_blank(),

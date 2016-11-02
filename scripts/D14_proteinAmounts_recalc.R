@@ -15,6 +15,11 @@ FDR <- subset(FDR, FDR == 1)
 
 ion_areas <- read_csv('data/D14_ion_areas_all_samples.csv')
 
+# ion areas constrained by FDR
+
+ion_areas <- ion_areas[ion_areas$Peptide %in% FDR$Peptide,]
+
+
 top2 <- function(x) {
   sum(sort(x, decreasing = TRUE)[1:2], na.rm=TRUE)
 }
