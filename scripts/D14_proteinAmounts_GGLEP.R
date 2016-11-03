@@ -16,15 +16,17 @@
   
   # multiply by the molecular weight to get g/cm2
   
+  source('scripts/protein_MW.R')
+  
   protein_MW <- rbind(read_csv('data/D14_protein_MW.csv'), read_csv('data/extraMWs.csv'))
   
-  protein_areas <- protein_areas[!protein_areas$Protein %in% setdiff(protein_areas$Protein, protein_MW$Protein),] # a few MW's missing, not important?
+  protein_areas <- protein_areas[!protein_areas$Protein %in% setdiff(protein_areas$Protein, protein_MW$Protein),]
   
   protein_areas <- arrange(protein_areas, Protein)
   protein_MW <- arrange(protein_MW, Protein)
   
-  #setdiff(protein_areas$Protein, protein_MW$Protein)
-  #setdiff(protein_MW$Protein, protein_areas$Protein)
+  setdiff(protein_areas$Protein, protein_MW$Protein)
+  setdiff(protein_MW$Protein, protein_areas$Protein)
   
   protein_amounts <- protein_areas
   
@@ -32,11 +34,9 @@
   
   protein_amounts[,2:315] <- protein_amounts[,2:315] * (1e07) # multiply by 10^07 to get mg/m2
   
-  quality_check<-protein_amounts[which(protein_amounts$Protein=="sp|OVAL_CHICK"),]
+  quality_check <- protein_amounts[protein_amounts$Protein=="sp|OVAL_CHICK",]
   
-  write.csv(data,"protein_areas_converted_per_leaf_area.csv")
-
-
+  write_csv(protein_amounts,"data/D14_protein_GGLEP.csv")
 
 
 
