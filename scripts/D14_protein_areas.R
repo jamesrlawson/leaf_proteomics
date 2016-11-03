@@ -32,7 +32,9 @@ euc_swath_reanalysed_FDR <- cbind(euc_swath_reanalysed_FDR[,1:7], euc_swath_rean
 names(euc_swath_reanalysed_FDR)[8:319] <- do.call(rbind, str_split(names(euc_swath_reanalysed_FDR[,8:319]), pattern = " "))[,2]
 euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, Decoy == 0)
 
-euc_swath_reanalysed_FDR$FDR <- apply(euc_swath_reanalysed_FDR[8:ncol(euc_swath_reanalysed_FDR)],1, function(x) as.numeric(any(x < 0.01)) )
+euc_swath_reanalysed_FDR$FDR <- apply(euc_swath_reanalysed_FDR[8:ncol(euc_swath_reanalysed_FDR)],1, function(x) as.numeric(sum(as.numeric(x < 0.01)) > 2) )
+
+
 nrow(euc_swath_reanalysed_FDR[euc_swath_reanalysed_FDR$FDR == 0,])
 
 euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, FDR == 1)
