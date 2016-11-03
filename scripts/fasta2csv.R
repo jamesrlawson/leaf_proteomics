@@ -11,9 +11,10 @@ EGrandis_AA_seqs <- data.frame(do.call(rbind, blah))
 
 write.csv(EGrandis_AA_seqs, 'data/large_files/Egrandis_Eglobulus_chloroplast_Myrtales_At_mt_cRAP_160405.csv')
 
-# had to remove proteins with | at the end (e.g. human, bov etc.)
+# had to manually remove proteins with | at the end (e.g. human, bov etc.)
 
 EGrandis_AA_seqs <- read_csv('data/large_files/Egrandis_Eglobulus_chloroplast_Myrtales_At_mt_cRAP_160405.csv')
+names(EGrandis_AA_seqs) <- c('Protein', 'AA_sequence')
 
 ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
 
