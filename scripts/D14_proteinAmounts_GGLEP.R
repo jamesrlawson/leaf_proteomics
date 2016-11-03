@@ -1,6 +1,6 @@
 ### calculate protein amounts in GGLEP equivalents ###
  
-  protein_areas <- read_csv('data/large_files/protein_areas.csv')
+  protein_areas <- read_csv('data/protein_areas.csv')
   
   # get GGLEP top2 areas for each sample
   

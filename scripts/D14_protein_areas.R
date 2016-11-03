@@ -64,7 +64,7 @@ protein_areas <-  ion_areas %>%
   group_by(Protein) %>%
   summarise_at(vars(3:316), top3)
 
-write_csv(protein_areas, 'data/large_files/protein_areas.csv')
+write_csv(protein_areas, 'data/protein_areas.csv')
 
 
 
