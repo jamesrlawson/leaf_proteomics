@@ -34,16 +34,30 @@
   
   protein_amounts[,2:315] <- protein_amounts[,2:315] * (1e07) # multiply by 10^07 to get mg/m2
   
-  quality_check <- protein_amounts[protein_amounts$Protein=="sp|OVAL_CHICK",]
   
   write_csv(protein_amounts,"data/D14_protein_GGLEP.csv")
 
 
+  qual_check <- function() {
+    
+    protein_assay <- read_csv('data/protein_assay.csv')
+    
+    quality_check <- protein_amounts[protein_amounts$Protein=="sp|OVAL_CHICK",]
+    
+    blah <- data.frame(t(quality_check[,2:315]))
+    blah$sample <- rownames(blah)
+    names(blah)[1] <- 'ovalb_amount_MS_mg_per_m2'
+    
+    blax <- merge(protein_assay, blah, by = 'sample')
+    blax$ovalb_amount_assay_mg_per_m2 <- blax$assay_protein_per_area_mg_per_m2 * blax$percent_ovalb_of_total_protein / 100
+    plot(blax$ovalb_amount_MS_mg_per_m2 ~ blax$ovalb_amount_assay_mg_per_m2, 
+         xlab = "ovalbumin amount assay measured (mg/m2)",
+         ylab = "ovalbumin amount MS measured (mg/m2)")
 
-
-
-
-
+  }
+  
+  qual_check()
+  
 # find protein amounts according to target protein area fraction of total protein area
 
 protein_fractions <- protein_areas
