@@ -58,6 +58,8 @@
   
   qual_check()
   
+  
+  
 # find protein amounts according to target protein area fraction of total protein area
 
 protein_fractions <- protein_areas

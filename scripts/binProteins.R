@@ -1,4 +1,4 @@
-## PROCESS PROTEIN DATA INTO BINS AND STANDARDISE ##
+## PROCESS PROTEIN DATA INTO BINS BASED ON MERCATOR FUNCTIONAL CATEGORIES ##
 
 source('scripts/functions.R')
 
@@ -9,11 +9,8 @@ library(tidyr)
 require(reshape2)
 require(plyr)
 
-## ASPINWALL DATA ##
-
-#protein_samples_asp <- read_csv('data/asp_proteins.csv')
-mercator <- read_csv('data/asp_mercator.csv')
-mercator_bins <- read_csv('data/asp_mercator_bins.csv')
+mercator <- read_csv('data/mercator/D14_mercator.csv')
+mercator_bins <- read_csv('data/mercator/mercator_bins.csv')
 
 # note that for this to work, all bincodes in asp_mercator.csv and mercator_bins.csv must be prefixed and suffixed by '_'
 # the following is a hierarchically ordered list of bincodes to be grepped over, where the first string in each list element defines the top level, 
@@ -60,7 +57,8 @@ bin_arch.list <- list(
 ## DISCOVERY DATA ##
 
 #protein_samples_D14 <- read_csv('data/D14_protein_sites.csv') # these are protein amounts calculated using ovalbumin equivalents
-protein_samples_D14 <- read_csv('data/protein_amounts_by_signal_fraction_perArea_D14.csv') # these are protein amounts calculated using signal intensity fraction
+#protein_samples_D14 <- read_csv('data/protein_amounts_by_signal_fraction_perArea_D14.csv') # these are protein amounts calculated using signal intensity fraction
+protein_samples_D14 <- read_csv('data/D14_protein_GGLEP.csv') # protein amounts calculated using D14 ion library, in GGLEP equivalents
 
 total_protein_D14 <- getTotalProtein(protein_samples_D14)
 
