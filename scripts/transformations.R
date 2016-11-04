@@ -59,7 +59,7 @@ recent_clim_locs <- recent_clim_locs[recent_clim_locs$sample %in% unique(protein
 
 rm(sample_locations,climate)
 
-climate_locs <- merge(climate_locs, recent_clim_locs, by = 'sample')
+climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species', 'Longitude', 'Latitude'))
 
 #climate_locs$tavg_recent <- round(climate_locs$tavg_recent , 2)
 
@@ -107,7 +107,7 @@ licor$photo_amb <- NULL
 
 licor <- na.omit(licor)
 
-climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
+#climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
 
 # leaf_CN 
 

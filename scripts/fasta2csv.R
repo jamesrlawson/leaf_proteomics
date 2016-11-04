@@ -15,7 +15,10 @@ write.csv(EGrandis_AA_seqs, 'data/sequences/Egrandis_Eglobulus_chloroplast_Myrta
 EGrandis_AA_seqs <- read_csv('data/sequences/Egrandis_Eglobulus_chloroplast_Myrtales_At_mt_cRAP_160405.csv')
 names(EGrandis_AA_seqs) <- c('Protein', 'AA_sequence')
 
-ion_areas <- read_csv('data/sequences/D14_ion_areas_new_ion_library.csv')
+
+if(!exists("ion_areas")) {
+  ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
+}
 
 D14_euc_AA_seqs <- EGrandis_AA_seqs[EGrandis_AA_seqs$Protein %in% unique(ion_areas$Protein),]
 

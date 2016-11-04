@@ -176,8 +176,6 @@ regression_output <- function(df, x, y) {
     
     model <- lm(paste(y, '~', x, sep = ""), data = df_sub)
     
-  #  model.stats <-  data.frame(cbind(sub,summary(model)$r.squared, summary(model)$coefficients[,4][2]))
-    
     model.stats <-  data.frame(cbind(sub,round(summary(model)$r.squared,3),
                                      round(summary(model)$coefficients[,4][2],2)))
     
@@ -204,4 +202,10 @@ regression_output <- function(df, x, y) {
   browser()
 }
 
+top2 <- function(x) {
+  sum(sort(x, decreasing = TRUE)[1:2], na.rm=TRUE)
+}
 
+top3 <- function(x) {
+  mean(sort(x, decreasing = TRUE)[1:3], na.rm=TRUE)
+}

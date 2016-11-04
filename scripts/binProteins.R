@@ -10,6 +10,7 @@ require(reshape2)
 require(plyr)
 
 mercator <- read_csv('data/mercator/D14_mercator.csv')
+
 mercator_bins <- read_csv('data/mercator/mercator_bins.csv')
 
 # note that for this to work, all bincodes in asp_mercator.csv and mercator_bins.csv must be prefixed and suffixed by '_'

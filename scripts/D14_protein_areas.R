@@ -4,6 +4,8 @@ require(stringr)
 require(readr)
 require(tidyr)
 
+source('scripts/functions.R')
+
 load_excel_files <- function(path, sheet) { 
   
   load_excel_arrange <- function(path, sheet) {
@@ -49,14 +51,6 @@ rm(euc_swath_reanalysed_FDR,euc_swath_reanalysed)
 ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
 
 # get protein areas using top2top3 method
-
-top2 <- function(x) {
-  sum(sort(x, decreasing = TRUE)[1:2], na.rm=TRUE)
-}
-
-top3 <- function(x) {
-  mean(sort(x, decreasing = TRUE)[1:3], na.rm=TRUE)
-}
 
 protein_areas <-  ion_areas %>% 
   group_by(Peptide, Protein) %>% 

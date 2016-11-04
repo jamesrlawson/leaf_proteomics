@@ -1,6 +1,14 @@
+require(dplyr)
+require(stringr)
+require(readr)
+require(tidyr)
+
+source('scripts/functions.R')
+
 ### calculate protein amounts in GGLEP equivalents ###
  
   protein_areas <- read_csv('data/protein_areas.csv')
+  ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
   
   # get GGLEP top2 areas for each sample
   
