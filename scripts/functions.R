@@ -209,3 +209,7 @@ top2 <- function(x) {
 top3 <- function(x) {
   mean(sort(x, decreasing = TRUE)[1:3], na.rm=TRUE)
 }
+
+top2avg <- function(x) {
+  mean(sort(x, decreasing = TRUE)[1:2], na.rm=TRUE)
+}

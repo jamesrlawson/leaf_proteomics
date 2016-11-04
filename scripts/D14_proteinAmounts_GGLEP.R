@@ -5,20 +5,33 @@ require(tidyr)
 
 source('scripts/functions.R')
 
-### calculate protein amounts in GGLEP equivalents ###
+### calculate protein amounts in GGLEP_DEDT equivalents ###
  
-  protein_areas <- read_csv('data/protein_areas.csv')
+  protein_areas <- read_csv('data/protein_areas_top2top2.csv')
   ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
   
   # get GGLEP top2 areas for each sample
   
-  GGLEP <- ion_areas[ion_areas$Peptide == "GGLEPINFQTAADQAR",]
-  GGLEP <- GGLEP %>% summarise_at(vars(10:323), top2)
+   # GGLEP <- ion_areas[ion_areas$Peptide == 'GGLEPINFQTAADQAR',]
+   # GGLEP <- GGLEP %>% summarise_at(vars(10:323), top2)
   
   # find protein areas relative to GGLEP area
-  protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP))) 
+    # protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP))) 
   
-  # multiply by 5.64x10^-11 to get moles per cm2
+    #ovalb <- protein_areas[protein_areas$Protein == "sp|OVAL_CHICK",] # or use ovalb top2top3
+    #protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(ovalb[,2:315]))) 
+  
+  # find protein areas relative to GGLEP/DEDT averaged area
+  
+    # get GGLEP/DEDT top2/top2avg
+    
+    GGLEP_YPILP <- ion_areas[ion_areas$Peptide %in% c('GGLEPINFQTAADQAR', 'DEDTQAMPFR'),]
+    GGLEP_YPILP <- GGLEP_YPILP %>% group_by(Peptide) %>% summarise_at(vars(10:323), top2)
+    GGLEP_YPILP <- data.frame(t(rowMeans(t(GGLEP_YPILP[,2:315]))))
+    
+    protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP_YPILP))) 
+  
+  # multiply by 5.64x10^-11 (2.5 * 10^-6 ug/cm2 / MW of ovalbumin - 44287) to get moles per cm2
   
   protein_areas[,2:315] <- protein_areas[,2:315]*(5.64e-11)
   
@@ -43,7 +56,7 @@ source('scripts/functions.R')
   protein_amounts[,2:315] <- protein_amounts[,2:315] * (1e07) # multiply by 10^07 to get mg/m2
   
   
-  write_csv(protein_amounts,"data/D14_protein_GGLEP.csv")
+  write_csv(protein_amounts,"data/D14_protein_GGLEP-DEDT.csv")
 
 
   qual_check <- function() {
@@ -67,7 +80,17 @@ source('scripts/functions.R')
   qual_check()
   
   
+quality_check <- protein_amounts[protein_amounts$Protein=="sp|OVAL_CHICK",]
   
+  
+  
+
+
+
+
+
+
+
 # find protein amounts according to target protein area fraction of total protein area
 
 protein_fractions <- protein_areas

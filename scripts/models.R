@@ -10,6 +10,8 @@ source('scripts/transformations.R')
 ### plots and models, data aggregated by species (within site) ##
 
 data <- na.omit(merge(protein_stand_D14_age, climate_locs))
+data <- na.omit(merge(protein_stand_D14_age, climate_locs))
+
 
 # adjust gap fraction for leaf age (c.f. Reich et al. 2009) 
 data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * 0.83
@@ -21,6 +23,7 @@ scatter3D(x = data$prec, y = 100-data$gap, z = data$Light_reactions, bty='g', ph
           xlab = 'prec', ylab = 'cover', zlab = 'Light reactions (rel)')
 
 plot(x = 100-data$gap, y = data$Light_reactions, xlab = 'canopy cover (%)', ylab = 'light reactions (rel)')
+
 plot(x = data$prec, y = data$Light_reactions, xlab = 'precip', ylab = 'light reactions (rel)')
 
 data$leaf_age = factor(data$leaf_age,c("new","mid","old"))

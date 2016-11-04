@@ -36,7 +36,6 @@ euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, Decoy == 0)
 
 euc_swath_reanalysed_FDR$FDR <- apply(euc_swath_reanalysed_FDR[8:ncol(euc_swath_reanalysed_FDR)],1, function(x) as.numeric(sum(as.numeric(x < 0.01)) > 2) )
 
-
 nrow(euc_swath_reanalysed_FDR[euc_swath_reanalysed_FDR$FDR == 0,])
 
 euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, FDR == 1)
@@ -46,9 +45,11 @@ euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, FDR == 1)
 ion_areas <- euc_swath_reanalysed[euc_swath_reanalysed$Peptide %in% euc_swath_reanalysed_FDR$Peptide,]
 rm(euc_swath_reanalysed_FDR,euc_swath_reanalysed)
 
-#write_csv(ion_areas, 'data/large_files/D14_ion_areas_new_ion_library.csv')
+write_csv(ion_areas, 'data/large_files/D14_ion_areas_new_ion_library.csv')
 
 ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
+
+ion_areas <- ion_areas[!grep('RRRRR', ion_areas$Protein),]
 
 # get protein areas using top2top3 method
 
@@ -59,6 +60,16 @@ protein_areas <-  ion_areas %>%
   summarise_at(vars(3:316), top3)
 
 write_csv(protein_areas, 'data/protein_areas.csv')
+
+# get protein areas using top2top2 method
+
+protein_areas <-  ion_areas %>% 
+  group_by(Peptide, Protein) %>% 
+  summarise_at(vars(10:323), top2) %>%
+  group_by(Protein) %>%
+  summarise_at(vars(3:316), top2avg)
+
+write_csv(protein_areas, 'data/protein_areas_top2top2.csv')
 
 
 

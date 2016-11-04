@@ -59,7 +59,7 @@ bin_arch.list <- list(
 
 #protein_samples_D14 <- read_csv('data/D14_protein_sites.csv') # these are protein amounts calculated using ovalbumin equivalents
 #protein_samples_D14 <- read_csv('data/protein_amounts_by_signal_fraction_perArea_D14.csv') # these are protein amounts calculated using signal intensity fraction
-protein_samples_D14 <- read_csv('data/D14_protein_GGLEP.csv') # protein amounts calculated using D14 ion library, in GGLEP equivalents
+protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
 
 total_protein_D14 <- getTotalProtein(protein_samples_D14)
 
