@@ -71,19 +71,19 @@ climate_locs$prec_recent <- sqrt(climate_locs$prec_recent)
   
   # add in replicate ID's
   
-  replicates <- read_csv('output/replicates.csv')
+#  replicates <- read_csv('output/replicates.csv')
 
-soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
-soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
-          filter(soil_P < 1500)
+#soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
+#soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
+#          filter(soil_P < 1500)
 
-  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
+#  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
   
-  climate_locs <- merge(climate_locs, soil_N, by = 'ID')
-  climate_locs <- merge(climate_locs, soil_P, by = 'ID')
+#  climate_locs <- merge(climate_locs, soil_N, by = 'ID')
+#  climate_locs <- merge(climate_locs, soil_P, by = 'ID')
 
-  plot(soilN ~ soil_N, climate_locs)
-  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
+#  plot(soilN ~ soil_N, climate_locs)
+#  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
   
 # canopy openness
 

@@ -39,8 +39,8 @@ blax_P <- blah_P %>% group_by(ID, biological_rep, leaf_age) %>%
   spread(key = leaf_age, value = mean_P) %>%
   mutate(resorption = sen/old)
 
-names(blax_P)[7] <- 'resorption_N'
-names(blax_N)[7] <- 'resorption_P'
+names(blax_P)[7] <- 'resorption_P'
+names(blax_N)[7] <- 'resorption_N'
 
 d <- merge(blax_P, blax_N, by = 'ID', all=TRUE)
 
@@ -51,16 +51,22 @@ hist(log10(d$resorption_N))
 
 plot(log10(resorption_N) ~ log10(resorption_P), d, ylab = 'resorption_N', xlab = 'resorption_P')
 
-plot(resorption_N ~ resorption_P), d, ylab = 'resorption_N', xlab = 'resorption_P')
+plot(resorption_N ~ resorption_P, d, ylab = 'resorption_N', xlab = 'resorption_P')
 
 
-plot(resorption_N ~ soil_N, merge(d, climate_locs), ylab = 'N_resorption', xlab = 'soil_N')
-plot(resorption_P ~ soil_P, merge(d, climate_locs), ylab = 'P_resorption', xlab = 'soil_P')
+#plot(resorption_N ~ soil_N, merge(d, climate_locs), ylab = 'N_resorption', xlab = 'soil_N')
+#plot(resorption_P ~ soil_P, merge(d, climate_locs), ylab = 'P_resorption', xlab = 'soil_P')
 
   
-plot(N ~ soil_N, climate_locs)
+#plot(N ~ soil_N, climate_locs)
 
 
+bl <- merge(protein_D14, replicates, by = 'sample')
 
-                                                        
+ba <- merge(blax_N, merge(protein_stand_D14, replicates, by = 'sample'), by = 'ID')
+
+plot(ba$stress ~ ba$resorption_N, ylab = 'stress protein (mg/m2)', xlab = 'N resorption (senecent leaf N / old leaf N)')
+abline(lm(ba$stress ~ ba$resorption_N))
+summary(lm(ba$stress ~ ba$resorption_N))
+
                                                         
