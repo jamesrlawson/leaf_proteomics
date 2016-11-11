@@ -64,9 +64,27 @@ climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species'
 #climate_locs$tavg_recent <- round(climate_locs$tavg_recent , 2)
 
 climate_locs$prec <- log10(climate_locs$prec)
-climate_locs$soilN <- log10(climate_locs$soilN)
+#climate_locs$soilN <- log10(climate_locs$soilN)
 climate_locs$prec_recent <- sqrt(climate_locs$prec_recent)
 
+# soil and litter data
+  
+  # add in replicate ID's
+  
+  replicates <- read_csv('output/replicates.csv')
+
+soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
+soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
+          filter(soil_P < 1500)
+
+  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
+  
+  climate_locs <- merge(climate_locs, soil_N, by = 'ID')
+  climate_locs <- merge(climate_locs, soil_P, by = 'ID')
+
+  plot(soilN ~ soil_N, climate_locs)
+  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
+  
 # canopy openness
 
 gaps <- read_csv('data/sky_pics.csv')
@@ -109,11 +127,12 @@ licor <- na.omit(licor)
 
 #climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
 
-# leaf_CN 
+# leaf_CN
 
-leaf_CN <- read_csv('data/leaf_CN.csv')
+leaf_CN <- read_csv('data/leaf_CNP/leaf_CN.csv')
 leaf_CN <- leaf_CN[leaf_CN$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
+
 
 climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
 
