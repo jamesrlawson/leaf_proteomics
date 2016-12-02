@@ -14,7 +14,7 @@ hist(leaf_P$P) # some outliers apparent, above 2000 ppm P
 hist(leaf_CN$N)
 hist(leaf_CN$C)
 
-  # plot leaf N values against total protein (only have values for eucs)
+# plot leaf N values against total protein (only have values for eucs)
   
   plot(N ~ total_protein, merge(leaf_CN, protein_D14, by = 'sample'))
   

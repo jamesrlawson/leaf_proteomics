@@ -25,15 +25,20 @@ source('scripts/functions.R')
   
     # get GGLEP/DEDT top2/top2avg
     
-    GGLEP_YPILP <- ion_areas[ion_areas$Peptide %in% c('GGLEPINFQTAADQAR', 'DEDTQAMPFR'),]
-    GGLEP_YPILP <- GGLEP_YPILP %>% group_by(Peptide) %>% summarise_at(vars(10:323), top2)
-    GGLEP_YPILP <- data.frame(t(rowMeans(t(GGLEP_YPILP[,2:315]))))
+    GGLEP_DEDT <- ion_areas[ion_areas$Peptide %in% c('GGLEPINFQTAADQAR', 'DEDTQAMPFR'),]
+    GGLEP_DEDT <- GGLEP_DEDT %>% group_by(Peptide) %>% summarise_at(vars(10:323), top2)
+    GGLEP_DEDT <- data.frame(t(rowMeans(t(GGLEP_DEDT[,2:315]))))
     
-    protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP_YPILP))) 
+    protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP_DEDT))) 
   
-  # multiply by 5.64x10^-11 (2.5 * 10^-6 ug/cm2 / MW of ovalbumin - 44287) to get moles per cm2
+  # multiply by 5.64x10^-11 (2.5 * 10^-6 g/cm2 / MW of ovalbumin - 44287) to get moles per cm2
   
   protein_areas[,2:315] <- protein_areas[,2:315]*(5.64e-11)
+  
+  protein_areas[,2:315] <- protein_areas[,2:315]*10000 # (to convert moles/cm2 to moles/m2)
+  
+  
+  write_csv(protein_areas, "data/D14_protein_moles_GGLEP-DEDT.csv")
   
   # multiply by the molecular weight to get g/cm2
   
@@ -59,6 +64,11 @@ source('scripts/functions.R')
   write_csv(protein_amounts,"data/D14_protein_GGLEP-DEDT.csv")
 
 
+  
+  
+  
+  
+  
   qual_check <- function() {
     
     protein_assay <- read_csv('data/protein_assay.csv')
