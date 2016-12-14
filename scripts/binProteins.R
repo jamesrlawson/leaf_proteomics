@@ -59,16 +59,16 @@ bin_arch.list <- list(
 
 #protein_samples_D14 <- read_csv('data/D14_protein_sites.csv') # these are protein amounts calculated using ovalbumin equivalents
 #protein_samples_D14 <- read_csv('data/protein_amounts_by_signal_fraction_perArea_D14.csv') # these are protein amounts calculated using signal intensity fraction
-#protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
-protein_samples_D14 <- read_csv('data/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
+protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
+#protein_samples_D14 <- read_csv('data/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
 
 
 total_protein_D14 <- getTotalProtein(protein_samples_D14)
 
 protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 
-#protein_bins_D14 <- populateProteinBins(protein_samples_D14, bin_arch.list)
-protein_bins_D14 <- populateProteinBins_mean(protein_samples_D14, bin_arch.list)
+protein_bins_D14 <- populateProteinBins(protein_samples_D14, bin_arch.list)
+#protein_bins_D14 <- populateProteinBins_mean(protein_samples_D14, bin_arch.list)
 
 
 # relative quants, standardised by total_protein

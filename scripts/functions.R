@@ -1,5 +1,9 @@
 # sourced by binProteins.R
 
+SE <- function(x) {
+  x <- sd(x) / sqrt(length(x))
+}
+
 CV <- function(x){
   sqrt(var(x))/mean(x)
 }
