@@ -145,6 +145,7 @@ leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
 leaf_age <- leaf_age[leaf_age$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
 
+climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
 
 ## these are the df's used in most of the knitr reports
 

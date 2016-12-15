@@ -2,7 +2,7 @@
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-#source('scripts/transformations.R')
+source('scripts/transformations.R')
 require(ggplot2)
 require(vegan)
 library(readr)
@@ -10,8 +10,6 @@ library(knitr)
 require(plyr)
 require(reshape2)
 require(dplyr)
-load("transformations.RData")
-
 
 tab <- regression_output(na.omit(protein_climate_D14_stand), tavg, sum)
 kable(tab, "markdown", align="l", padding=10)
