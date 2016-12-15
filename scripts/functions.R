@@ -1,7 +1,7 @@
 # sourced by binProteins.R
 
 SE <- function(x) {
-  x <- sd(x) / sqrt(length(x))
+  x <- sd(x, na.rm=TRUE) / sqrt(length(x))
 }
 
 CV <- function(x){

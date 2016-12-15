@@ -7,21 +7,68 @@ require(ggplot2)
 
 source('scripts/transformations.R')
 
-data <- na.omit(merge(protein_stand_D14_age, climate_locs))
+#data <- na.omit(merge(protein_stand_D14_age, climate_locs))
 
-data$Latitude <- round(data$Latitude, 2)
-data$Longitude <- round(data$Longitude, 2)
+#data$Latitude <- round(data$Latitude, 2)
+#data$Longitude <- round(data$Longitude, 2)
+
+replicates <- read_csv('output/replicates.csv')
+replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
+
+data <- merge(protein_stand_D14_age, climate_locs)
+data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised'))
+data <- data[!duplicated(data$sample),]
+
+data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
+
+corcit <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 2, ID = 'corcit_43')
+cortes <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'cortes_51')
+eucmed <- data.frame(data = NA, leaf_age = 'new', biological_rep = 3, ID = 'eucmed_65')
+eucdel <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'eucdel_58')
+eucglo <- data.frame(data = NA, leaf_age = 'new', biological_rep = 2, ID = 'eucglo_63')
+eucpun <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 3, ID = 'eucpun_71')
+eucspa <- data.frame(data = NA, leaf_age = 'old', biological_rep = 2, ID = 'eucspa_75')
+eucten_new <- data.frame(data = NA, leaf_age = 'new', biological_rep = 2, ID = 'eucten_77')
+eucten_old <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'eucten_77')
+corexi <- data.frame(data = NA, leaf_age = 'new', biological_rep = 3, ID = 'corexi_45')
+corpoc <- data.frame(data = NA, leaf_age = 'old', biological_rep = 2, ID = 'corpoc_49')
+eucdum <- data.frame(data = NA, leaf_age = 'new', biological_rep = 1, ID = 'eucdum_60')
+euchae <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 1, ID = 'euchae_64')
+eucrub <- data.frame(data = NA, leaf_age = 'new', biological_rep = 3, ID = 'eucrub_73')
+
+#eucspa doesnt have biological rep 3 (fixed) - and YG118 is missing from protein_D14_age (!) this needs further investigation
+#biological rep needs to be checked for added lines
+
+data <- data %>% 
+  bind_rows(corcit) %>% 
+  bind_rows(cortes) %>% 
+  bind_rows(eucmed) %>%
+  bind_rows(eucdel) %>%
+  bind_rows(eucglo) %>%
+  bind_rows(eucpun) %>%
+  bind_rows(eucspa) %>%
+  bind_rows(eucten_new) %>%
+  bind_rows(eucten_old) %>%
+  bind_rows(corexi) %>%
+  bind_rows(corpoc) %>%
+  bind_rows(eucdum) %>%
+  bind_rows(euchae) %>%
+  bind_rows(eucrub)
+
+rm(corcit,cortes,eucmed,eucdel,eucglo,eucpun,eucspa,eucten_new,eucten_old,corexi,corpoc,eucdum,euchae,eucrub)
+
 
 # Calvin cycle
 
-Calvin_cycle_means <- ddply(data, .(species, Longitude, Latitude), summarise, Calvin_cycle_mean = mean(Calvin_cycle), Calvin_cycle_se = SE(PSII))
-Calvin_cycle_means <- merge(data, Calvin_cycle_means, by = c('species','Longitude', 'Latitude'))
-Calvin_cycle_means <- Calvin_cycle_means[!duplicated(Calvin_cycle_means[,c('Longitude', 'Latitude', 'species', 'leaf_age')]),]
+Calvin_cycle_means <- ddply(data, .(ID), summarise, Calvin_cycle_mean = mean(Calvin_cycle, na.rm=TRUE), Calvin_cycle_se = SE(Calvin_cycle))
+Calvin_cycle_means <- merge(data, Calvin_cycle_means, by = c('ID'))
+Calvin_cycle_means <- Calvin_cycle_means[!duplicated(Calvin_cycle_means[,c('Calvin_cycle_mean')]),]
 
 p <- ggplot(Calvin_cycle_means, aes(y = Calvin_cycle_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = Calvin_cycle_mean - Calvin_cycle_se, ymax = Calvin_cycle_mean + Calvin_cycle_se), width = 0.02)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
 p
+
 
 summary(lm(Calvin_cycle_mean ~ prec, Calvin_cycle_means))
 
@@ -34,9 +81,9 @@ summary(lm(Calvin_cycle_mean ~ gap, Calvin_cycle_means))
 
 # electron transport
 
-electron_transport_minATPsynth_means <- ddply(data, .(species, Longitude, Latitude), summarise, electron_transport_minATPsynth_mean = mean(electron_transport_minATPsynth), electron_transport_minATPsynth_se = SE(PSII))
-electron_transport_minATPsynth_means <- merge(data, electron_transport_minATPsynth_means, by = c('species','Longitude', 'Latitude'))
-electron_transport_minATPsynth_means <- electron_transport_minATPsynth_means[!duplicated(electron_transport_minATPsynth_means[,c('Longitude', 'Latitude', 'species', 'leaf_age')]),]
+electron_transport_minATPsynth_means <- ddply(data, .(ID), summarise, electron_transport_minATPsynth_mean = mean(electron_transport_minATPsynth, na.rm=TRUE), electron_transport_minATPsynth_se = SE(electron_transport_minATPsynth))
+electron_transport_minATPsynth_means <- merge(data, electron_transport_minATPsynth_means, by = c('ID'))
+electron_transport_minATPsynth_means <- electron_transport_minATPsynth_means[!duplicated(electron_transport_minATPsynth_means[,c('electron_transport_minATPsynth_mean')]),]
 
 p <- ggplot(electron_transport_minATPsynth_means, aes(y = electron_transport_minATPsynth_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = electron_transport_minATPsynth_mean - electron_transport_minATPsynth_se, ymax = electron_transport_minATPsynth_mean + electron_transport_minATPsynth_se), width = 0.02)
@@ -54,9 +101,9 @@ summary(lm(electron_transport_minATPsynth_mean ~ gap, electron_transport_minATPs
 
 # photosystems
 
-Photosystems_means <- ddply(data, .(species, Longitude, Latitude), summarise, Photosystems_mean = mean(Photosystems), Photosystems_se = SE(PSII))
-Photosystems_means <- merge(data, Photosystems_means, by = c('species','Longitude', 'Latitude'))
-Photosystems_means <- Photosystems_means[!duplicated(Photosystems_means[,c('Longitude', 'Latitude', 'species', 'leaf_age')]),]
+Photosystems_means <- ddply(data, .(ID), summarise, Photosystems_mean = mean(Photosystems, na.rm=TRUE), Photosystems_se = SE(Photosystems))
+Photosystems_means <- merge(data, Photosystems_means, by = c('ID'))
+Photosystems_means <- Photosystems_means[!duplicated(Photosystems_means[,c('Photosystems_mean')]),]
 
 p <- ggplot(Photosystems_means, aes(y = Photosystems_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = Photosystems_mean - Photosystems_se, ymax = Photosystems_mean + Photosystems_se), width = 0.02)
@@ -72,6 +119,25 @@ p
 
 summary(lm(Photosystems_mean ~ gap, Photosystems_means))
 
+# PSI
+
+PSI_means <- ddply(data, .(ID), summarise, PSI_mean = mean(PSI, na.rm=TRUE), PSI_se = SE(PSI))
+PSI_means <- merge(data, PSI_means, by = c('ID'))
+PSI_means <- PSI_means[!duplicated(PSI_means[,c('PSI_mean')]),]
+
+p <- ggplot(PSI_means, aes(y = PSI_mean, x = prec)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = PSI_mean - PSI_se, ymax = PSI_mean + PSI_se), width = 0.02)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [PSI proteins] (rel)')
+p
+
+summary(lm(PSI_mean ~ prec, PSI_means))
+
+p <- ggplot(PSI_means, aes(y = PSI_mean, x = gap)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = PSI_mean - PSI_se, ymax = PSI_mean + PSI_se), width = 0.7)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Canopy gap fraction (%)') + ylab('Species mean of [PSI proteins] (rel)')
+p
+
+summary(lm(PSI_mean ~ gap, PSI_means))
 
 
 # leaf age plots
