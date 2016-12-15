@@ -167,52 +167,55 @@ protein_climate_D14$bin_arch_name <- as.character(protein_climate_D14$bin_arch_n
 
 leaf_age <- read_csv('data/leaf_age.csv')
 leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
+
+leaf_age <- leaf_age[leaf_age$sample %in% protein_stand_D14$sample,]
+
 protein_stand_D14_age <- merge(leaf_age, protein_stand_D14, by = 'sample')
 
-protein_stand_D14_new <- subset(protein_stand_D14_age, leaf_age == "new")
-protein_stand_D14_mid <- subset(protein_stand_D14_age, leaf_age == "mid")
-protein_stand_D14_old <- subset(protein_stand_D14_age, leaf_age == "old")
+#protein_stand_D14_new <- subset(protein_stand_D14_age, leaf_age == "new")
+#protein_stand_D14_mid <- subset(protein_stand_D14_age, leaf_age == "mid")
+#protein_stand_D14_old <- subset(protein_stand_D14_age, leaf_age == "old")
 
-protein_climate_D14_new_stand <- merge(climate_locs, melt(protein_stand_D14_new), by = 'sample')
-names(protein_climate_D14_new_stand)[names(protein_climate_D14_new_stand) == 'variable'] <- 'bin_arch_name'
-names(protein_climate_D14_new_stand)[names(protein_climate_D14_new_stand) == 'value'] <- 'sum'
-protein_climate_D14_new_stand$bin_arch_name <- as.character(protein_climate_D14_new_stand$bin_arch_name)
+#protein_climate_D14_new_stand <- merge(climate_locs, melt(protein_stand_D14_new), by = 'sample')
+#names(protein_climate_D14_new_stand)[names(protein_climate_D14_new_stand) == 'variable'] <- 'bin_arch_name'
+#names(protein_climate_D14_new_stand)[names(protein_climate_D14_new_stand) == 'value'] <- 'sum'
+#protein_climate_D14_new_stand$bin_arch_name <- as.character(protein_climate_D14_new_stand$bin_arch_name)
 
-protein_climate_D14_mid_stand <- merge(climate_locs, melt(protein_stand_D14_mid), by = 'sample')
-names(protein_climate_D14_mid_stand)[names(protein_climate_D14_mid_stand) == 'variable'] <- 'bin_arch_name'
-names(protein_climate_D14_mid_stand)[names(protein_climate_D14_mid_stand) == 'value'] <- 'sum'
-protein_climate_D14_mid_stand$bin_arch_name <- as.character(protein_climate_D14_mid_stand$bin_arch_name)
+#protein_climate_D14_mid_stand <- merge(climate_locs, melt(protein_stand_D14_mid), by = 'sample')
+#names(protein_climate_D14_mid_stand)[names(protein_climate_D14_mid_stand) == 'variable'] <- 'bin_arch_name'
+#names(protein_climate_D14_mid_stand)[names(protein_climate_D14_mid_stand) == 'value'] <- 'sum'
+#protein_climate_D14_mid_stand$bin_arch_name <- as.character(protein_climate_D14_mid_stand$bin_arch_name)
 
-protein_climate_D14_old_stand <- merge(climate_locs, melt(protein_stand_D14_old), by = 'sample')
-names(protein_climate_D14_old_stand)[names(protein_climate_D14_old_stand) == 'variable'] <- 'bin_arch_name'
-names(protein_climate_D14_old_stand)[names(protein_climate_D14_old_stand) == 'value'] <- 'sum'
-protein_climate_D14_old_stand$bin_arch_name <- as.character(protein_climate_D14_old_stand$bin_arch_name)
+#protein_climate_D14_old_stand <- merge(climate_locs, melt(protein_stand_D14_old), by = 'sample')
+#names(protein_climate_D14_old_stand)[names(protein_climate_D14_old_stand) == 'variable'] <- 'bin_arch_name'
+#names(protein_climate_D14_old_stand)[names(protein_climate_D14_old_stand) == 'value'] <- 'sum'
+#protein_climate_D14_old_stand$bin_arch_name <- as.character(protein_climate_D14_old_stand$bin_arch_name)
 
 
 # absolute [protein] separated by leaf age
 
 leaf_age <- read_csv('data/leaf_age.csv')
-leaf_age <- leaf_age[unique(leaf_age$sample) %in% protein_D14$sample,]
+leaf_age <- leaf_age[leaf_age$sample %in% protein_D14$sample,]
 protein_D14_age <- merge(leaf_age, protein_D14, by = 'sample')
 
-protein_D14_new <- subset(protein_D14_age, leaf_age == "new")
-protein_D14_mid <- subset(protein_D14_age, leaf_age == "mid")
-protein_D14_old <- subset(protein_D14_age, leaf_age == "old")
+#protein_D14_new <- subset(protein_D14_age, leaf_age == "new")
+#protein_D14_mid <- subset(protein_D14_age, leaf_age == "mid")
+#protein_D14_old <- subset(protein_D14_age, leaf_age == "old")
 
-protein_climate_D14_new <- merge(climate_locs, melt(protein_D14_new), by = 'sample')
-names(protein_climate_D14_new)[names(protein_climate_D14_new) == 'variable'] <- 'bin_arch_name'
-names(protein_climate_D14_new)[names(protein_climate_D14_new) == 'value'] <- 'sum'
-protein_climate_D14_new$bin_arch_name <- as.character(protein_climate_D14_new$bin_arch_name)
+#protein_climate_D14_new <- merge(climate_locs, melt(protein_D14_new), by = 'sample')
+#names(protein_climate_D14_new)[names(protein_climate_D14_new) == 'variable'] <- 'bin_arch_name'
+#names(protein_climate_D14_new)[names(protein_climate_D14_new) == 'value'] <- 'sum'
+#protein_climate_D14_new$bin_arch_name <- as.character(protein_climate_D14_new$bin_arch_name)
 
-protein_climate_D14_mid <- merge(climate_locs, melt(protein_D14_mid), by = 'sample')
-names(protein_climate_D14_mid)[names(protein_climate_D14_mid) == 'variable'] <- 'bin_arch_name'
-names(protein_climate_D14_mid)[names(protein_climate_D14_mid) == 'value'] <- 'sum'
-protein_climate_D14_mid$bin_arch_name <- as.character(protein_climate_D14_mid$bin_arch_name)
+#protein_climate_D14_mid <- merge(climate_locs, melt(protein_D14_mid), by = 'sample')
+#names(protein_climate_D14_mid)[names(protein_climate_D14_mid) == 'variable'] <- 'bin_arch_name'
+#names(protein_climate_D14_mid)[names(protein_climate_D14_mid) == 'value'] <- 'sum'
+#protein_climate_D14_mid$bin_arch_name <- as.character(protein_climate_D14_mid$bin_arch_name)
 
-protein_climate_D14_old <- merge(climate_locs, melt(protein_D14_old), by = 'sample')
-names(protein_climate_D14_old)[names(protein_climate_D14_old) == 'variable'] <- 'bin_arch_name'
-names(protein_climate_D14_old)[names(protein_climate_D14_old) == 'value'] <- 'sum'
-protein_climate_D14_old$bin_arch_name <- as.character(protein_climate_D14_old$bin_arch_name)
+#protein_climate_D14_old <- merge(climate_locs, melt(protein_D14_old), by = 'sample')
+#names(protein_climate_D14_old)[names(protein_climate_D14_old) == 'variable'] <- 'bin_arch_name'
+#names(protein_climate_D14_old)[names(protein_climate_D14_old) == 'value'] <- 'sum'
+#protein_climate_D14_old$bin_arch_name <- as.character(protein_climate_D14_old$bin_arch_name)
 
 
 

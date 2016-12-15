@@ -192,7 +192,6 @@ QL381,sen
 QL419,mid
 QL423,mid
 QL427,mid
-QL427,mid
 QL418,new
 QL422,new
 QL426,new
@@ -257,10 +256,7 @@ T288,old
 T292,old
 T296,old
 T289,sen
-T289,sen
 T293,sen
-T293,sen
-T297,sen
 T297,sen
 T299,mid
 T302,mid
@@ -284,7 +280,6 @@ T137,mid
 T140,mid
 T143,mid
 T136,new
-T139,new
 T139,new
 T142,new
 T138,old
@@ -317,7 +312,6 @@ T370,mid
 T362,new
 T366,new
 T369,new
-T369,new
 T364,old
 T368,old
 T371,old
@@ -343,7 +337,6 @@ T090,old
 RH097,mid
 RH100,mid
 RH103,mid
-RH096,new
 RH096,new
 RH099,new
 RH102,new
@@ -388,11 +381,9 @@ KG077,old
 KG039,sen
 KG076,sen
 KG023,mid
-KG023,mid
 KG050,mid
 KG082,mid
 KG024,new
-KG051,new
 KG051,new
 KG083,new
 KG022,old
@@ -408,7 +399,6 @@ RH117,new
 RH120,new
 RH123,new
 RH119,old
-RH119,old
 RH122,old
 RH125,old
 RH002,mid
@@ -416,7 +406,6 @@ RH006,mid
 RH010,mid
 RH001,new
 RH005,new
-RH009,new
 RH009,new
 RH003,old
 RH007,old
@@ -426,7 +415,6 @@ RH008,sen
 RH012,sen
 RH056,mid
 RH060,mid
-RH064,mid
 RH064,mid
 RH055,new
 RH059,new
@@ -494,7 +482,6 @@ YG028,sen
 YG169,mid
 YG187,mid
 YG203,mid
-YG203,mid
 YG170,new
 YG188,new
 YG204,new
@@ -546,7 +533,6 @@ QL154,new
 QL150,old
 QL153,old
 QL156,old
-QL156,old
 QL107,mid
 QL111,mid
 QL115,mid
@@ -574,7 +560,6 @@ QL401,mid
 QL403,new
 QL397,new
 QL400,new
-QL405,old
 QL405,old
 QL399,old
 QL402,old
@@ -710,7 +695,6 @@ T156,sen
 T373,mid
 T377,mid
 T381,mid
-T381,mid
 T372,new
 T376,new
 T380,new
@@ -748,7 +732,6 @@ T398,mid
 T402,mid
 T406,mid
 T397,new
-T401,new
 T401,new
 T405,new
 T399,old
@@ -1032,10 +1015,7 @@ QL084,old
 QL088,old
 QL092,old
 QL085,sen
-QL085,sen
 QL089,sen
-QL089,sen
-QL093,sen
 QL093,sen
 QL344,mid
 QL338,mid
@@ -1208,10 +1188,7 @@ T264,old
 T268,old
 T272,old
 T265,sen
-T265,sen
 T269,sen
-T269,sen
-T273,sen
 T273,sen
 T308,mid
 T312,mid
