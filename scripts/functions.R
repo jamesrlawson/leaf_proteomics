@@ -328,15 +328,18 @@ populateProteinBins_mean <- function(protein_samples, bin_arch.list) {
   
 }
 
-agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) { # labs are title, xlab, ylab
+agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
   
   dep_means <- data %>%
     group_by(ID) %>%
     summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
-               SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>% # need lazyeval::interp to pass in arguments to dplyr::summarise_ (arguments should be as "string")
+               SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
     full_join(data, by = 'ID')  %>%
     distinct(mean, .keep_all=TRUE) %>%
     select(-data)
+  
+  
+  #indep <- dep_means[[indepvar]]
   
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F) + ggtitle(labs[1]) + xlab(labs[2]) + ylab(labs[3])
@@ -356,7 +359,7 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) { # labs are ti
     
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10),trans='log10')
     
-    print(summary(lm(dep_means[[depvar]] ~ log10(dep_means[[indepvar]]))))
+    print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
     
   } else {
     
@@ -365,10 +368,11 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) { # labs are ti
     
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
     
-    print(summary(lm(dep_means[[depvar]] ~ dep_means[[indepvar]])))
+    print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
     
   }
   
   print(p)
+  
   
 }
