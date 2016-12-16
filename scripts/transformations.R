@@ -63,9 +63,9 @@ climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species'
 
 #climate_locs$tavg_recent <- round(climate_locs$tavg_recent , 2)
 
-climate_locs$prec <- log10(climate_locs$prec)
+#climate_locs$prec <- log10(climate_locs$prec)
 #climate_locs$soilN <- log10(climate_locs$soilN)
-climate_locs$prec_recent <- sqrt(climate_locs$prec_recent)
+#climate_locs$prec_recent <- sqrt(climate_locs$prec_recent)
 
 # soil and litter data
   
@@ -218,6 +218,6 @@ protein_D14_age <- merge(leaf_age, protein_D14, by = 'sample')
 #names(protein_climate_D14_old)[names(protein_climate_D14_old) == 'value'] <- 'sum'
 #protein_climate_D14_old$bin_arch_name <- as.character(protein_climate_D14_old$bin_arch_name)
 
-
-
+rm(licor, leaf_CN, mercator, mercator_bins, protein_bins_D14, protein_samples_D14, 
+   protein_D14_long, protein_stand_D14_long, bin_arch.list, recent_clim, recent_clim_locs)
 

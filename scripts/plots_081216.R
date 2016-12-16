@@ -7,11 +7,6 @@ require(ggplot2)
 
 source('scripts/transformations.R')
 
-#data <- na.omit(merge(protein_stand_D14_age, climate_locs))
-
-#data$Latitude <- round(data$Latitude, 2)
-#data$Longitude <- round(data$Longitude, 2)
-
 replicates <- read_csv('output/replicates.csv')
 replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
 
@@ -57,6 +52,68 @@ data <- data %>%
 
 rm(corcit,cortes,eucmed,eucdel,eucglo,eucpun,eucspa,eucten_new,eucten_old,corexi,corpoc,eucdum,euchae,eucrub)
 
+# total protein
+
+agg_plot(data, 'total_protein', 'prec', logx = TRUE, labs = c('Total protein vs MAP', 'Mean annual precip (log10)', 'Species mean of [Total protein]'))
+agg_plot(data, 'total_protein', 'gap', logx = FALSE, labs = c('Total protein vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Total protein] '))
+agg_plot(data, 'total_protein', 'tavg', logx = FALSE, labs = c('Total protein vs MAT', 'Mean annual temp (degC)', 'Species mean of [Total protein]'))
+
+# Calvin cycle
+
+agg_plot(data, 'Calvin_cycle', 'prec', logx = TRUE, labs = c('Calvin Cycle vs MAP', 'Mean annual precip (log10)', 'Species mean of [Calvin cycle proteins] (rel)'))
+agg_plot(data, 'Calvin_cycle', 'gap', logx = FALSE, labs = c('Calvin Cycle vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Calvin cycle proteins] (rel)'))
+agg_plot(data, 'Calvin_cycle', 'tavg', logx = FALSE, labs = c('Calvin Cycle vs MAT', 'Mean annual temp (degC)', 'Species mean of [Calvin cycle proteins] (rel)'))
+
+# Photosystems
+
+agg_plot(data, 'electron_transport_minATPsynth', 'prec', logx = TRUE, labs = c('Electron transport vs MAP', 'Mean annual precip (log10)', 'Species mean of [Electron transport proteins] (rel)'))
+agg_plot(data, 'electron_transport_minATPsynth', 'gap', logx = FALSE, labs = c('Electron transport vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Electron transport proteins] (rel)'))
+agg_plot(data, 'electron_transport_minATPsynth', 'tavg', logx = FALSE, labs = c('Electron transport vs MAT', 'Mean annual temp (degC)', 'Species mean of [Electron transport proteins] (rel)'))
+
+# Photosystems
+
+agg_plot(data, 'Photosystems', 'prec', logx = TRUE, labs = c('Photosystems vs MAP', 'Mean annual precip (log10)', 'Species mean of [Photosystems proteins] (rel)'))
+agg_plot(data, 'Photosystems', 'gap', logx = FALSE, labs = c('Photosystems vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Photosystems proteins] (rel)'))
+agg_plot(data, 'Photosystems', 'tavg', logx = FALSE, labs = c('Photosystems vs MAT', 'Mean annual temp (degC)', 'Species mean of [Photosystems proteins] (rel)'))
+
+
+
+
+
+
+
+
+
+# total protein
+
+total_protein_means <- ddply(data, .(ID), summarise, total_protein_mean = mean(total_protein, na.rm=TRUE), total_protein_se = SE(total_protein))
+total_protein_means <- merge(data, total_protein_means, by = c('ID'))
+total_protein_means <- total_protein_means[!duplicated(total_protein_means[,c('total_protein_mean')]),]
+
+errorbar_width <- (max(data$prec, na.rm=TRUE) - min(data$tavg, na.rm=TRUE)) / 50
+p <- ggplot(total_protein_means, aes(y = total_protein_mean, x = prec)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = total_protein_mean - total_protein_se, ymax = total_protein_mean + total_protein_se), width = errorbar_width)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
+p
+
+summary(lm(total_protein ~ prec, total_protein_means))
+
+errorbar_width <- (max(data$gap, na.rm=TRUE) - min(data$tavg, na.rm=TRUE)) / 50
+p <- ggplot(total_protein_means, aes(y = total_protein_mean, x = gap)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = total_protein_mean - total_protein_se, ymax = total_protein_mean + total_protein_se), width = errorbar_width)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Canopy gap fraction (%)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
+p
+
+summary(lm(total_protein ~ gap, total_protein_means))
+
+errorbar_width <- (max(data$tavg, na.rm=TRUE) - min(data$tavg, na.rm=TRUE)) / 50
+p <- ggplot(total_protein_means, aes(y = total_protein_mean, x = tavg)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = total_protein_mean - total_protein_se, ymax = total_protein_mean + total_protein_se), width = errorbar_width)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual temperature (deg C)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
+p
+
+summary(lm(total_protein ~ tavg, total_protein_means))
+
 
 # Calvin cycle
 
@@ -64,6 +121,7 @@ Calvin_cycle_means <- ddply(data, .(ID), summarise, Calvin_cycle_mean = mean(Cal
 Calvin_cycle_means <- merge(data, Calvin_cycle_means, by = c('ID'))
 Calvin_cycle_means <- Calvin_cycle_means[!duplicated(Calvin_cycle_means[,c('Calvin_cycle_mean')]),]
 
+errorbar_width <- (max(data$prec, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
 p <- ggplot(Calvin_cycle_means, aes(y = Calvin_cycle_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = Calvin_cycle_mean - Calvin_cycle_se, ymax = Calvin_cycle_mean + Calvin_cycle_se), width = 0.02)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
@@ -72,6 +130,7 @@ p
 
 summary(lm(Calvin_cycle_mean ~ prec, Calvin_cycle_means))
 
+errorbar_width <- (max(data$gap, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
 p <- ggplot(Calvin_cycle_means, aes(y = Calvin_cycle_mean, x = gap)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = Calvin_cycle_mean - Calvin_cycle_se, ymax = Calvin_cycle_mean + Calvin_cycle_se), width = 0.7)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Canopy gap fraction (%)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
@@ -79,12 +138,23 @@ p
 
 summary(lm(Calvin_cycle_mean ~ gap, Calvin_cycle_means))
 
+errorbar_width <- (max(data$tavg, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
+p <- ggplot(Calvin_cycle_means, aes(y = Calvin_cycle_mean, x = tavg)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = Calvin_cycle_mean - Calvin_cycle_se, ymax = Calvin_cycle_mean + Calvin_cycle_se), width = 0.7)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual temperature (deg C)') + ylab('Species mean of [Calvin cycle proteins] (rel)')
+p
+
+summary(lm(Calvin_cycle_mean ~ tavg, Calvin_cycle_means))
+
+
+
 # electron transport
 
 electron_transport_minATPsynth_means <- ddply(data, .(ID), summarise, electron_transport_minATPsynth_mean = mean(electron_transport_minATPsynth, na.rm=TRUE), electron_transport_minATPsynth_se = SE(electron_transport_minATPsynth))
 electron_transport_minATPsynth_means <- merge(data, electron_transport_minATPsynth_means, by = c('ID'))
 electron_transport_minATPsynth_means <- electron_transport_minATPsynth_means[!duplicated(electron_transport_minATPsynth_means[,c('electron_transport_minATPsynth_mean')]),]
 
+errorbar_width <- (max(data$prec, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
 p <- ggplot(electron_transport_minATPsynth_means, aes(y = electron_transport_minATPsynth_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = electron_transport_minATPsynth_mean - electron_transport_minATPsynth_se, ymax = electron_transport_minATPsynth_mean + electron_transport_minATPsynth_se), width = 0.02)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [electron transport proteins] (rel)')
@@ -92,6 +162,7 @@ p
 
 summary(lm(electron_transport_minATPsynth_mean ~ prec, electron_transport_minATPsynth_means))
 
+errorbar_width <- (max(data$gap, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
 p <- ggplot(electron_transport_minATPsynth_means, aes(y = electron_transport_minATPsynth_mean, x = gap)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = electron_transport_minATPsynth_mean - electron_transport_minATPsynth_se, ymax = electron_transport_minATPsynth_mean + electron_transport_minATPsynth_se), width = 0.7)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Canopy gap fraction (%)') + ylab('Species mean of [electron transport proteins] (rel)')
@@ -99,12 +170,22 @@ p
 
 summary(lm(electron_transport_minATPsynth_mean ~ gap, electron_transport_minATPsynth_means))
 
+errorbar_width <- (max(data$tavg, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
+p <- ggplot(electron_transport_minATPsynth_means, aes(y = electron_transport_minATPsynth_mean, x = tavg)) + geom_point(size = 3)
+p <- p + geom_errorbar(aes(ymin = electron_transport_minATPsynth_mean - electron_transport_minATPsynth_se, ymax = electron_transport_minATPsynth_mean + electron_transport_minATPsynth_se), width = 0.7)
+p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual temperature (degC)') + ylab('Species mean of [electron transport proteins] (rel)')
+p
+
+summary(lm(electron_transport_minATPsynth_mean ~ tavg, electron_transport_minATPsynth_means))
+
+
 # photosystems
 
 Photosystems_means <- ddply(data, .(ID), summarise, Photosystems_mean = mean(Photosystems, na.rm=TRUE), Photosystems_se = SE(Photosystems))
 Photosystems_means <- merge(data, Photosystems_means, by = c('ID'))
 Photosystems_means <- Photosystems_means[!duplicated(Photosystems_means[,c('Photosystems_mean')]),]
 
+errorbar_width <- (max(data$tavg, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
 p <- ggplot(Photosystems_means, aes(y = Photosystems_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = Photosystems_mean - Photosystems_se, ymax = Photosystems_mean + Photosystems_se), width = 0.02)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [Photosystems proteins] (rel)')
@@ -112,6 +193,7 @@ p
 
 summary(lm(Photosystems_mean ~ prec, Photosystems_means))
 
+errorbar_width <- (max(data$gap, na.rm=TRUE) - min(data$gap, na.rm=TRUE)) / 50
 p <- ggplot(Photosystems_means, aes(y = Photosystems_mean, x = gap)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = Photosystems_mean - Photosystems_se, ymax = Photosystems_mean + Photosystems_se), width = 0.7)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Canopy gap fraction (%)') + ylab('Species mean of [Photosystems proteins] (rel)')
@@ -125,6 +207,7 @@ PSI_means <- ddply(data, .(ID), summarise, PSI_mean = mean(PSI, na.rm=TRUE), PSI
 PSI_means <- merge(data, PSI_means, by = c('ID'))
 PSI_means <- PSI_means[!duplicated(PSI_means[,c('PSI_mean')]),]
 
+errorbar_width <- (max(data$tavg, na.rm=TRUE) - min(data$prec, na.rm=TRUE)) / 50
 p <- ggplot(PSI_means, aes(y = PSI_mean, x = prec)) + geom_point(size = 3)
 p <- p + geom_errorbar(aes(ymin = PSI_mean - PSI_se, ymax = PSI_mean + PSI_se), width = 0.02)
 p <- p + geom_smooth(method = 'lm', se = F) + xlab('Mean annual precip (log)') + ylab('Species mean of [PSI proteins] (rel)')
