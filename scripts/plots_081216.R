@@ -4,6 +4,8 @@
 
 require(plyr)
 require(ggplot2)
+require(lazyeval)
+require(dplyr)
 
 source('scripts/transformations.R')
 
@@ -15,6 +17,7 @@ data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_
 data <- data[!duplicated(data$sample),]
 
 data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
+data <- filter(data, ID != 'melpal_106')
 
 corcit <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 2, ID = 'corcit_43')
 cortes <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'cortes_51')
@@ -64,7 +67,7 @@ agg_plot(data, 'Calvin_cycle', 'prec', logx = TRUE, labs = c('Calvin Cycle vs MA
 agg_plot(data, 'Calvin_cycle', 'gap', logx = FALSE, labs = c('Calvin Cycle vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Calvin cycle proteins] (rel)'))
 agg_plot(data, 'Calvin_cycle', 'tavg', logx = FALSE, labs = c('Calvin Cycle vs MAT', 'Mean annual temp (degC)', 'Species mean of [Calvin cycle proteins] (rel)'))
 
-# Photosystems
+# Electron transport
 
 agg_plot(data, 'electron_transport_minATPsynth', 'prec', logx = TRUE, labs = c('Electron transport vs MAP', 'Mean annual precip (log10)', 'Species mean of [Electron transport proteins] (rel)'))
 agg_plot(data, 'electron_transport_minATPsynth', 'gap', logx = FALSE, labs = c('Electron transport vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Electron transport proteins] (rel)'))
@@ -75,13 +78,6 @@ agg_plot(data, 'electron_transport_minATPsynth', 'tavg', logx = FALSE, labs = c(
 agg_plot(data, 'Photosystems', 'prec', logx = TRUE, labs = c('Photosystems vs MAP', 'Mean annual precip (log10)', 'Species mean of [Photosystems proteins] (rel)'))
 agg_plot(data, 'Photosystems', 'gap', logx = FALSE, labs = c('Photosystems vs canopy gap fraction', 'Canopy gap fraction (%) ', 'Species mean of [Photosystems proteins] (rel)'))
 agg_plot(data, 'Photosystems', 'tavg', logx = FALSE, labs = c('Photosystems vs MAT', 'Mean annual temp (degC)', 'Species mean of [Photosystems proteins] (rel)'))
-
-
-
-
-
-
-
 
 
 # total protein

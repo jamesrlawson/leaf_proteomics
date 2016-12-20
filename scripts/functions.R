@@ -165,27 +165,32 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   
 }
 
-regression_output <- function(df, x, y) { 
+regression_output <- function(df, indepvar, logx) {
   
-  # x is the dependent variable (whatever climate variable), y is 'sum'
-  x <- deparse(substitute(x))
-  y <- deparse(substitute(y))
+  #  df <- na.omit(merge(protein_stand_D14_age, climate_locs, all=TRUE))
   
   a <- data.frame()
-  my.list <- vector("list", length(unique(df$bin_arch_name)))
+  my.list <- vector("list", length(protein_stand_D14_age)-2)
   
-  for(i in 1:length(unique(df$bin_arch_name))) {
-    sub <- unique(df$bin_arch_name)[i]
-    df_sub <- subset(df, bin_arch_name == sub)
+  for(i in 3:length(protein_stand_D14_age)) {
     
-    model <- lm(paste(y, '~', x, sep = ""), data = df_sub)
+    protname <- names(df[i])
     
-    model.stats <-  data.frame(cbind(sub,round(summary(model)$r.squared,3),
-                                     round(summary(model)$coefficients[,4][2],2)))
+    if(logx) {
     
+      model <- summary(lm(df[[protname]] ~ log10(df[[indepvar]])))
+    
+    } else {
+      
+        model <- summary(lm(df[[protname]] ~ df[[indepvar]]))
+      
+    }
+    
+    model.stats <-  data.frame(cbind(protname,round(model$r.squared,3),
+                                     round(model$coefficients[,4][2],2)))
     
     names(model.stats) <- c('submodel','R2','pval') 
-     rownames(model.stats) <- NULL
+    rownames(model.stats) <- NULL
     
     my.list[[i]] <- model.stats
     
@@ -203,8 +208,8 @@ regression_output <- function(df, x, y) {
   
   return(a)
   
-  browser()
 }
+
 
 top2 <- function(x) {
   sum(sort(x, decreasing = TRUE)[1:2], na.rm=TRUE)
@@ -338,11 +343,9 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
     distinct(mean, .keep_all=TRUE) %>%
     select(-data)
   
-  
-  #indep <- dep_means[[indepvar]]
-  
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
-  p <- p + geom_smooth(method = 'lm', se = F) + ggtitle(labs[1]) + xlab(labs[2]) + ylab(labs[3])
+  p <- p + geom_smooth(method = 'lm', se = F)
+  p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
   p <- p + theme_bw()
   p <- p + theme(panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(), 
@@ -355,20 +358,20 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
   if(logx) {
     
     errorbar_width <- (log10(max(data[[indepvar]], na.rm=TRUE)) - log10(min(data[[indepvar]], na.rm=TRUE))) / 50
-    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width)
+    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
     
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10),trans='log10')
     
-    print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
+     print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
     
   } else {
     
     errorbar_width <- (max(data[[indepvar]], na.rm=TRUE) - min(data[[indepvar]], na.rm=TRUE)) / 50
-    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width)
+    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
     
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
     
-    print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
+     print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
     
   }
   
