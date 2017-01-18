@@ -340,8 +340,7 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
     summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
                SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
     full_join(data, by = 'ID')  %>%
-    distinct(mean, .keep_all=TRUE) %>%
-    select(-data)
+    distinct(mean, .keep_all=TRUE) 
   
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F)
@@ -362,7 +361,7 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
     
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10),trans='log10')
     
-     print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
+    # print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
     
   } else {
     
@@ -371,11 +370,97 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
     
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
     
-     print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
+    # print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
     
   }
   
   print(p)
   
+  
+}
+
+
+regression_output_agg <- function(df, indepvar, logx) {
+  
+  # called by regression_agg, creates table of model stats
+  
+  df <- df[names(df) %in% names(protein_D14[,2:ncol(protein_D14)]) | names(df) %in% indepvar]
+  
+  a <- data.frame()
+  my.list <- vector("list", length(df)-2)
+  
+  for(i in 1:ncol(df)) {
+    
+    protname <- names(df[i])
+    
+    if(logx) {
+      
+      model <- summary(lm(df[[protname]] ~ log10(df[[indepvar]])))
+      
+    } else {
+      
+      model <- summary(lm(df[[protname]] ~ df[[indepvar]]))
+      
+    }
+    
+    model.stats <-  data.frame(cbind(protname,round(model$r.squared,3),
+                                     round(model$coefficients[,4][2],2)))
+    
+    names(model.stats) <- c('submodel','R2','pval') 
+    rownames(model.stats) <- NULL
+    
+    my.list[[i]] <- model.stats
+    
+  }
+  
+  a <- rbind(a, do.call(rbind, my.list))
+  
+  a <-  filter(a, submodel != indepvar)
+  
+  a$p.adj <- p.adjust(as.numeric(as.character(a$pval)), method = "BH")
+  
+  a$R2 <- signif(as.numeric(as.character(a$R2)), 3)
+  a$pval <- signif(as.numeric(as.character(a$pval)), 5)
+  a$p.adj <- signif(as.numeric(as.character(a$p.adj)), 5)
+  a$submodel <- as.character(a$submodel)
+  
+  a <- a[order(a$R2, decreasing=T),]
+  
+  return(a)
+  
+}
+
+
+regression_agg <- function(data, indepvar, logx = FALSE) {
+  
+  # recombobulates data to aggregate by ID
+  # then calls regression_output_agg to output table
+  
+  a <- data.frame()
+  my.list <- vector("list", length(names(protein_D14[,2:ncol(protein_D14)])))
+  
+  for(i in names(protein_D14[,2:ncol(protein_D14)])) {
+    
+    depvar = i 
+    
+    dep_means <- data %>%
+      group_by(ID) %>%
+      summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)))
+    
+    dep_means$bin_arch_name <- depvar
+    
+    my.list[[i]] <- dep_means
+    
+  }
+  
+  a <- rbind(a, do.call(rbind, my.list))
+  
+  a <- tidyr::spread(a, bin_arch_name, mean)
+  
+  clim  <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
+  
+  bla <- regression_output_agg(merge(a, clim, by = 'ID'), 'prec', logx=TRUE)
+  
+  return(bla)
   
 }

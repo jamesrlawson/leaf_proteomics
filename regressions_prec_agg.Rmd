@@ -13,7 +13,7 @@ require(dplyr)
 require(lazyeval)
 source('scripts/prep_data.R')
 
-tab <- regression_output(data, 'prec', logx=TRUE)
+tab <- regression_agg(data, 'prec', logx=TRUE)
 
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
