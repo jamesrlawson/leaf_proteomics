@@ -89,6 +89,7 @@ climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species'
 
 gaps <- read_csv('data/sky_pics.csv')
 gaps <- gaps[gaps$sample %in% climate_locs$sample,]
+#gaps <- gaps[!duplicated(gaps[,c('sample', 'gap')]),]
 gaps$gap <- as.numeric(gaps$gap)
 
 climate_locs <- merge(gaps, climate_locs)
