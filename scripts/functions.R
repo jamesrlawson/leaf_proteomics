@@ -459,7 +459,7 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
   
   clim  <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
   
-  bla <- regression_output_agg(merge(a, clim, by = 'ID'), 'prec', logx=TRUE)
+  bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
   
   return(bla)
   

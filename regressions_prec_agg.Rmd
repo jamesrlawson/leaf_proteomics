@@ -1,4 +1,4 @@
-## Linear regressions: relative [protein] vs. mean precip in the last year (oC)
+## Linear regressions: relative [protein] vs. mean annual precip (mm)
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
