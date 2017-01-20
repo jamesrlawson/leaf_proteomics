@@ -67,23 +67,6 @@ climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species'
 #climate_locs$soilN <- log10(climate_locs$soilN)
 #climate_locs$prec_recent <- sqrt(climate_locs$prec_recent)
 
-# soil and litter data
-  
-  # add in replicate ID's
-  
-#  replicates <- read_csv('output/replicates.csv')
-
-#soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
-#soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
-#          filter(soil_P < 1500)
-
-#  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
-  
-#  climate_locs <- merge(climate_locs, soil_N, by = 'ID')
-#  climate_locs <- merge(climate_locs, soil_P, by = 'ID')
-
-#  plot(soilN ~ soil_N, climate_locs)
-#  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
   
 # canopy openness
 
@@ -139,14 +122,34 @@ climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
 
 climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
 
-# leaf age
+# leaf age 
 
-leaf_age <- read_csv('data/leaf_age.csv')
-leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
-leaf_age <- leaf_age[leaf_age$sample %in% climate_locs$sample,]
-climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
-
-climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
+  leaf_age <- read_csv('data/leaf_age.csv')
+  leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
+  leaf_age <- leaf_age[leaf_age$sample %in% climate_locs$sample,]
+  climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
+  
+  climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
+  
+  
+# soil and litter data
+  
+  # add in replicate ID's
+  
+  replicates <- read_csv('output/replicates.csv')
+  replicates$site_revised <- NULL
+  
+  soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
+  soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
+    filter(soil_P < 1500)
+  
+  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
+  
+  climate_locs <- merge(climate_locs, soil_N, by = 'ID')
+  climate_locs <- merge(climate_locs, soil_P, by = 'ID')
+  
+  #  plot(soilN ~ soil_N, climate_locs)
+  #  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
 
 ## these are the df's used in most of the knitr reports
 

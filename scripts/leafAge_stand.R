@@ -2,50 +2,7 @@
 
 # Leaf age plots
 
-replicates <- read_csv('output/replicates.csv')
-replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
-
-data <- merge(protein_stand_D14_age, climate_locs)
-data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised'))
-data <- data[!duplicated(data$sample),]
-
-data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
-
-corcit <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 2, ID = 'corcit_43')
-cortes <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'cortes_51')
-eucmed <- data.frame(data = NA, leaf_age = 'new', biological_rep = 3, ID = 'eucmed_65')
-eucdel <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'eucdel_58')
-eucglo <- data.frame(data = NA, leaf_age = 'new', biological_rep = 2, ID = 'eucglo_63')
-eucpun <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 3, ID = 'eucpun_71')
-eucspa <- data.frame(data = NA, leaf_age = 'old', biological_rep = 2, ID = 'eucspa_75')
-eucten_new <- data.frame(data = NA, leaf_age = 'new', biological_rep = 2, ID = 'eucten_77')
-eucten_old <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'eucten_77')
-corexi <- data.frame(data = NA, leaf_age = 'new', biological_rep = 3, ID = 'corexi_45')
-corpoc <- data.frame(data = NA, leaf_age = 'old', biological_rep = 2, ID = 'corpoc_49')
-eucdum <- data.frame(data = NA, leaf_age = 'new', biological_rep = 1, ID = 'eucdum_60')
-euchae <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 1, ID = 'euchae_64')
-eucrub <- data.frame(data = NA, leaf_age = 'new', biological_rep = 3, ID = 'eucrub_73')
-
-#eucspa doesnt have biological rep 3 (fixed) - and YG118 is missing from protein_D14_age (!) this needs further investigation
-#biological rep needs to be checked for added lines
-
-data <- data %>% 
-  bind_rows(corcit) %>% 
-  bind_rows(cortes) %>% 
-  bind_rows(eucmed) %>%
-  bind_rows(eucdel) %>%
-  bind_rows(eucglo) %>%
-  bind_rows(eucpun) %>%
-  bind_rows(eucspa) %>%
-  bind_rows(eucten_new) %>%
-  bind_rows(eucten_old) %>%
-  bind_rows(corexi) %>%
-  bind_rows(corpoc) %>%
-  bind_rows(eucdum) %>%
-  bind_rows(euchae) %>%
-  bind_rows(eucrub)
-
-rm(corcit,cortes,eucmed,eucdel,eucglo,eucpun,eucspa,eucten_new,eucten_old,corexi,corpoc,eucdum,euchae,eucrub)
+source('scripts/prep_data.R')
 
 # TOTAL PROTEIN
 
@@ -76,11 +33,13 @@ check <- total_protein %>%
   
   data$leaf_age <- factor(data$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(total_protein ~ leaf_age, data)
+  boxplot(total_protein ~ leaf_age, data, main = "Total protein vs leaf age", ylab = "total protein (mg/mm2)")
   
   total_protein$leaf_age <- factor(total_protein$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(total_protein_stand ~ leaf_age, total_protein)
+  boxplot(total_protein_stand ~ leaf_age, total_protein, main = "Total protein vs leaf age, rel. to newest leaf", ylab = "total protein (rel. to newest leaf)")
+  
+  summary(aov(total_protein ~ leaf_age, subset(total_protein, leaf_age != 'new')))
   
   summary(aov(total_protein_stand ~ leaf_age, subset(total_protein, leaf_age != 'new')))
   
@@ -114,11 +73,13 @@ check <- total_protein %>%
   
   data$leaf_age <- factor(data$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(Photosystems ~ leaf_age, data)
+  boxplot(Photosystems ~ leaf_age, data, main = "Photosystems protein vs leaf age", ylab = "Photosystems protein (mg/mm2)")
   
   Photosystems$leaf_age <- factor(Photosystems$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(Photosystems_stand ~ leaf_age, Photosystems)
+  boxplot(Photosystems_stand ~ leaf_age, Photosystems, main = "Photosystems protein vs leaf age, rel. to newest leaf", ylab = "Photosystems protein (rel. to newest leaf)")
+  
+  summary(aov(Photosystems ~ leaf_age, subset(Photosystems, leaf_age != 'new')))
   
   summary(aov(Photosystems_stand ~ leaf_age, subset(Photosystems, leaf_age != 'new')))
   
@@ -151,11 +112,11 @@ check <- total_protein %>%
   
   data$leaf_age <- factor(data$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(PSI ~ leaf_age, data)
+  boxplot(PSI ~ leaf_age, data, main = "PSI protein vs leaf age", ylab = "PSI protein (mg/mm2)")
   
   PSI$leaf_age <- factor(PSI$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(PSI_stand ~ leaf_age, PSI)
+  boxplot(PSI_stand ~ leaf_age, PSI, main = "PSI protein vs leaf age, rel. to newest leaf", ylab = "PSI protein (rel. to newest leaf)")
   
   summary(aov(PSI_stand ~ leaf_age, subset(PSI, leaf_age != 'new')))
   
@@ -189,11 +150,13 @@ check <- total_protein %>%
   
   data$leaf_age <- factor(data$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(electron_transport_minATPsynth ~ leaf_age, data)
+  boxplot(electron_transport_minATPsynth ~ leaf_age, data, main = "Electron transport protein vs leaf age", ylab = "Electron transport protein (mg/mm2)")
   
   electron_transport_minATPsynth$leaf_age <- factor(electron_transport_minATPsynth$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(electron_transport_minATPsynth_stand ~ leaf_age, electron_transport_minATPsynth)
+  boxplot(electron_transport_minATPsynth_stand ~ leaf_age, electron_transport_minATPsynth, main = "Electron transport protein vs leaf age, rel. to newest leaf", ylab = "Electron transport protein (rel. to newest leaf)")
+  
+  summary(aov(electron_transport_minATPsynth ~ leaf_age, subset(electron_transport_minATPsynth, leaf_age != 'new')))
   
   summary(aov(electron_transport_minATPsynth_stand ~ leaf_age, subset(electron_transport_minATPsynth, leaf_age != 'new')))
   
@@ -227,11 +190,11 @@ check <- total_protein %>%
   
   data$leaf_age <- factor(data$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(Cytochrome_b6f ~ leaf_age, data)
+  boxplot(Cytochrome_b6f ~ leaf_age, data, main = "Cytochrome b6f protein vs leaf age", ylab = "Cytochrome b6f transport protein (mg/mm2)")
   
   Cytochrome_b6f$leaf_age <- factor(Cytochrome_b6f$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(Cytochrome_b6f_stand ~ leaf_age, Cytochrome_b6f)
+  boxplot(Cytochrome_b6f_stand ~ leaf_age, Cytochrome_b6f, main = "Cytochrome b6f protein vs leaf age, rel. to newest leaf", ylab = "Cytochrome b6f protein (rel. to newest leaf)")
   
   summary(aov(Cytochrome_b6f_stand ~ leaf_age, subset(Cytochrome_b6f, leaf_age != 'new')))
   
@@ -266,10 +229,13 @@ check <- total_protein %>%
   
   data$leaf_age <- factor(data$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(Calvin_cycle ~ leaf_age, data)
+  boxplot(Calvin_cycle ~ leaf_age, data, main = "Calvin cycle protein vs leaf age", ylab = "Calvin cycle transport protein (mg/mm2)")
   
   Calvin_cycle$leaf_age <- factor(Calvin_cycle$leaf_age, levels = c('new', 'mid', 'old'))
   
-  boxplot(Calvin_cycle_stand ~ leaf_age, Calvin_cycle)
+  boxplot(Calvin_cycle_stand ~ leaf_age, Calvin_cycle, main = "Calvin cycle protein vs leaf age, rel. to newest leaf", ylab = "Calvin cycle protein (rel. to newest leaf)")
+  
+  summary(aov(Calvin_cycle ~ leaf_age, subset(Calvin_cycle, leaf_age != 'new')))
   
   summary(aov(Calvin_cycle_stand ~ leaf_age, subset(Calvin_cycle, leaf_age != 'new')))
+  

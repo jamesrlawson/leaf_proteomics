@@ -2,12 +2,13 @@ replicates <- read_csv('output/replicates.csv')
 replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
 
 data <- merge(protein_stand_D14_age, climate_locs)
+data$ID <- NULL
 data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised'))
 data <- data[!duplicated(data$sample),]
 
 data <- filter(data, ID != 'melpal_106')
 
-data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
+#data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
 
 corcit <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 2, ID = 'corcit_43')
 cortes <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'cortes_51')
@@ -47,4 +48,4 @@ rm(corcit,cortes,eucmed,eucdel,eucglo,eucpun,eucspa,eucten_new,eucten_old,corexi
 
 data$data <- NULL
 
-data <- na.omit(data)
+#data <- na.omit(data)

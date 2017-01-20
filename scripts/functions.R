@@ -457,6 +457,8 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
   
   a <- tidyr::spread(a, bin_arch_name, mean)
   
+  climate_locs$ID <- NULL
+  
   clim  <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
   
   bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
