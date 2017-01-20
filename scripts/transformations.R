@@ -78,6 +78,19 @@ gaps$gap <- as.numeric(gaps$gap)
 climate_locs <- merge(gaps, climate_locs)
 rm(gaps)
 
+# radiation
+
+radiation <- read_csv('data/radiation.csv')
+
+radiation <- radiation[radiation$Longitude %in% climate_locs$Longitude & radiation$Latitude %in% climate_locs$Latitude,]
+radiation <- radiation[!duplicated(radiation),]
+
+climate_locs <- merge(radiation, climate_locs, by = c('Latitude', 'Longitude'))
+
+ # irradiance at leaf
+
+  climate_locs$leaf_rad <- climate_locs$radiation * climate_locs$gap
+
 # LMA & LWC
 
 LMA_LWC <- read_csv('data/LMA_LWC.csv')
@@ -147,6 +160,8 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   
   climate_locs <- merge(climate_locs, soil_N, by = 'ID')
   climate_locs <- merge(climate_locs, soil_P, by = 'ID')
+  
+  climate_locs$ID <- NULL
   
   #  plot(soilN ~ soil_N, climate_locs)
   #  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
