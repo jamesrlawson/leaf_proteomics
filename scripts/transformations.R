@@ -67,30 +67,6 @@ climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species'
 #climate_locs$soilN <- log10(climate_locs$soilN)
 #climate_locs$prec_recent <- sqrt(climate_locs$prec_recent)
 
-  
-# canopy openness
-
-gaps <- read_csv('data/sky_pics.csv')
-gaps <- gaps[gaps$sample %in% climate_locs$sample,]
-#gaps <- gaps[!duplicated(gaps[,c('sample', 'gap')]),]
-gaps$gap <- as.numeric(gaps$gap)
-
-climate_locs <- merge(gaps, climate_locs)
-rm(gaps)
-
-# radiation
-
-radiation <- read_csv('data/radiation.csv')
-
-radiation <- radiation[radiation$Longitude %in% climate_locs$Longitude & radiation$Latitude %in% climate_locs$Latitude,]
-radiation <- radiation[!duplicated(radiation),]
-
-climate_locs <- merge(radiation, climate_locs, by = c('Latitude', 'Longitude'))
-
- # irradiance at leaf
-
-  climate_locs$leaf_rad <- climate_locs$radiation * climate_locs$gap
-
 # LMA & LWC
 
 LMA_LWC <- read_csv('data/LMA_LWC.csv')
@@ -132,7 +108,6 @@ leaf_CN <- read_csv('data/leaf_CNP/leaf_CN.csv')
 leaf_CN <- leaf_CN[leaf_CN$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
 
-
 climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
 
 # leaf age 
@@ -144,6 +119,32 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   
   climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
   
+# canopy openness
+  
+  gaps <- read_csv('data/sky_pics.csv')
+  gaps <- gaps[gaps$sample %in% climate_locs$sample,]
+  #gaps <- gaps[!duplicated(gaps[,c('sample', 'gap')]),]
+  gaps$gap <- as.numeric(gaps$gap)
+  
+  climate_locs <- merge(gaps, climate_locs)
+  rm(gaps)
+  
+  # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma
+  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
+  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
+  
+# irradiance
+  
+  irradiance <- read_csv('data/irradiance.csv')
+  
+  irradiance <- irradiance[irradiance$Longitude %in% climate_locs$Longitude & irradiance$Latitude %in% climate_locs$Latitude,]
+  irradiance <- irradiance[!duplicated(irradiance),]
+  
+  climate_locs <- merge(irradiance, climate_locs, by = c('Latitude', 'Longitude'))
+  
+  # irradiance at leaf
+  
+  climate_locs$leaf_rad <- climate_locs$irradiance * climate_locs$gap / 100  
   
 # soil and litter data
   
@@ -152,19 +153,18 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   replicates <- read_csv('output/replicates.csv')
   replicates$site_revised <- NULL
   
+  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
+  
   soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
   soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
     filter(soil_P < 1500)
   
-  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
+  soil_N <- soil_N[soil_N$ID %in% climate_locs$ID,]
   
-  climate_locs <- merge(climate_locs, soil_N, by = 'ID')
-  climate_locs <- merge(climate_locs, soil_P, by = 'ID')
+  #climate_locs <- merge(climate_locs, soil_N, by = 'ID')
+  #climate_locs <- merge(climate_locs, soil_P, by = 'ID')
   
   climate_locs$ID <- NULL
-  
-  #  plot(soilN ~ soil_N, climate_locs)
-  #  plot(soilP ~ soil_P, subset(climate_locs, soil_P < 1500))
 
 ## these are the df's used in most of the knitr reports
 
@@ -239,4 +239,5 @@ protein_D14_age <- merge(leaf_age, protein_D14, by = 'sample')
 
 rm(licor, leaf_CN, mercator, mercator_bins, protein_bins_D14, protein_samples_D14, 
    protein_D14_long, protein_stand_D14_long, bin_arch.list, recent_clim, recent_clim_locs)
+
 
