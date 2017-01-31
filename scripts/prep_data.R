@@ -1,14 +1,21 @@
 replicates <- read_csv('output/replicates.csv')
 replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
 
+replicates <- merge(replicates, read_csv('data/lineage.csv'))
+
+climate_locs$biological_rep <- NULL
+
 data <- merge(protein_stand_D14_age, climate_locs)
-data$ID <- NULL
-data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised'))
+#data$ID <- NULL
+data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised', 'species_confirmed', 'date'))
 data <- data[!duplicated(data$sample),]
 
 data <- filter(data, ID != 'melpal_106')
 
-#data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
+
+if(any(data$ID %in% 'corgum_47')) {
+  data[data$ID == 'corgum_47',]$ID <- 'corgum_46'
+}
 
 corcit <- data.frame(data = NA, leaf_age = 'mid', biological_rep = 2, ID = 'corcit_43')
 cortes <- data.frame(data = NA, leaf_age = 'old', biological_rep = 3, ID = 'cortes_51')

@@ -2,7 +2,7 @@
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-source('scripts/transformations.R')
+source('scripts/transformations_soil.R')
 require(ggplot2)
 require(vegan)
 library(readr)
@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'soil_N', logx=FALSE, labs = 'Soil P (%)')
+  agg_plot(data, depvar = i, indepvar = 'soil_N', logx=FALSE, labs = 'Soil N (%)')
   
 }
 

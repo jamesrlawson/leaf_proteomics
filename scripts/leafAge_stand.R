@@ -1,4 +1,4 @@
-#source('scripts/transformations.R')
+source('scripts/transformations.R')
 
 # Leaf age plots
 
@@ -6,7 +6,7 @@ source('scripts/prep_data.R')
 
 # TOTAL PROTEIN
 
-total_protein <- data %>% select(total_protein, leaf_age, biological_rep, ID) %>%
+total_protein <- data %>% dplyr::select(total_protein, leaf_age, biological_rep, ID) %>%
   mutate(total_protein_stand = NA) %>%
   filter(!ID %in% 'melpal_106')
 
@@ -19,6 +19,8 @@ for(j in 0:2) {
     x <- seq((j*3+1), (j+1)*3)
     
     total_protein[total_protein$ID %in% i,]$total_protein_stand[x] <- total_protein[total_protein$ID %in% i,]$total_protein[x] / subset(total_protein[total_protein$ID %in% i,], leaf_age == 'new')$total_protein
+    
+   #browser()
     
   }
   
@@ -46,7 +48,7 @@ check <- total_protein %>%
 
 # PHOTOSYSTEMS
   
-  Photosystems <- data %>% select(Photosystems, leaf_age, biological_rep, ID) %>%
+  Photosystems <- data %>% dplyr::select(Photosystems, leaf_age, biological_rep, ID) %>%
     mutate(Photosystems_stand = NA) %>%
     filter(!ID %in% 'melpal_106')
   
@@ -85,7 +87,7 @@ check <- total_protein %>%
   
   # PSI
   
-  PSI <- data %>% select(PSI, leaf_age, biological_rep, ID) %>%
+  PSI <- data %>% dplyr::select(PSI, leaf_age, biological_rep, ID) %>%
     mutate(PSI_stand = NA) %>%
     filter(!ID %in% 'melpal_106')
   
@@ -123,7 +125,7 @@ check <- total_protein %>%
   
   # electron_transport_minATPsynth
   
-  electron_transport_minATPsynth <- data %>% select(electron_transport_minATPsynth, leaf_age, biological_rep, ID) %>%
+  electron_transport_minATPsynth <- data %>% dplyr::select(electron_transport_minATPsynth, leaf_age, biological_rep, ID) %>%
     mutate(electron_transport_minATPsynth_stand = NA) %>%
     filter(!ID %in% 'melpal_106')
   
@@ -163,7 +165,7 @@ check <- total_protein %>%
   
   # Cytochrome_b6f
   
-  Cytochrome_b6f <- data %>% select(Cytochrome_b6f, leaf_age, biological_rep, ID) %>%
+  Cytochrome_b6f <- data %>% dplyr::select(Cytochrome_b6f, leaf_age, biological_rep, ID) %>%
     mutate(Cytochrome_b6f_stand = NA) %>%
     filter(!ID %in% 'melpal_106')
   
@@ -202,7 +204,7 @@ check <- total_protein %>%
   
   # Calvin_cycle
   
-  Calvin_cycle <- data %>% select(Calvin_cycle, leaf_age, biological_rep, ID) %>%
+  Calvin_cycle <- data %>% dplyr::select(Calvin_cycle, leaf_age, biological_rep, ID) %>%
     mutate(Calvin_cycle_stand = NA) %>%
     filter(!ID %in% 'melpal_106')
   
