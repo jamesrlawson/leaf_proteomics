@@ -345,6 +345,7 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F)
   p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
+  p <- p + expand_limits(y=0)
   p <- p + theme_bw()
   p <- p + theme(panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(), 
@@ -464,5 +465,54 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
   bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
   
   return(bla)
+  
+}
+
+
+agg_plot_gap <- function(data, depvar, indepvar, logx=FALSE, labs) {
+  
+  dep_means <- data %>%
+    group_by(ID) %>%
+    summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
+               SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
+    full_join(data, by = 'ID')  %>%
+    distinct(mean, .keep_all=TRUE) 
+  
+  p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
+  p <- p + geom_smooth(method = 'lm', se = F)
+  p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
+  p <- p + expand_limits(y=0)
+  p <- p + theme_bw()
+  p <- p + theme(panel.grid.major = element_blank(),
+                 panel.grid.minor = element_blank(), 
+                 legend.title=element_blank(),
+                 legend.position="bottom",
+                 axis.line = element_line(colour = "black"))
+  
+  number_ticks <- function(n) {function(limits) pretty(limits, n)}
+  
+  if(logx) {
+    
+    errorbar_width <- (log10(max(data[[indepvar]], na.rm=TRUE)) - log10(min(data[[indepvar]], na.rm=TRUE))) / 50
+    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
+    p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE), alpha = 0.6)
+    p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10),trans='log10')
+    
+    # print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
+    
+  } else {
+    
+    errorbar_width <- (max(data[[indepvar]], na.rm=TRUE) - min(data[[indepvar]], na.rm=TRUE)) / 50
+    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
+    p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE), alpha = 0.6)
+    
+    p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
+    
+    # print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
+    
+  }
+  
+  print(p)
+  
   
 }

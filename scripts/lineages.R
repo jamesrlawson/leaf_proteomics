@@ -4,13 +4,11 @@ replicates <- merge(replicates, read_csv('data/lineage.csv'), by = 'species_conf
 
 blah <- merge(replicates, protein_stand_D14_age)
 
-blah <- blah[!blah$lineage %in% 'Angophora',]
-
 blah$lineage <- as.factor(blah$lineage)
 
-#boxplot(total_protein ~ lineage, blah)
+#boxplot(electron_transport_minATPsynth ~ lineage, blah)
 
-bla <- aov(total_protein ~ lineage, blah)
+bla <- glm(family = 'gaussian', electron_transport_minATPsynth ~ lineage, blah)
   
 anova(bla)
 require('multcomp')
@@ -22,6 +20,18 @@ opar <- par(mai=c(1,1,1.5,1))
 plot(tuk.cld)
 par(opar)
 
+
+staz <- blah %>% group_by(lineage) %>% summarise(mean = mean(electron_transport_minATPsynth, na.rm=TRUE), 
+                                                 SE = SE(electron_transport_minATPsynth),
+                                                 n = length(electron_transport_minATPsynth)) %>%
+                                                 mutate(E = qt(.975, df=n−1)∗SE)
+
+
+p <- ggplot(staz, aes(y = mean, x = lineage))
+p <- p + geom_point()
+p <- p + geom_errorbar(aes(ymin = mean - E, ymax = mean + E))
+p <- p + ylab('electron_transport_minATPsynth')
+p
 
 
 source('scripts/prep_data.R')
@@ -89,6 +99,6 @@ agg_plot_lineage <- function(data, depvar, indepvar, logx = FALSE, labs) {
 
 
 
-agg_plot_lineage(data, depvar = 'Photosystems', indepvar = 'leaf_rad', logx=FALSE, labs = 'irradiance')
+agg_plot_lineage(data, depvar = 'Photosystems', indepvar = 'leaf_rad', logx=FALSE, labs = 'leaf level irradiance')
 
 

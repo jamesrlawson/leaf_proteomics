@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'prec', logx=TRUE, labs = 'Mean annual precip (log10(mm))')
+  agg_plot(data, depvar = i, indepvar = 'prec', logx=TRUE, labs = 'Mean annual precipitation (mm)')
   
 }
 

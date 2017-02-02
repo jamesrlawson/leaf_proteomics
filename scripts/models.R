@@ -105,17 +105,36 @@ summary(lm5)
 
 # variance partitioning in linear models
 
-data.varpart <- varpart(data$Light_reactions,
-                        ~ prec,
-                        ~ gap,
-                        #  ~ tavg,
-                        #  ~ soilN,
-                        #  ~ alpha,
-                        ~ leaf_age,
+source('scripts/transformations.R')
+source('scripts/prep_data.R')
+
+data <- na.omit(data)
+
+depvar = "Photosystems"
+
+dep_means <- data %>%
+  group_by(ID) %>%
+  summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
+             SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
+  full_join(data, by = 'ID')  %>%
+  distinct(mean, .keep_all=TRUE) 
+
+
+data.varpart <- varpart(dep_means$mean,
+                        ~ log10(prec),
+                          ~ gap,
+                        #    ~ tavg,
+                        #    ~ soil_N,
+                        #    ~ soil_P,
+                        # ~ soil_C,
+                        #  ~ irradiance,
+                        ~ leaf_rad,
+                        #~ leaf_age,
                         #  ~ species,
-                        data = data)
+                        data = dep_means)
 data.varpart
 plot(data.varpart)
+
 
 # permanovas between lineages #
 
