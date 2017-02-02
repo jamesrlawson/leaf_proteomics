@@ -1,11 +1,11 @@
 # sensitivity analysis 
   
-  sequence <- seq(1, 0, by = 0.02)
+  sequence <- seq(0, 1, by = 0.01)
   
   def <- data.frame()
   my.list <- vector("list", length(sequence))
   
-  for (j in 1:51) {
+  for (j in 1:length(sequence)) {
     
     source('scripts/transformations_quick.R')
     
@@ -18,11 +18,25 @@
     data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * (1-(1-sequence[j])/2)
     data[data$leaf_age == 'old',]$gap <- data[data$leaf_age == 'old',]$gap * sequence[j]
     
+    if(sequence[j] == 0) {
+     
+      lm_zero <- lm(Photosystems ~ gap, data)
+       
+    } else {
+      
+      if(sequence[j] == 0.23) {
+        
+       lm_reich <- lm(Photosystems ~ gap, data)
+         
+      }
+      
+    }
+    
     blah.lm <- lm(Photosystems ~ gap, data)
     
     model.stats <- cbind(sequence[j], blah.lm$coefficients[2], round(summary(blah.lm)$r.squared,3))
     
-    names(model.stats) <- c('pc_light_reduction_at_oldest_leaf','slope','R2') 
+    names(model.stats) <- c('fraction_light_reaching_oldest_leaf','slope','R2') 
     rownames(model.stats) <- NULL
     
     my.list[[j]] <- model.stats
@@ -30,11 +44,57 @@
   }
   
   def <- rbind(def, do.call(rbind, my.list))
-  names(def) <- c('pc_light_reduction_at_oldest_leaf','slope','R2') 
+  names(def) <- c('fraction_light_reaching_oldest_leaf','slope','R2') 
   #return(def)
 
-  plot(1-def$R2 ~ def$pc_light_reduction_at_oldest_leaf, xlab = 'fraction of light reaching oldest leaf', ylab = '1-R2')
-  plot(def$slope ~ def$pc_light_reduction_at_oldest_leaf, xlab = 'fraction of light reaching oldest leaf', ylab = 'slope')
+  plot(1-def$R2 ~ def$fraction_light_reaching_oldest_leaf, xlab = 'fraction of light reaching oldest leaf', ylab = '1-R2')
+  plot(def$slope ~ def$fraction_light_reaching_oldest_leaf, xlab = 'fraction of light reaching oldest leaf', ylab = 'slope')
 
-
-
+  # ggplots
+  
+  quants <- quantile(def$fraction_light_reaching_oldest_leaf, c(0.05, 0.95))
+  
+  staz <- def %>% summarise(mean = mean(fraction_light_reaching_oldest_leaf, na.rm=TRUE), 
+                                        SE = SE(fraction_light_reaching_oldest_leaf),
+                                        n = length(fraction_light_reaching_oldest_leaf)) %>%
+                  mutate(E = qt(.975, df=n−1)∗SE)
+  
+  
+  
+  R2 <- ggplot(def, aes(x = fraction_light_reaching_oldest_leaf, y = 1-R2))
+  R2 <- R2 + geom_smooth(method = 'loess')
+  R2 <- R2 + geom_vline(xintercept = 1-0.225, colour = 'red') 
+  R2 <- R2 + geom_vline(xintercept = max(def[1-def$R2 == min(1-def$R2),]$fraction_light_reaching_oldest_leaf) + staz$E) 
+  R2 <- R2 + geom_vline(xintercept = min(def[1-def$R2 == min(1-def$R2),]$fraction_light_reaching_oldest_leaf) - staz$E)
+  R2 <- R2 + theme_bw()
+  R2
+  
+  slope <- ggplot(def, aes(x = fraction_light_reaching_oldest_leaf, y = slope))
+  slope <- slope + geom_smooth(method = 'loess')
+  slope <- slope + geom_vline(xintercept = 1-0.225, colour = 'red') 
+  slope <- slope + geom_vline(xintercept = def[def$slope == min(def$slope),]$fraction_light_reaching_oldest_leaf + staz$E) 
+  slope <- slope + geom_vline(xintercept = def[def$slope == min(def$slope),]$fraction_light_reaching_oldest_leaf - staz$E)
+  slope <- slope + theme_bw()
+  slope 
+  
+  
+# compare slopes of Photosystems ~ Reich adjusted and raw gap fraction
+  
+  source('scripts/transformations_quick.R')
+  
+  source('scripts/prep_data.R')
+  
+  data_raw <- data
+  data_raw$model <- 'raw'
+  
+  data_reich <- data
+  data_reich$model <- 'reich'
+  
+  data_reich[data_reich$leaf_age == 'mid',]$gap <- data_reich[data_reich$leaf_age == 'mid',]$gap * (1-0.23)
+  data_reich[data_reich$leaf_age == 'old',]$gap <- data_reich[data_reich$leaf_age == 'old',]$gap * (1-0.115)
+  
+  data_reich_raw <- rbind(data_raw, data_reich)
+  
+  reich_raw.lm <- lm(Photosystems ~ gap*model, data_reich_raw)
+  anova(reich_raw.lm)
+  
