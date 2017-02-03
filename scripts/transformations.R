@@ -129,9 +129,9 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   climate_locs <- merge(gaps, climate_locs)
   rm(gaps)
   
-  # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma
-  #climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.84
-  #climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.68
+  # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.23)
+  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * (1-0.1125)
+  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * (1-0.225)
   
 # irradiance
   
