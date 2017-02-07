@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'leaf_rad', logx=TRUE, labs = 'irradiance at leaf')
+  agg_plot_leafrad(data, depvar = i, indepvar = 'leafrad_mean', logx=TRUE, labs = 'irradiance at leaf')
   
 }
 

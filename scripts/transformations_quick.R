@@ -10,6 +10,7 @@ require(plyr)
 require(reshape2)
 require(dplyr)
 #source('scripts/binProteins.R')
+source('scripts/functions.R')
 
 sample_locations <- read_csv('data/sample_locations.csv')
 climate <- read_csv('data/discovery_site_climate.csv')
@@ -160,6 +161,11 @@ climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Lo
 
 gap_mean <- climate_locs %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
 climate_locs <- merge(climate_locs, gap_mean)
+
+# calculate leafrad means and leafrad SE
+
+leafrad_mean <- climate_locs %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
+climate_locs <- merge(climate_locs, leafrad_mean)
 
 
 soil_N <- read_csv('data/leaf_CNP/soil_N.csv')

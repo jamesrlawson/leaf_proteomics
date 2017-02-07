@@ -130,8 +130,8 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   rm(gaps)
   
   # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.23)
-  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * (1-0.1125)
-  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * (1-0.225)
+  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
+  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
   
 # irradiance
   
@@ -160,6 +160,12 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   
   gap_mean <- climate_locs %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
   climate_locs <- merge(climate_locs, gap_mean)
+  
+  # calculate leafrad means and leafrad SE
+  
+  leafrad_mean <- climate_locs %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
+  climate_locs <- merge(climate_locs, leafrad_mean)
+  
   
   
   soil_N <- read_csv('data/leaf_CNP/soil_N.csv')

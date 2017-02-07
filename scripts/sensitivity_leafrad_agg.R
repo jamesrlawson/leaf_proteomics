@@ -1,7 +1,6 @@
+# sensitivity analysis for leaf level irradiance
 
 require(lazyeval)
-
-# sensitivity analysis for gap fraction
 
 sequence <- seq(0, 1, by = 0.005)
 
@@ -23,6 +22,13 @@ for (j in 1:length(sequence)) {
   data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * (1-(1-sequence[j])/2)
   data[data$leaf_age == 'old',]$gap <- data[data$leaf_age == 'old',]$gap * sequence[j]
   
+    # irradiance at leaf
+    
+  data$leaf_rad <- data$irradiance * data$gap / 100  
+    
+  #  leafrad_mean <- data %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), gap_SE = SE(gap))
+  #  climate_locs <- merge(data, leafrad_mean)
+  
   depvar <- 'Photosystems'
   
   dep_means <- data %>%
@@ -30,13 +36,13 @@ for (j in 1:length(sequence)) {
     summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
                SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
     full_join(data, by = 'ID') %>%
-    dplyr::select(-gap_mean, -gap_SE)
-
-  gap_means <- dep_means %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+    dplyr::select(-leafrad_mean, -leafrad_SE)
   
-  data <- merge(gap_means, dep_means, by = 'ID')
+  leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   
-  blah.lm <- lm(mean ~ gap_mean, data)
+  data <- merge(leafrad_means, dep_means, by = 'ID')
+  
+  blah.lm <- lm(mean ~ leafrad_mean, data)
   
   model.stats <- cbind(sequence[j], blah.lm$coefficients[2], summary(blah.lm)$r.squared)
   
@@ -77,15 +83,15 @@ dep_means <- data_raw %>%
   summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
              SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
   full_join(data, by = 'ID') %>%
-  dplyr::select(-gap_mean, -gap_SE)
+  dplyr::select(-leafrad_mean, -gap_SE)
 
-gap_means <- dep_means %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
 
-data_raw <- merge(gap_means, dep_means, by = 'ID')
+data_raw <- merge(leafrad_means, dep_means, by = 'ID')
 
 data_raw$model <- 'raw'
 
-raw.lm <- lm(mean ~ gap_mean, data_raw)
+raw.lm <- lm(mean ~ leafrad_mean, data_raw)
 
 ####
 
@@ -99,15 +105,15 @@ dep_means <- data_reich %>%
   summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
              SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
   full_join(data, by = 'ID') %>%
-  dplyr::select(-gap_mean, -gap_SE)
+  dplyr::select(-leafrad_mean, -gap_SE)
 
-gap_means <- dep_means %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
 
-data_reich <- merge(gap_means, dep_means, by = 'ID')
+data_reich <- merge(leafrad_means, dep_means, by = 'ID')
 
 data_reich$model <- 'reich'
 
-reich.lm <- lm(mean ~ gap_mean, data_reich)
+reich.lm <- lm(mean ~ leafrad_mean, data_reich)
 
 ##
 
@@ -121,22 +127,22 @@ dep_means <- data_bestfit %>%
   summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
              SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
   full_join(data, by = 'ID') %>%
-  dplyr::select(-gap_mean, -gap_SE)
+  dplyr::select(-leafrad_mean, -gap_SE)
 
-gap_means <- dep_means %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
 
-data_bestfit <- merge(gap_means, dep_means, by = 'ID')
+data_bestfit <- merge(leafrad_means, dep_means, by = 'ID')
 
 data_bestfit$model <- 'bestfit'
 
-bestfit.lm <- lm(mean ~ gap_mean, data_bestfit)
+bestfit.lm <- lm(mean ~ leafrad_mean, data_bestfit)
 
 
 data_reich_best_raw <- rbind(data_raw, data_reich)
 data_reich_best_raw <- rbind(data_reich_best_raw, data_bestfit)
 
 
-reich_best_raw.lm <- lm(mean ~ gap_mean*model, data_reich_best_raw)
+reich_best_raw.lm <- lm(mean ~ leafrad_mean*model, data_reich_best_raw)
 anova(reich_best_raw.lm)
 
 
