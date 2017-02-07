@@ -19,14 +19,14 @@ for (j in 1:length(sequence)) {
   
   # alter gap fraction for mid and old leaves by i or 1-((1-i)/2)
   
-  data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * (1-(1-sequence[j])/2)
-  data[data$leaf_age == 'old',]$gap <- data[data$leaf_age == 'old',]$gap * sequence[j]
+#  data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * (1-(1-sequence[j])/2)
+#  data[data$leaf_age == 'old',]$gap <- data[data$leaf_age == 'old',]$gap * sequence[j]
   
     # irradiance at leaf
     
   data$leaf_rad <- data$irradiance * data$gap / 100  
     
-  #  leafrad_mean <- data %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), gap_SE = SE(gap))
+  #  leafrad_mean <- data %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   #  climate_locs <- merge(data, leafrad_mean)
   
   depvar <- 'Photosystems'
@@ -37,6 +37,8 @@ for (j in 1:length(sequence)) {
                SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
     full_join(data, by = 'ID') %>%
     dplyr::select(-leafrad_mean, -leafrad_SE)
+  
+  dep_means <- na.omit(dep_means)
   
   leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   
@@ -70,7 +72,7 @@ staz <- blah  %>% summarise(mean = mean(1-def$fraction_light_reaching_oldest_lea
 
 
 
-# compare slopes of Photosystems ~ Reich adjusted and raw gap fraction
+# compare slopes of Photosystems ~ Reich adjusted and raw leaf_rad
 
 source('scripts/transformations_quick.R')
 
@@ -83,9 +85,9 @@ dep_means <- data_raw %>%
   summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
              SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
   full_join(data, by = 'ID') %>%
-  dplyr::select(-leafrad_mean, -gap_SE)
+  dplyr::select(-leafrad_mean, -leafrad_SE)
 
-leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
 
 data_raw <- merge(leafrad_means, dep_means, by = 'ID')
 
@@ -105,9 +107,9 @@ dep_means <- data_reich %>%
   summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
              SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
   full_join(data, by = 'ID') %>%
-  dplyr::select(-leafrad_mean, -gap_SE)
+  dplyr::select(-leafrad_mean, -leafrad_SE)
 
-leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
 
 data_reich <- merge(leafrad_means, dep_means, by = 'ID')
 
@@ -127,9 +129,9 @@ dep_means <- data_bestfit %>%
   summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
              SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
   full_join(data, by = 'ID') %>%
-  dplyr::select(-leafrad_mean, -gap_SE)
+  dplyr::select(-leafrad_mean, -leafrad_SE)
 
-leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
 
 data_bestfit <- merge(leafrad_means, dep_means, by = 'ID')
 
@@ -184,32 +186,32 @@ slope
 
 
 
-# compare slopes of Photosystems ~ Reich adjusted and raw gap fraction
+# compare slopes of Photosystems ~ Reich adjusted and raw leaf_rad fraction
 
 source('scripts/transformations_quick.R')
 
 source('scripts/prep_data.R')
 
 data_nolight <- data
-data_nolight[data_nolight$leaf_age == 'mid',]$gap <- data_nolight[data_nolight$leaf_age == 'mid',]$gap * (0)
-data_nolight[data_nolight$leaf_age == 'old',]$gap <- data_nolight[data_nolight$leaf_age == 'old',]$gap * (0.5)
+data_nolight[data_nolight$leaf_age == 'mid',]$leaf_rad <- data_nolight[data_nolight$leaf_age == 'mid',]$leaf_rad * (0)
+data_nolight[data_nolight$leaf_age == 'old',]$leaf_rad <- data_nolight[data_nolight$leaf_age == 'old',]$leaf_rad * (0.5)
 
 data_75 <- data
-data_75[data_75$leaf_age == 'mid',]$gap <- data_75[data_75$leaf_age == 'mid',]$gap * (0.25)
-data_75[data_75$leaf_age == 'old',]$gap <- data_75[data_75$leaf_age == 'old',]$gap * (1-(1-0.25)/2)
+data_75[data_75$leaf_age == 'mid',]$leaf_rad <- data_75[data_75$leaf_age == 'mid',]$leaf_rad * (0.25)
+data_75[data_75$leaf_age == 'old',]$leaf_rad <- data_75[data_75$leaf_age == 'old',]$leaf_rad * (1-(1-0.25)/2)
 
 data_50 <- data
-data_50[data_50$leaf_age == 'mid',]$gap <- data_50[data_50$leaf_age == 'mid',]$gap * (0.5)
-data_50[data_50$leaf_age == 'old',]$gap <- data_50[data_50$leaf_age == 'old',]$gap * (1-(1-0.5)/2)
+data_50[data_50$leaf_age == 'mid',]$leaf_rad <- data_50[data_50$leaf_age == 'mid',]$leaf_rad * (0.5)
+data_50[data_50$leaf_age == 'old',]$leaf_rad <- data_50[data_50$leaf_age == 'old',]$leaf_rad * (1-(1-0.5)/2)
 
 data_25 <- data
-data_25[data_25$leaf_age == 'mid',]$gap <- data_25[data_25$leaf_age == 'mid',]$gap * (0.75)
-data_25[data_25$leaf_age == 'old',]$gap <- data_25[data_25$leaf_age == 'old',]$gap * (1-(1-0.75)/2)
+data_25[data_25$leaf_age == 'mid',]$leaf_rad <- data_25[data_25$leaf_age == 'mid',]$leaf_rad * (0.75)
+data_25[data_25$leaf_age == 'old',]$leaf_rad <- data_25[data_25$leaf_age == 'old',]$leaf_rad * (1-(1-0.75)/2)
 
 
-plot(Photosystems ~ gap, data_nolight)
-plot(Photosystems ~ gap, data_75)
-plot(Photosystems ~ gap, data_50)
-plot(Photosystems ~ gap, data_25)
-plot(Photosystems ~ gap, data)
+plot(Photosystems ~ leaf_rad, data_nolight)
+plot(Photosystems ~ leaf_rad, data_75)
+plot(Photosystems ~ leaf_rad, data_50)
+plot(Photosystems ~ leaf_rad, data_25)
+plot(Photosystems ~ leaf_rad, data)
 

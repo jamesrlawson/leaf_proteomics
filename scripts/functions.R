@@ -410,6 +410,8 @@ regression_output_agg <- function(df, indepvar, logx) {
     names(model.stats) <- c('submodel','R2','pval') 
     rownames(model.stats) <- NULL
     
+ #   browser()
+    
     my.list[[i]] <- model.stats
     
   }
@@ -462,7 +464,11 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
   
   clim  <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
   
-  bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
+  browser()
+  
+  #bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
+  bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=logx)
+  
   
   return(bla)
   
@@ -526,6 +532,7 @@ agg_plot_leafrad <- function(data, depvar, indepvar, logx=FALSE, labs) {
                SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
     full_join(data, by = 'ID')  %>%
     distinct(mean, .keep_all=TRUE) 
+  dep_means <- na.omit(dep_means)
   
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F)

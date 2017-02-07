@@ -129,9 +129,9 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   climate_locs <- merge(gaps, climate_locs)
   rm(gaps)
   
-  # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.23)
-  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
-  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
+  # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.225)
+#  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
+#  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
   
 # irradiance
   
@@ -177,7 +177,7 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   #climate_locs <- merge(climate_locs, soil_N, by = 'ID')
   #climate_locs <- merge(climate_locs, soil_P, by = 'ID')
   
-  climate_locs$ID <- NULL
+ climate_locs$ID <- NULL
 
 ## these are the df's used in most of the knitr reports
 

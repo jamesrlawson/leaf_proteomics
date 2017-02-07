@@ -11,9 +11,24 @@ require(plyr)
 require(reshape2)
 require(dplyr)
 require(lazyeval)
-source('scripts/prep_data.R')
 
-tab <- regression_agg(data, 'leaf_rad', logx=TRUE)
+replicates <- read_csv('output/replicates.csv')
+replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
+
+replicates <- merge(replicates, read_csv('data/lineage.csv'))
+
+climate_locs$biological_rep <- NULL
+
+data <- merge(protein_stand_D14_age, climate_locs)
+#data$ID <- NULL
+data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised', 'species_confirmed', 'date'))
+data <- data[!duplicated(data$sample),]
+
+data <- filter(data, ID != 'melpal_106')
+
+data <- na.omit(data)
+
+tab <- regression_agg(data, 'leafrad_mean', logx=FALSE)
 
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -27,7 +42,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot_leafrad(data, depvar = i, indepvar = 'leafrad_mean', logx=TRUE, labs = 'irradiance at leaf')
+  agg_plot_leafrad(data, depvar = i, indepvar = 'leafrad_mean', logx=FALSE, labs = 'irradiance at leaf')
   
 }
 
