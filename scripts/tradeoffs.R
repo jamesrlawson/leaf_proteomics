@@ -14,16 +14,39 @@ abline(lm(PSI ~ PSII, protein_D14))
 
 
 require(ggplot2)
+ggplot(protein_D14, aes(x = PSII, y = PSI)) + geom_smooth() + geom_point(alpha = 0.4)
+
+# are the slopes different?
+
+bla1 <- subset(protein_D14, PSII < 0.000075)
+bla1$model <- 'high_light'
+bla2 <- subset(protein_D14, PSII > 0.000075)
+bla2$model <- 'low_light'
+bla3 <- rbind(bla1,bla2)
+bla3.glm <- glm(PSI ~ PSII, family = 'gaussian', data = bla3)
+summary(bla3.glm)
+bla3.glm2 <- glm(PSI ~ PSII * model, family = 'gaussian', data = bla3)
+summary(bla3.glm2)
+
+AIC(bla3.glm,bla3.glm2)
+
+bla1.glm <- glm(PSI ~ PSII, family = 'gaussian', data = bla1)
+bla2.glm <- glm(PSI ~ PSII, family = 'gaussian', data = bla2)
+
+require(ggplot2)
 
 p <- ggplot(protein_D14, aes(x = PSII, y = PSI))
 p <- p + geom_point()
 p <- p + geom_smooth()
 print(p)
 
+plot(PSI ~ PSII, protein_D14, xlab = "PSII (umol / m2)", ylab = "PSI (umol/m2)", main = "PSI/PSII stoichiometry in wild Eucalyptus")
 
+abline(bla1.glm, col = 'red')
+abline(bla2.glm, col = 'blue')
 
-plot(PSI ~ PSII, protein_stand_D14)
-summary(lm(PSI ~ PSII, protein_stand_D14))
+summary(bla1.glm)
+summary(bla2.glm)
 
 
 plot(PSI ~ prec, protein_clim_D14)

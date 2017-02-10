@@ -13,21 +13,35 @@ for (j in 1:length(sequence)) {
   
   source('scripts/transformations_quick.R')
   
-  source('scripts/prep_data.R')
+  replicates <- read_csv('output/replicates.csv')
+  replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
+  
+  replicates <- merge(replicates, read_csv('data/lineage.csv'))
+  
+  climate_locs$biological_rep <- NULL
+  
+  data <- merge(protein_stand_D14_age, climate_locs)
+  #data$ID <- NULL
+  data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised', 'species_confirmed', 'date'))
+  data <- data[!duplicated(data$sample),]
+  
+  data <- filter(data, ID != 'melpal_106')
+  
+  data <- na.omit(data)
   
   # aggregate data
   
   # alter gap fraction for mid and old leaves by i or 1-((1-i)/2)
   
-#  data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * (1-(1-sequence[j])/2)
-#  data[data$leaf_age == 'old',]$gap <- data[data$leaf_age == 'old',]$gap * sequence[j]
+  data[data$leaf_age == 'mid',]$gap <- data[data$leaf_age == 'mid',]$gap * (1-(1-sequence[j])/2)
+  data[data$leaf_age == 'old',]$gap <- data[data$leaf_age == 'old',]$gap * sequence[j]
   
     # irradiance at leaf
     
   data$leaf_rad <- data$irradiance * data$gap / 100  
     
-  #  leafrad_mean <- data %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
-  #  climate_locs <- merge(data, leafrad_mean)
+#    leafrad_mean <- data %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
+#    climate_locs <- merge(data, leafrad_mean)
   
   depvar <- 'Photosystems'
   
@@ -40,7 +54,7 @@ for (j in 1:length(sequence)) {
   
   dep_means <- na.omit(dep_means)
   
-  leafrad_means <- dep_means %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
+  leafrad_means <- data %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   
   data <- merge(leafrad_means, dep_means, by = 'ID')
   
