@@ -1,8 +1,8 @@
-## Linear regressions: relative [protein] vs. soil N (%)
+## Linear regressions: relative [protein] vs. total chlorophyll (umol/m2)
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
-source('scripts/transformations_soil.R')
+source('scripts/transformations.R')
 require(ggplot2)
 require(vegan)
 library(readr)
@@ -11,9 +11,9 @@ require(plyr)
 require(reshape2)
 require(dplyr)
 require(lazyeval)
-source('scripts/prep_data.R')
+source('scripts/prep_data_.R')
 
-tab <- regression_agg(data, 'soil_N', logx=TRUE)
+tab <- regression_agg(data, 'mg_Cl_total_per_m2', logx=TRUE)
 
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'soil_N', logx=TRUE, labs = 'Soil N (%)')
+  agg_plot(data, depvar = i, indepvar = 'mg_Cl_total_per_m2', logx=TRUE, labs = 'total chlorophyll (umol/m2)')
   
 }
 

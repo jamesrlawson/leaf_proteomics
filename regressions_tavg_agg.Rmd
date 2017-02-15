@@ -11,7 +11,7 @@ require(plyr)
 require(reshape2)
 require(dplyr)
 require(lazyeval)
-source('scripts/prep_data.R')
+source('scripts/prep_data_.R')
 
 tab <- regression_agg(data, 'tavg', logx=FALSE)
 

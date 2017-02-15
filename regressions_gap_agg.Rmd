@@ -1,6 +1,5 @@
 ## Linear regressions: relative [protein] vs. canopy gap fraction (%)
 
-# Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 source('scripts/transformations.R')
 require(ggplot2)
@@ -11,17 +10,16 @@ require(plyr)
 require(reshape2)
 require(dplyr)
 require(lazyeval)
-source('scripts/prep_data.R')
+source('scripts/prep_data_.R')
 
 tab <- regression_agg(data, 'gap_mean', logx=TRUE)
 
-kable(tab, "markdown", align="l", padding=10)
+#kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
 
 modelorder <- read_csv('output/modelorder.csv')
 ````
 
-# Linear regressions
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 

@@ -342,10 +342,27 @@ agg_plot <- function(data, depvar, indepvar, logx = FALSE, labs) {
     full_join(data, by = 'ID')  %>%
     distinct(mean, .keep_all=TRUE) 
   
+  if(logx) {
+    
+    model <- summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]])))
+    
+  } else {
+    
+    model <- summary(lm(dep_means$mean ~ dep_means[[indepvar]]))
+    
+  }
+  
+  
+              
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F)
   p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
   p <- p + expand_limits(y=0)
+  
+    p <- p + annotate("text" , x = max(dep_means[[indepvar]])*0.3, y = (max(dep_means$mean)+max(dep_means$SE)), label = paste('R2 =', round(model$r.squared,3), sep = " "))
+    p <- p + annotate("text" , x = max(dep_means[[indepvar]])*0.3, y = (max(dep_means$mean)+max(dep_means$SE))*0.9, label = paste('pval =', round(model$coefficients[,4][2],2), sep = " "))
+  
+  
   p <- p + theme_bw()
   p <- p + theme(panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(), 
@@ -440,9 +457,9 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
   # then calls regression_output_agg to output table
   
   a <- data.frame()
-  my.list <- vector("list", length(names(protein_D14[,2:ncol(protein_D14)])))
+  my.list <- vector("list", length(names(protein_stand_D14[,2:ncol(protein_D14)])))
   
-  for(i in names(protein_D14[,2:ncol(protein_D14)])) {
+  for(i in names(protein_stand_D14[,2:ncol(protein_stand_D14)])) {
     
     depvar = i 
     
@@ -452,6 +469,8 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
     
     dep_means$bin_arch_name <- depvar
     
+    dep_means <- na.omit(dep_means)
+  
     my.list[[i]] <- dep_means
     
   }
@@ -464,11 +483,8 @@ regression_agg <- function(data, indepvar, logx = FALSE) {
   
   clim  <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
   
-  browser()
-  
-  #bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
+
   bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=logx)
-  
   
   return(bla)
   
@@ -484,10 +500,22 @@ agg_plot_gap <- function(data, depvar, indepvar, logx=FALSE, labs) {
     full_join(data, by = 'ID')  %>%
     distinct(mean, .keep_all=TRUE) 
   
+  if(logx) {
+    
+    model <- summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]])))
+    
+  } else {
+    
+    model <- summary(lm(dep_means$mean ~ dep_means[[indepvar]]))
+    
+  }
+  
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F)
   p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
   p <- p + expand_limits(y=0)
+  p <- p + annotate("text" , x = max(dep_means[[indepvar]])*0.4, y = (max(dep_means$mean)+max(dep_means$SE)), label = paste('R2 =', round(model$r.squared,3), sep = " "))
+  p <- p + annotate("text" , x = max(dep_means[[indepvar]])*0.4, y = (max(dep_means$mean)+max(dep_means$SE))*0.9, label = paste('pval =', round(model$coefficients[,4][2],2), sep = " "))
   p <- p + theme_bw()
   p <- p + theme(panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(), 
@@ -518,6 +546,7 @@ agg_plot_gap <- function(data, depvar, indepvar, logx=FALSE, labs) {
     
   }
   
+
   print(p)
   
   
@@ -534,10 +563,22 @@ agg_plot_leafrad <- function(data, depvar, indepvar, logx=FALSE, labs) {
     distinct(mean, .keep_all=TRUE) 
   dep_means <- na.omit(dep_means)
   
+  if(logx) {
+    
+    model <- summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]])))
+    
+  } else {
+    
+    model <- summary(lm(dep_means$mean ~ dep_means[[indepvar]]))
+    
+  }
+  
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   p <- p + geom_smooth(method = 'lm', se = F)
   p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
   p <- p + expand_limits(y=0)
+  p <- p + annotate("text" , x = max(dep_means[[indepvar]])*0.33, y = (max(dep_means$mean)+max(dep_means$SE)), label = paste('R2 =', round(model$r.squared,3), sep = " "))
+  p <- p + annotate("text" , x = max(dep_means[[indepvar]])*0.33, y = (max(dep_means$mean)+max(dep_means$SE))*0.9, label = paste('pval =', round(model$coefficients[,4][2],2), sep = " "))
   p <- p + theme_bw()
   p <- p + theme(panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank(), 
@@ -570,5 +611,100 @@ agg_plot_leafrad <- function(data, depvar, indepvar, logx=FALSE, labs) {
   
   print(p)
   
+  
+}
+
+
+
+
+
+
+
+
+agg_plot_ <- function(data, depvar, indepvar, logx = FALSE, labs) {
+  
+  dep_means <- data %>%
+    group_by(ID) %>%
+    summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
+               SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
+    full_join(data, by = 'ID')  %>%
+    distinct(mean, .keep_all=TRUE) 
+  
+  p <- ggplot(dep_means, aes(y = SE, x = dep_means[[indepvar]])) + geom_point(size = 2)
+  p <- p + geom_smooth(method = 'lm', se = F)
+  p <- p + xlab(labs[1]) + ggtitle(depvar) + ylab(paste('Species mean of [', depvar, ' proteins] (proportion)', sep = ""))
+  p <- p + expand_limits(y=0)
+  p <- p + theme_bw()
+  p <- p + theme(panel.grid.major = element_blank(),
+                 panel.grid.minor = element_blank(), 
+                 legend.title=element_blank(),
+                 legend.position="bottom",
+                 axis.line = element_line(colour = "black"))
+  
+  number_ticks <- function(n) {function(limits) pretty(limits, n)}
+  
+  if(logx) {
+    
+   # errorbar_width <- (log10(max(data[[indepvar]], na.rm=TRUE)) - log10(min(data[[indepvar]], na.rm=TRUE))) / 50
+  #  p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
+    
+    p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10),trans='log10')
+    
+    # print(summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]]))))
+    
+  } else {
+    
+   # errorbar_width <- (max(data[[indepvar]], na.rm=TRUE) - min(data[[indepvar]], na.rm=TRUE)) / 50
+    #p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
+    
+    p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
+    
+    # print(summary(lm(dep_means$mean ~ dep_means[[indepvar]])))
+    
+  }
+  
+  print(p)
+  
+  
+}
+
+
+regression_agg_ <- function(data, indepvar, logx = FALSE) {
+  
+  # recombobulates data to aggregate by ID
+  # then calls regression_output_agg to output table
+  
+  a <- data.frame()
+  my.list <- vector("list", length(names(protein_D14[,2:ncol(protein_D14)])))
+  
+  for(i in names(protein_D14[,2:ncol(protein_D14)])) {
+    
+    depvar = i 
+    
+    dep_means <- data %>%
+      group_by(ID) %>%
+      summarise_(mean = interp(~SE(var), var = as.name(depvar)))
+    
+    dep_means$bin_arch_name <- depvar
+    
+    my.list[[i]] <- dep_means
+    
+  }
+  
+  a <- rbind(a, do.call(rbind, my.list))
+  
+  a <- tidyr::spread(a, bin_arch_name, mean)
+  
+  climate_locs$ID <- NULL
+  
+  clim  <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude'))
+  
+  # browser()
+  
+  #bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=TRUE)
+  bla <- regression_output_agg(merge(a, clim, by = 'ID'), indepvar, logx=logx)
+  
+  
+  return(bla)
   
 }

@@ -6,6 +6,31 @@ protein_D14$PS_ratio <- protein_D14$PSI/protein_D14$PSII
 
 protein_clim_D14 <- merge(protein_D14, climate_locs, by = 'sample')
 
+chl <- na.omit(read_csv('data/chlorophyll.csv'))
+chl <- chl[chl$sample %in% protein_D14$sample,]
+
+protein_clim_D14 <- merge(chl, protein_clim_D14, by = 'sample')
+
+
+# PSI & PSII vs chl
+
+plot(protein_clim_D14$umol_Cl_b_per_m2mmol   ~ protein_clim_D14$mg_Cl_a_per_m2)
+
+plot(log10(protein_clim_D14$umol_Cl_a_per_m2) ~ protein_clim_D14$PSI)
+plot(log10(protein_clim_D14$umol_Cl_b_per_m2) ~ protein_clim_D14$PSI)
+plot(log10(protein_clim_D14$umol_Cl_total_per_m2) ~ protein_clim_D14$PSI) 
+
+plot(log10(protein_clim_D14$umol_Cl_a_per_m2) ~ protein_clim_D14$PSII)
+plot(log10(protein_clim_D14$umol_Cl_b_per_m2) ~ protein_clim_D14$PSII)
+plot(log10(protein_clim_D14$umol_Cl_total_per_m2) ~ protein_clim_D14$PSII) 
+
+plot(log10(protein_clim_D14$umol_Cl_total_per_m2) ~ protein_clim_D14$PS_ratio)
+
+ggplot(protein_clim_D14, aes(y = log10(umol_Cl_total_per_m2), x = PSI)) + geom_point(alpha = 0.3) + geom_smooth() + ylab('umol total chlorophyll / m2 (log10)') + xlab('PSI (mol/m2)')
+
+ggplot(protein_clim_D14, aes(y = log10(umol_Cl_total_per_m2), x = Photosystems)) + geom_point(alpha = 0.3) + geom_smooth() + ylab('umol total chlorophyll / m2 (log10)') + xlab('Photosystems proteins (mol/m2)')
+
+
 # PSI vs PSII
 
 plot(PSI ~ PSII, protein_D14, xlab = "PSII (umol / m2)", ylab = "PSI (umol/m2)", main = "PSI/PSII stoichiometry in wild Eucalyptus")
@@ -14,13 +39,13 @@ abline(lm(PSI ~ PSII, protein_D14))
 
 
 require(ggplot2)
-ggplot(protein_D14, aes(x = PSII, y = PSI)) + geom_smooth() + geom_point(alpha = 0.4)
+ggplot(protein_D14, aes(x = PSI, y = PSII)) + geom_smooth() + geom_point(alpha = 0.4)
 
 # are the slopes different?
 
-bla1 <- subset(protein_D14, PSII < 0.000075)
+bla1 <- subset(protein_D14, PSII < 0.0001)
 bla1$model <- 'high_light'
-bla2 <- subset(protein_D14, PSII > 0.000075)
+bla2 <- subset(protein_D14, PSII > 0.0001)
 bla2$model <- 'low_light'
 bla3 <- rbind(bla1,bla2)
 bla3.glm <- glm(PSI ~ PSII, family = 'gaussian', data = bla3)
@@ -32,6 +57,13 @@ AIC(bla3.glm,bla3.glm2)
 
 bla1.glm <- glm(PSI ~ PSII, family = 'gaussian', data = bla1)
 bla2.glm <- glm(PSI ~ PSII, family = 'gaussian', data = bla2)
+
+summary(bla1.glm)
+summary(bla2.glm)
+
+ggplot(bla3, aes(x = PSII, y = PSI, group = model)) + geom_smooth(method = 'lm') + geom_point(alpha = 0.4) + xlab('PSII (umol / m2)') + ylab("PSI (umol/m2)") + ggtitle("PSI/PSII stoichiometry in wild Eucalyptus")
+
+
 
 require(ggplot2)
 

@@ -12,6 +12,7 @@ data <- data[!duplicated(data$sample),]
 
 data <- filter(data, ID != 'melpal_106')
 
+data <- na.omit(data)
 
 if(any(data$ID %in% 'corgum_47')) {
   data[data$ID == 'corgum_47',]$ID <- 'corgum_46'

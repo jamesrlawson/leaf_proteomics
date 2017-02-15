@@ -13,7 +13,7 @@ require(dplyr)
 require(lazyeval)
 source('scripts/prep_data.R')
 
-tab <- regression_agg(data, 'soil_P', logx=FALSE)
+tab <- regression_agg(data, 'soil_P', logx=TRUE)
 
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'soil_P', logx=FALSE, labs = 'Soil P (%)')
+  agg_plot(data, depvar = i, indepvar = 'soil_P', logx=TRUE, labs = 'Soil P (%)')
   
 }
 

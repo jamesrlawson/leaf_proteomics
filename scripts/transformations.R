@@ -130,8 +130,8 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   rm(gaps)
   
   # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.225)
-#  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
-#  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
+  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
+  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
   
 # irradiance
   
@@ -145,6 +145,15 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   # irradiance at leaf
   
   climate_locs$leaf_rad <- climate_locs$irradiance * climate_locs$gap / 100  
+  
+  
+# chlorophyll
+  
+  chl <- na.omit(read_csv('data/chlorophyll.csv'))
+  chl <- chl[chl$sample %in% protein_D14$sample,]
+  climate_locs <- merge(chl, climate_locs, by = 'sample')
+  
+
   
 # soil and litter data
   
@@ -166,7 +175,7 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   leafrad_mean <- climate_locs %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   climate_locs <- merge(climate_locs, leafrad_mean)
   
-  
+
   
   soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
   soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
@@ -178,7 +187,8 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   #climate_locs <- merge(climate_locs, soil_P, by = 'ID')
   
  climate_locs$ID <- NULL
-
+ climate_locs <- na.omit(climate_locs)
+ 
 ## these are the df's used in most of the knitr reports
 
 # relative [protein]
@@ -231,6 +241,8 @@ leaf_age <- read_csv('data/leaf_age.csv')
 leaf_age <- leaf_age[leaf_age$sample %in% protein_D14$sample,]
 protein_D14_age <- merge(leaf_age, protein_D14, by = 'sample')
 
+
+
 #protein_D14_new <- subset(protein_D14_age, leaf_age == "new")
 #protein_D14_mid <- subset(protein_D14_age, leaf_age == "mid")
 #protein_D14_old <- subset(protein_D14_age, leaf_age == "old")
@@ -250,7 +262,7 @@ protein_D14_age <- merge(leaf_age, protein_D14, by = 'sample')
 #names(protein_climate_D14_old)[names(protein_climate_D14_old) == 'value'] <- 'sum'
 #protein_climate_D14_old$bin_arch_name <- as.character(protein_climate_D14_old$bin_arch_name)
 
-rm(licor, leaf_CN, mercator, mercator_bins, protein_bins_D14, protein_samples_D14, 
-   protein_D14_long, protein_stand_D14_long, bin_arch.list, recent_clim, recent_clim_locs)
+#rm(licor, leaf_CN, mercator, mercator_bins, protein_bins_D14, protein_samples_D14, 
+#   protein_D14_long, protein_stand_D14_long, bin_arch.list, recent_clim, recent_clim_locs)
 
 
