@@ -146,3 +146,48 @@ plot(eucgr.k02223.1.p ~ tavg, bla[bla$eucgr.k02223.1.p > max(bla$eucgr.k02223.1.
 
  
 
+
+
+# large subunit of rubisco
+
+# rubisco activase
+
+rb <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.c03525.1.p',
+                                                             'tr|t1qkk4|t1qkk4_eucgl'),]
+rb <- arrange(rb, Protein)
+
+names <- rb$Protein
+
+rb <- as.data.frame(t(rb[,2:314]))
+
+names(rb) <- names
+rb$sample <- rownames(rb)
+rownames(rb) <- NULL
+
+rb <- merge(rb, total_protein_D14)
+
+rb[,2:3] <- lapply(rb[,2:3],function(x) as.numeric(as.character(x)))
+
+#rb[,2:3] <- rb[,2:3]/rb$total_protein
+str(rb)
+
+rb$rb_largesub <- rowSums(rb[,c('eucgr.c03525.1.p',
+                                'tr|t1qkk4|t1qkk4_eucgl'),])
+
+
+bla <- merge(rb, climate_locs)
+
+plot(rb_largesub ~ d13C, bla)
+abline(lm(rb_largesub ~ d13C, bla))
+summary(lm(rb_largesub ~ d13C, bla))
+
+
+## pgk data
+
+
+
+
+
+
+
+

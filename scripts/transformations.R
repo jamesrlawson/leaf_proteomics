@@ -153,7 +153,7 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   chl <- chl[chl$sample %in% protein_D14$sample,]
   climate_locs <- merge(chl, climate_locs, by = 'sample')
   
-
+ 
   
 # soil and litter data
   
@@ -176,7 +176,6 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   climate_locs <- merge(climate_locs, leafrad_mean)
   
 
-  
   soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
   soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
     filter(soil_P < 1500)
@@ -186,8 +185,42 @@ climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
   #climate_locs <- merge(climate_locs, soil_N, by = 'ID')
   #climate_locs <- merge(climate_locs, soil_P, by = 'ID')
   
+
+ 
+ # delta C 13
+ 
+ d13C <- read_csv('data/d13C.csv')
+ d13C <- d13C[d13C$sample %in% protein_D14$sample,]
+ climate_locs <- merge(d13C, climate_locs, by = 'sample', all=TRUE)
+ 
+ id <- unique(climate_locs$ID)
+ 
+# fill in values so d13C for all leaf ages of a branch = mid value
+ 
+ for(i in 1:length(id)) {
+   
+   for(j in 1:3) {
+     
+    temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
+     
+     if(any(temp$leaf_age %in% 'mid')) {
+       
+       temp[temp$leaf_age %in% 'mid',]$d13C
+       
+       climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
+       
+     }
+     
+     
+   }
+   
+ }
+ 
+ 
  climate_locs$ID <- NULL
  climate_locs <- na.omit(climate_locs)
+ 
+ 
  
 ## these are the df's used in most of the knitr reports
 
