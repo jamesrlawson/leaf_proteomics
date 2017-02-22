@@ -52,13 +52,13 @@ data$leaf_age <- factor(data$leaf_age, levels = c('new','mid','old'))
 bla1 <- lm(Photosystems ~ leaf_age, data)
 anova(bla1)
 
-bla2 <- lm(Photosystems ~ leaf_rad + leaf_age, data)
+bla2 <- lm(Photosystems ~ gap + leaf_age, data)
 summary(bla2)
 anova(bla2) 
 
-bla3 <- lm(Photosystems ~ leaf_rad, data_means)
+bla3 <- lm(Photosystems ~ gap, data_means)
 
-bla4 <- lm(Photosystems ~ leaf_rad * leaf_age, data)
+bla4 <- lm(Photosystems ~ gap * leaf_age, data)
 
 
 AICc(bla1,bla2,bla3,bla4)
@@ -138,7 +138,7 @@ tp_new_mid
 tp_mid_old
 tp_new_old
 
-tp_leafage <- aov(total_protein ~ leaf_age, data)
+tp_leafage <- lm(total_protein ~ leaf_age, data)
 TukeyHSD(tp_leafage)
 
 
@@ -160,7 +160,7 @@ ps_mid_old
 ps_new_old
 
 
-ps_leafage <- aov(Photosystems ~ leaf_age, data)
+ps_leafage <- lm(Photosystems ~ leaf_age, data)
 TukeyHSD(ps_leafage)
 
 
@@ -181,5 +181,5 @@ calv_mid_old
 calv_new_old
 
 
-calv_leafage <- aov(Calvin_cycle ~ leaf_age, data)
+calv_leafage <- lm(Calvin_cycle ~ leaf_age, data)
 TukeyHSD(calv_leafage)
