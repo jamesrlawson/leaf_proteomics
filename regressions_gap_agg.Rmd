@@ -10,9 +10,9 @@ require(plyr)
 require(reshape2)
 require(dplyr)
 require(lazyeval)
-source('scripts/prep_data_.R')
+source('scripts/prep_data.R')
 
-tab <- regression_agg(data, 'gap_mean', logx=TRUE)
+tab <- regression_agg(data, 'gap_mean', logx=FALSE)
 
 #kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -25,7 +25,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot_gap(data, depvar = i, indepvar = 'gap_mean', logx=TRUE, labs = 'canopy gap fraction (%)')
+  agg_plot_gap(data, depvar = i, indepvar = 'gap_mean', logx=FALSE, labs = 'canopy gap fraction (%)')
   
 }
 

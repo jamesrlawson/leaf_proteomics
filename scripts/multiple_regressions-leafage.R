@@ -49,7 +49,7 @@ plot(jou)
 
 data$leaf_age <- factor(data$leaf_age, levels = c('new','mid','old'))
 
-bla1 <- lm(Photosystems ~ leaf_age, data)
+bla1 <- lm(Photosystems ~ gap, data)
 anova(bla1)
 
 bla2 <- lm(Photosystems ~ gap + leaf_age, data)

@@ -13,7 +13,7 @@ require(lazyeval)
 
 source('scripts/prep_data.R')
 
-tab <- regression_agg(data, 'leafrad_mean', logx=TRUE)
+tab <- regression_agg(data, 'leafrad_mean', logx=FALSE)
 
 #kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -26,7 +26,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot_leafrad(data, depvar = i, indepvar = 'leafrad_mean', logx=TRUE, labs = 'irradiance at leaf')
+  agg_plot_leafrad(data, depvar = i, indepvar = 'leafrad_mean', logx=FALSE, labs = 'irradiance at leaf')
   
 }
 

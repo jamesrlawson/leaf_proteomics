@@ -123,6 +123,20 @@ c('eucgr.j01502.1.p', 'eucgr.j01502.2.p', 'eucgr.c00150.1.p', 'eucgr.b03013.1.p'
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # large subunit of rubisco
 
 source('scripts/transformations.R')
@@ -194,70 +208,125 @@ data_means <- bla %>% group_by(ID) %>% summarise(Rubisco_mean = mean(Rubisco, na
 
 
 # small subunit of rubisco plots
-
-plot(rb_small1 ~ tavg, data_means)
-plot(rb_small2 ~ tavg, data_means)
-plot(rb_small3 ~ tavg, data_means)
-plot(rb_small4 ~ tavg, data_means)
-plot(rb_small5 ~ tavg, data_means)
+png(filename = paste('output/figures/20170217/', 'rb_small1-tavg_', 'R2-', round(summary(lm(rb_small1 ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(rb_small1 ~ tavg, data_means)
+  abline(lm(rb_small1 ~ tavg, data_means))
+dev.off()
+png(filename = paste('output/figures/20170217/', 'rb_small2-tavg_', 'R2-', round(summary(lm(rb_small2 ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(rb_small2 ~ tavg, data_means)
+  abline(lm(rb_small2 ~ tavg, data_means))
+dev.off()
+png(filename = paste('output/figures/20170217/', 'rb_small3-tavg_', 'R2-', round(summary(lm(rb_small3 ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(rb_small3 ~ tavg, data_means)
+  abline(lm(rb_small3 ~ tavg, data_means))
+dev.off()
+png(filename = paste('output/figures/20170217/', 'rb_small4-tavg_', 'R2-', round(summary(lm(rb_small4 ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(rb_small4 ~ tavg, data_means)
+  abline(lm(rb_small4 ~ tavg, data_means))
+dev.off()
+png(filename = paste('output/figures/20170217/', 'rb_small5-tavg_', 'R2-', round(summary(lm(rb_small5 ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(rb_small5 ~ tavg, data_means)
+  abline(lm(rb_small5 ~ tavg, data_means))
+dev.off()
+  
 
 
 
 
 ### plots ###
 # calvin cycle ex. rubisco vs tavg, prec, light, d13C, total protein
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-tavg_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ tavg, data_means)
+  abline(lm(Calv_ex_rubisco ~ tavg, data_means))
+dev.off()
 
-plot(Calv_ex_rubisco ~ tavg, data_means)
-abline(lm(Calv_ex_rubisco ~ tavg, data_means))
-summary(lm(Calv_ex_rubisco ~ tavg, data_means))
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-log10prec_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ log10(prec), data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ log10(prec), data_means)
+  abline(lm(Calv_ex_rubisco ~ log10(prec), data_means))
+dev.off()
 
-plot(Calv_ex_rubisco ~ log10(prec), data_means)
-abline(lm(Calv_ex_rubisco ~ log10(prec), data_means))
-summary(lm(Calv_ex_rubisco ~ log10(prec), data_means))
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-gap_mean_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ gap_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ gap_mean, data_means)
+  abline(lm(Calv_ex_rubisco ~ gap_mean, data_means))
+dev.off()
 
-plot(Calv_ex_rubisco ~ gap_mean, data_means)
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-tavg_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ leafrad_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ leafrad_mean, data_means)
+  abline(lm(Calv_ex_rubisco ~ leafrad_mean, data_means))
+dev.off()
 
-plot(Calv_ex_rubisco ~ log10(leafrad_mean), data_means)
+#png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-d13C_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ d13C, data_means))$r.squared,3), '.png', sep=""))
+#  plot(Calv_ex_rubisco ~ d13C, data_means)
+#  abline(lm(Calv_ex_rubisco ~ d13C, data_means))
+#dev.off()
 
-plot(Calv_ex_rubisco ~ d13C, data_means)
-
-plot(Calv_ex_rubisco ~ total_protein_mean, data_means)
-
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-total_protein_mean_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ total_protein_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ total_protein_mean, data_means)
+  abline(lm(Calv_ex_rubisco ~ total_protein_mean, data_means))
+dev.off()
 
 # rubisco activase vs PGK, PGLP, PRK, calv ex rb, RbcL, tavg, prec, light, d13C, total_protein
 
-plot(rbact_mean ~ PGK_mean, data_means)
-summary(lm(rbact_mean ~ PGK_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'rbact_mean-PGK_mean_', 'R2-', round(summary(lm(rbact_mean ~ PGK_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ PGK_mean, data_means)
+  abline(lm(rbact_mean ~ PGK_mean, data_means))
+dev.off()
 
-plot(Rubisco_mean ~ PGK_mean, data_means)
-summary(lm(Rubisco_mean ~ PGK_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'rbact_mean-PRK_mean_', 'R2-', round(summary(lm(rbact_mean ~ PRK_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ PRK_mean, data_means)
+  abline(lm(rbact_mean ~ PRK_mean, data_means))
+dev.off()
 
-plot(rbact_mean ~ PRK_mean, data_means)
-summary(lm(rbact_mean ~ PRK_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'rbact_mean-PGLP_mean_', 'R2-', round(summary(lm(rbact_mean ~ PGLP_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ PGLP_mean, data_means)
+  abline(lm(rbact_mean ~ PGLP_mean, data_means))
+dev.off()
 
-plot(rbact_mean ~ PGLP_mean, data_means)
-summary(lm(rbact_mean ~ PGLP_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'rbact_mean-Calv_ex_rubisco_', 'R2-', round(summary(lm(rbact_mean ~ Calv_ex_rubisco, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ Calv_ex_rubisco, data_means)
+dev.off()
 
+png(filename = paste('output/figures/20170217/', 'rbact_mean-rbL_mean_', 'R2-', round(summary(lm(rbact_mean ~ rbL_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ rbL_mean, data_means)
+  abline(lm(rbact_mean ~ rbL_mean, data_means))
+dev.off()
 
-plot(rbact_mean ~ Calv_ex_rubisco, data_means)
-plot(rbact_mean ~ rbL_mean, data_means)
-summary(lm(rbact_mean ~ rbL_mean, data_means))
-abline(lm(rbact_mean ~ rbL_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'rbact_mean-tavg_', 'R2-', round(summary(lm(rbact_mean ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ tavg, data_means)
+  abline(lm(rbact_mean ~ tavg, data_means))
+dev.off()
 
+png(filename = paste('output/figures/20170217/', 'rbact_mean-log10prec_', 'R2-', round(summary(lm(rbact_mean ~ log10(prec), data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ log10(prec), data_means)
+  abline(lm(rbact_mean ~ log10(prec), data_means))
+dev.off()
 
-plot(rbact_mean ~ tavg, data_means)
-plot(rbact_mean ~ log10(prec), data_means)
-plot(rbact_mean ~ gap_mean, data_means)
-plot(rbact_mean ~ leafrad_mean, data_means)
-plot(rbact_mean ~ d13C, data_means)
-plot(rbact_mean ~ total_protein_mean, data_means)
+png(filename = paste('output/figures/20170217/', 'rbact_mean-gap_mean_', 'R2-', round(summary(lm(rbact_mean ~ gap_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ gap_mean, data_means)
+  abline(lm(rbact_mean ~ gap_mean, data_means))
+dev.off()
+
+png(filename = paste('output/figures/20170217/', 'rbact_mean-leafrad_mean_', 'R2-', round(summary(lm(rbact_mean ~ leafrad_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ leafrad_mean, data_means)
+  abline(lm(rbact_mean ~ leafrad_mean, data_means))
+dev.off()
+
+#png(filename = paste('output/figures/20170217/', 'rbact_mean-PGK_mean_', 'R2-', round(summary(lm(rbact_mean ~ PGK_mean, data_means))$r.squared,3), '.png', sep=""))
+#  plot(rbact_mean ~ d13C, data_means)
+#  summary(lm(rbact_mean ~ d13C, data_means))
+#dev.off()
+
+png(filename = paste('output/figures/20170217/', 'rbact_mean-total_protein_mean_', 'R2-', round(summary(lm(rbact_mean ~ total_protein_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ total_protein_mean, data_means)
+  abline(lm(rbact_mean ~ total_protein_mean, data_means))
+dev.off()
 
 # activase / PGK vs tavg, prec, light, d13c
 
-plot((rbact_mean/PGK_mean) ~ tavg, data_means)
-summary(lm((rbact_mean/PGK_mean) ~ tavg, data_means))
-abline(lm((rbact_mean/PGK_mean) ~ tavg, data_means))
-
+png(filename = paste('output/figures/20170217/', 'rbactPerPGK_mean-tavg_', 'R2-', round(summary(lm((rbact_mean/PGK_mean) ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot((rbact_mean/PGK_mean) ~ tavg, data_means)
+  abline(lm((rbact_mean/PGK_mean) ~ tavg, data_means))
+dev.off()
 
 blax <- lm(scale(rbact_mean) ~ scale(PGK_mean)  + scale(tavg), data_means)
 summary(blax)
@@ -285,53 +354,98 @@ summary(lm(data_means$rbact_mean/data_means$total_protein_mean ~ data_means$tavg
 
 plot(PGK_mean/total_protein_mean ~ tavg, data_means)
 
-plot((rbact_mean/PGK_mean) ~ log10(prec), data_means)
-plot((rbact_mean/PGK_mean) ~ gap_mean, data_means)
-plot((rbact_mean/PGK_mean) ~ leafrad_mean, data_means)
-plot((rbact_mean/PGK_mean) ~ d13C, data_means)
-plot((rbact_mean/PGK_mean) ~ total_protein_mean, data_means)
+png(filename = paste('output/figures/20170217/', 'rbactPerPGK_mean-log10prec_', 'R2-', round(summary(lm((rbact_mean/PGK_mean) ~ log10(prec), data_means))$r.squared,3), '.png', sep=""))
+  plot((rbact_mean/PGK_mean) ~ log10(prec), data_means)
+  abline((rbact_mean/PGK_mean) ~ log10(prec), data_means)
+dev.off()
+
+png(filename = paste('output/figures/20170217/', 'rbactPerPGK_mean-gap_mean_', 'R2-', round(summary(lm((rbact_mean/PGK_mean) ~ gap_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot((rbact_mean/PGK_mean) ~ gap_mean, data_means)
+  abline(lm((rbact_mean/PGK_mean) ~ gap_mean, data_means))
+dev.off()
+
+png(filename = paste('output/figures/20170217/', 'rbactPerPGK_mean-leafrad_mean_', 'R2-', round(summary(lm((rbact_mean/PGK_mean) ~ leafrad_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot((rbact_mean/PGK_mean) ~ leafrad_mean, data_means)
+  abline(lm((rbact_mean/PGK_mean) ~ leafrad_mean, data_means))
+dev.off()
+#png(filename = paste('output/figures/20170217/', 'rbactPerPGK_mean-log10prec_', 'R2-', round(summary(lm((rbact_mean/PGK_mean) ~ log10(prec), data_means))$r.squared,3), '.png', sep=""))
+#  plot((rbact_mean/PGK_mean) ~ d13C, data_means)
+#dev.off()
+png(filename = paste('output/figures/20170217/', 'rbactPerPGK_mean-total_protein_mean_', 'R2-', round(summary(lm((rbact_mean/PGK_mean) ~ total_protein_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot((rbact_mean/PGK_mean) ~ total_protein_mean, data_means)
+  abline(lm((rbact_mean/PGK_mean) ~ total_protein_mean, data_means))
+dev.off()
 
 # calvin cycle ex rubisco vs total protein, photosystems, light reactions, 
 
-plot(Calvin_cycle_mean ~ Photosystems_mean, data_means)
-plot(Calv_ex_rubisco ~ Photosystems_mean, data_means)
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-Photosystems_mean_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ Photosystems_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ Photosystems_mean, data_means)
+  abline(lm(Calv_ex_rubisco ~ Photosystems_mean, data_means))
+dev.off()
 
-plot(Calv_ex_rubisco ~ total_protein_mean, data_means)
-plot(Calvin_cycle_mean ~ total_protein_mean, data_means)
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-total_protein_mean_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ total_protein_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ total_protein_mean, data_means)
+  abline(lm(Calv_ex_rubisco ~ total_protein_mean, data_means))
+dev.off()
 
-plot(Calv_ex_rubisco ~ Light_rxns_mean, data_means)
-plot(Calvin_cycle_mean ~ Light_rxns_mean, data_means)
-  
+png(filename = paste('output/figures/20170217/', 'Calv_ex_rubisco-Light_rxns_mean_', 'R2-', round(summary(lm(Calv_ex_rubisco ~ Light_rxns_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(Calv_ex_rubisco ~ Light_rxns_mean, data_means)
+  abline(lm(Calv_ex_rubisco ~ Light_rxns_mean, data_means))
+dev.off()
+
+
 
 # oxidation : carboxylation ratios
 
-plot(PGLP_mean ~ PRK_mean, data_means)
 
-plot((PGLP_mean / PRK_mean) ~ tavg, data_means)
-abline(lm((PGLP_mean / PRK_mean) ~ tavg, data_means))
-summary(lm((PGLP_mean / PRK_mean) ~ tavg, data_means))
+png(filename = paste('output/figures/20170217/', 'PGLP_mean-PRK_mean_', 'R2-', round(summary(lm(PGLP_mean ~ PRK_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot(PGLP_mean ~ PRK_mean, data_means)
+  plot(PGLP_mean ~ PRK_mean, data_means)
+dev.off()
 
-plot((PGLP_mean / PRK_mean) ~ leafrad_mean, data_means)
-abline(lm((PGLP_mean / PRK_mean) ~ leafrad_mean, data_means))
-summary(lm((PGLP_mean / PRK_mean) ~ leafrad_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'PGLP_per_PRK_mean-tavg_', 'R2-', round(summary(lm(PGLP_mean ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot((PGLP_mean / PRK_mean) ~ tavg, data_means)
+  abline(lm((PGLP_mean / PRK_mean) ~ tavg, data_means))
+dev.off()
 
-plot((PGLP_mean / PRK_mean) ~ gap_mean, data_means)
-abline(lm((PGLP_mean / PRK_mean) ~ leafrad_mean, data_means))
-summary(lm((PGLP_mean / PRK_mean) ~ leafrad_mean, data_means))
+png(filename = paste('output/figures/20170217/', 'PGLP_per_PRK_mean-tavg_', 'R2-', round(summary(lm(PGLP_mean ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot((PGLP_mean / PRK_mean) ~ tavg, data_means)
+  abline(lm((PGLP_mean / PRK_mean) ~ tavg, data_means))
+dev.off()
 
-
+png(filename = paste('output/figures/20170217/', 'PGLP_per_PRK_mean-gap_mean_', 'R2-', round(summary(lm(PGLP_mean ~ gap_mean, data_means))$r.squared,3), '.png', sep=""))
+  plot((PGLP_mean / PRK_mean) ~ gap_mean, data_means)
+  abline(lm((PGLP_mean / PRK_mean) ~ leafrad_mean, data_means))
+dev.off()
 
 data_means$Calv_ex_act <- (data_means$Calvin_cycle_mean - data_means$rbact_mean)
 
-plot(rbact_mean ~ Calv_ex_act, data_means)
-summary(lm(rbact_mean ~ Calv_ex_act, data_means))
-abline(lm(rbact_mean ~ Calv_ex_act, data_means))
+png(filename = paste('output/figures/20170217/', 'rbact_mean-Calv_ex_act_', 'R2-', round(summary(lm(rbact_mean ~ Calv_ex_act, data_means))$r.squared,3), '.png', sep=""))
+  plot(rbact_mean ~ Calv_ex_act, data_means)
+  abline(lm(rbact_mean ~ Calv_ex_act, data_means))
+dev.off()
 
-plot((rbact_mean / rbL_mean) ~ tavg, data_means)
-summary(lm((rbact_mean / rbL_mean) ~ tavg, data_means))
+png(filename = paste('output/figures/20170217/', 'rbactPerRBL_mean-Calv_ex_act_', 'R2-', round(summary(lm((rbact_mean / rbL_mean) ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot((rbact_mean / rbL_mean) ~ tavg, data_means)
+  abline(lm((rbact_mean / rbL_mean) ~ tavg, data_means))
+dev.off()
 
 
-plot(chaperonin_mean ~ Calvin_cycle_mean, data_means)
+png(filename = paste('output/figures/20170217/', 'rbactPerRBL_mean-Calv_ex_act_', 'R2-', round(summary(lm((rbact_mean / rbL_mean) ~ tavg, data_means))$r.squared,3), '.png', sep=""))
+  plot(chaperonin_mean ~ Calvin_cycle_mean, data_means)
+  abline(lm(chaperonin_mean ~ Calvin_cycle_mean, data_means))
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
 
 ## PRK and calvin cycle enzymes
 
