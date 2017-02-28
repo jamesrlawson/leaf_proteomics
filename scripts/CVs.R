@@ -1,3 +1,11 @@
+# protein summary stats
+
+l <- select(protein_D14_age, total_protein, Photosystems, Calvin_cycle, Photorespiration, Light_reactions)
+l$all_photosynth <- l$Light_reactions + l$Calvin_cycle + l$Photorespiration
+l <- melt(l)
+l <- ddply(l, .(variable), summarise, mean = mean(value, na.rm=TRUE), SD = sd(value, na.rm=TRUE))
+
+
 # within species / site combination
 # - leaf age
 # - biological rep

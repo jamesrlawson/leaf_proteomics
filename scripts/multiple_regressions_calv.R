@@ -164,7 +164,6 @@ x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(data_means$pdmt)
 
 (x - y)/x
 
-
 # correlation table
 
 cors <- dplyr::select(data_means, prec, pdmt, tavg, gap_mean, leafrad_mean)
@@ -202,3 +201,20 @@ data_means <- distinct(data_means, ID, .keep_all = TRUE)
 plot(rubisco_stand ~ gap, data_means)
 abline(lm(rubisco_stand ~ gap, data_means))
 summary(lm(rubisco_stand ~ gap, data_means))
+
+
+# calvin cycle vs pdmt plot
+
+x <- ggplot(data_means, aes(x = prec, y = mean)) + geom_point(alpha = 0.6)
+x <- x + geom_smooth(method = 'lm', formula = y ~ x + I(x^2))
+x <- x + ylab('Amount of PSII (proportion of total protein)') + xlab('Mean annual precipitation (mm)')
+x <- x + theme_bw() + theme(axis.line = element_line(colour = "black"),
+                            panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(),
+                            panel.border = element_blank(),
+                            panel.background = element_blank()
+)
+x
+
+
+

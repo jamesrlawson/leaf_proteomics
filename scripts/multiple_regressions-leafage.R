@@ -56,7 +56,7 @@ bla2 <- lm(Photosystems ~ gap + leaf_age, data)
 summary(bla2)
 anova(bla2) 
 
-bla3 <- lm(Photosystems ~ gap, data_means)
+bla3 <- aov(Photosystems ~ gap, data_means)
 
 bla4 <- lm(Photosystems ~ gap * leaf_age, data)
 
@@ -64,6 +64,17 @@ bla4 <- lm(Photosystems ~ gap * leaf_age, data)
 AICc(bla1,bla2,bla3,bla4)
 
 boxplot(data$Photosystems ~ data$leaf_age)
+
+p <- ggplot(data, aes(y = Photosystems, x = leaf_age)) + geom_boxplot()
+p <- p + expand_limits(y=0)
+p <- p + theme_bw()
+p <- p + xlab('leaf age') + ylab('Photosystems protein abundance (proportion)')
+p <- p + theme(panel.grid.major = element_blank(),
+               panel.grid.minor = element_blank(), 
+               legend.title=element_blank(),
+               legend.position="bottom",
+               axis.line = element_line(colour = "black"))
+p
 
 jou <- varpart(data$Photosystems, 
                ~leaf_age,
@@ -95,24 +106,36 @@ bla1 <- lm(Calvin_cycle ~ gap, data)
 anova(bla1)
 summary(bla1)
 
-bla2 <- lm(Calvin_cycle ~ gap + leaf_age, data)
+bla2 <- lm(Calvin_cycle ~ gap + leaf_age, data[!data$leaf_age %in% 'new',])
 summary(bla2)
 anova(bla2) 
 
-bla3 <- lm(Calvin_cycle ~ gap, data_means)
+bla3 <- lm(Calvin_cycle ~ gap, data)
 
 bla4 <- lm(Calvin_cycle ~ gap * leaf_age, data)
 
+bla5 <- lm(Calvin_cycle ~ leaf_age, data)
 
 AICc(bla1,bla2,bla3,bla4)
 
 boxplot(data$Calvin_cycle ~ data$leaf_age)
 
+p <- ggplot(data, aes(y = Calvin_cycle, x = leaf_age)) + geom_boxplot()
+p <- p + expand_limits(y=0)
+p <- p + xlab('leaf age') + ylab('Calvin cycle protein abundance (proportion)')
+p <- p + theme_bw()
+p <- p + theme(panel.grid.major = element_blank(),
+               panel.grid.minor = element_blank(), 
+               legend.title=element_blank(),
+               legend.position="bottom",
+               axis.line = element_line(colour = "black"))
+p
+
 jou <- varpart(data$Calvin_cycle, 
                ~leaf_age,
                ~gap,
-               ~log10(prec),
-               ~log10(leaf_rad),
+           #    ~log10(prec),
+          #     ~leaf_rad,
                data = data)
 jou
 plot(jou)
@@ -123,6 +146,17 @@ plot(Calvin_cycle ~ pdmt, data)
 # percent changes with leaf age
 
 # total_protein
+
+p <- ggplot(data, aes(y = total_protein, x = leaf_age)) + geom_boxplot()
+p <- p + expand_limits(y=0)
+p <- p + xlab('leaf age') + ylab('Total protein abundance (mg / m2)')
+p <- p + theme_bw()
+p <- p + theme(panel.grid.major = element_blank(),
+               panel.grid.minor = element_blank(), 
+               legend.title=element_blank(),
+               legend.position="bottom",
+               axis.line = element_line(colour = "black"))
+p
 
 p <- lm(total_protein ~ leaf_age, data) 
 boxplot(total_protein ~ leaf_age, data)
@@ -181,5 +215,29 @@ calv_mid_old
 calv_new_old
 
 
-calv_leafage <- lm(Calvin_cycle ~ leaf_age, data)
+calv_leafage <- aov(Calvin_cycle ~ leaf_age, data)
 TukeyHSD(calv_leafage)
+
+
+
+# all photosynthesis
+
+data$all_photosynth <- data$Calvin_cycle + data$Light_reactions + data$Photorespiration
+
+p <- lm(all_photosynth ~ leaf_age, data) 
+boxplot(all_photosynth ~ leaf_age, data)
+
+all_new <- mean(data[data$leaf_age == 'new',]$all_photosynth, na.rm=TRUE)
+all_mid <- mean(data[data$leaf_age == 'mid',]$all_photosynth, na.rm=TRUE)
+all_old <- mean(data[data$leaf_age == 'old',]$all_photosynth, na.rm=TRUE)
+
+all_new_mid <- (all_mid - all_new) / all_new
+all_mid_old <- (all_old - all_mid) / all_mid
+all_new_old <- (all_old - all_new) / all_new
+all_new_mid
+all_mid_old
+all_new_old
+
+
+all_leafage <- aov(all_photosynth ~ leaf_age, data)
+TukeyHSD(all_leafage)
