@@ -1,145 +1,9 @@
-# rubisco activase
+# SMALL SUBUNIT OF RUBISCO RELATIONSHIP WITH TEMPERATURE
 
-# add in these: 'eucgr.l03031.1.p' 'eucgr.b02310.1.p'
-
-
-rb <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.j02030.1.p', 'eucgr.j01234.1.p','eucgr.l03031.1.p','eucgr.b02310.1.p',
-                                                             'eucgr.j01502.1.p',
-                                                             'eucgr.j01502.2.p',
-                                                             'eucgr.c00150.1.p',
-                                                             'eucgr.b03013.1.p',
-                                                             'eucgr.k02223.1.p'),]
-rb <- arrange(rb, Protein)
-
-names <- rb$Protein
-
-rb <- as.data.frame(t(rb[,2:314]))
-
-names(rb) <- names
-rb$sample <- rownames(rb)
-rownames(rb) <- NULL
-
-rb <- merge(rb, total_protein_D14)
-
-rb[,2:10] <- lapply(rb[,2:10],function(x) as.numeric(as.character(x)))
-
-rb[,2:10] <- rb[,2:10]/rb$total_protein
-str(rb)
-
-rb$rb_smallsub <- rowSums(rb[,c('eucgr.j01502.1.p', 'eucgr.j01502.2.p', 'eucgr.c00150.1.p', 'eucgr.b03013.1.p', 'eucgr.k02223.1.p')])
-
-rb$rb_act <- rowSums(rb[,c('eucgr.j02030.1.p', 'eucgr.j01234.1.p','eucgr.l03031.1.p','eucgr.b02310.1.p')])
-
-bla <- merge(rb, climate_locs)
-
-plot(bla$eucgr.j01234.1.p ~ bla$tavg, ylab = 'eucgr.j01234.1.p', xlab = 'tavg (oC)')
-abline(lm(bla$eucgr.j01234.1.p ~ bla$tavg))
-summary(lm(bla$eucgr.j01234.1.p ~ bla$tavg))
-
-blax <- merge(bla, replicates)
-
-blax <- blax %>% group_by(ID) %>% summarise(rbact_mean = mean(eucgr.j01234.1.p, na.rm=TRUE),
-                                            rbact_SE = SE(eucgr.j01234.1.p))
-
-blax <- merge(blax, merge(climate_locs, replicates))
-
-plot(blax$rbact_mean ~ blax$tavg)
-
-rbact.lm <- summary(lm(blax$rbact_mean ~ blax$tavg))
-
-round(rbact.lm$coefficients[,4][2],2)
-
-
-h <- ggplot(blax, aes(x = tavg, y = rbact_mean)) + geom_point() 
-h <- h + geom_errorbar(aes(ymin = rbact_mean - rbact_SE, ymax = rbact_mean + rbact_SE), width = 0.2, alpha = 0.8)
-h <- h + geom_smooth(method = 'lm')
-h <- h + expand_limits(y=0)
-h <- h + annotate("text" , x = max(blax$tavg)*0.3, y = max(blax$rbact_mean), label = paste('R2 =', round(rbact.lm$r.squared,3), sep = " "))
-h <- h + annotate("text" , x = max(blax$tavg)*0.3, y = max(blax$rbact_mean)*0.9, label = paste('pval =', round(rbact.lm$coefficients[,4][2],2), sep = " "))
-h <- h + ylab('mean rubisco activase')
-h <- h + theme_bw()
-h <- h + theme(panel.grid.major = element_blank(),
-               panel.grid.minor = element_blank(), 
-               legend.title=element_blank(),
-               legend.position="bottom",
-               axis.line = element_line(colour = "black"))
-#h
-
-
-
-blax <- merge(bla, replicates)
-
-blax <- blax %>% group_by(ID) %>% summarise(rb_small_mean = mean(eucgr.k02223.1.p, na.rm=TRUE),
-                                            rb_small_SE = SE(eucgr.k02223.1.p))
-
-blax <- merge(blax, merge(climate_locs, replicates))
-
-plot(blax$rb_small_mean ~ blax$tavg)
-
-rb_small.lm <- summary(lm(blax$rb_small_mean ~ blax$tavg))
-
-round(rb_small.lm$coefficients[,4][2],2)
-
-
-h <- ggplot(blax, aes(x = tavg, y = rb_small_mean)) + geom_point() 
-h <- h + geom_errorbar(aes(ymin = rb_small_mean - rb_small_SE, ymax = rb_small_mean + rb_small_SE), width = 0.2, alpha = 0.8)
-h <- h + geom_smooth(method = 'lm')
-h <- h + annotate("text" , x = max(blax$tavg)*0.3, y = max(blax$rb_small_mean), label = paste('R2 =', round(rb_small.lm$r.squared,3), sep = " "))
-h <- h + annotate("text" , x = max(blax$tavg)*0.3, y = max(blax$rb_small_mean)*0.9, label = paste('pval =', round(rb_small.lm$coefficients[,4][2],2), sep = " "))
-h <- h + ylab('mean eucgr.k02223.1.p')
-h <- h + theme_bw()
-h <- h + theme(panel.grid.major = element_blank(),
-               panel.grid.minor = element_blank(), 
-               legend.title=element_blank(),
-               legend.position="bottom",
-               axis.line = element_line(colour = "black"))
-h
-
-plot(blax$rb_small_SE ~ blax$tavg)
-
-plot(bla$rb_smallsub_mean ~ bla$tavg)
-
-plot(bla$rb_act_mean/bla$rb_smallsub_mean ~ bla$tavg)
-
-plot(eucgr.j01502.1.p ~ tavg, bla)
-summary(lm(eucgr.j01502.1.p ~ tavg, bla))
-
-plot(eucgr.j01502.2.p ~ tavg, bla)
-summary(lm(eucgr.j01502.2.p ~ tavg, bla))
-
-plot(eucgr.c00150.1.p ~ tavg, bla)
-summary(lm(eucgr.c00150.1.p ~ tavg, bla))
-
-plot(eucgr.b03013.1.p ~ tavg, bla)
-summary(lm(eucgr.b03013.1.p ~ tavg, bla))
-
-plot(as.numeric(as.character(eucgr.k02223.1.p)) ~ tavg, bla)
-summary(lm(as.numeric(as.character(eucgr.k02223.1.p)) ~ tavg, bla))
-
- 
-ip <- merge(bla,blax)
-
-c('eucgr.j01502.1.p', 'eucgr.j01502.2.p', 'eucgr.c00150.1.p', 'eucgr.b03013.1.p', 'eucgr.k02223.1.p')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# large subunit of rubisco
 
 source('scripts/transformations.R')
+
+source('scripts/prep_data.R')
 
 # pull out particular proteins from protein_samples_D14 and arrange
 
@@ -164,8 +28,8 @@ rb <- merge(rb, total_protein_D14)
 
 rb[,2:(ncol(rb)-1)] <- lapply(rb[,2:(ncol(rb)-1)],function(x) as.numeric(as.character(x)))
 
-rb[,2:(ncol(rb)-1)] <- rb[,2:(ncol(rb)-1)]/rb$total_protein # standardise to total protein amount
-str(rb)
+rb[,2:(ncol(rb)-1)] <- rb[,2:(ncol(rb)-1)]/rb$total_protein # standardise to total protein amount WARNING ONLY TURN THIS ON FOR SMALL SUBUNIT QUERIES
+#str(rb)
 
 # sum components of multi-protein complexes
 
@@ -197,14 +61,19 @@ data_means <- bla %>% group_by(ID) %>% summarise(Rubisco_mean = mean(Rubisco, na
                                                  chaperonin_mean = mean(eucgr.b02532.1.p, na.rm=TRUE),
                                                  total_protein_mean = mean(total_protein),
                                                  Photosystems_mean = mean(Photosystems, na.rm=TRUE),
-                                                 Light_rxns_mean = mean(Photosystems, na.rm=TRUE),
+                                                 Light_rxns_mean = mean(Light_reactions, na.rm=TRUE),
                                                  rb_small1 = mean(eucgr.j01502.1.p, n.rm=TRUE),
                                                  rb_small2 = mean(eucgr.j01502.2.p, na.rm=TRUE),
                                                  rb_small3 = mean(eucgr.c00150.1.p, na.rm=TRUE),
                                                  rb_small4 = mean(eucgr.b03013.1.p, na.rm=TRUE),
                                                  rb_small5 = mean(eucgr.k02223.1.p, na.rm=TRUE)) %>%
   full_join(bla, by = 'ID') %>%
-  mutate(Calv_ex_rubisco = Calvin_cycle_mean - Rubisco_mean)
+  mutate(Calv_ex_rubisco = Calvin_cycle_mean - Rubisco_mean) %>%
+  mutate(Calv_ex_rbact = Calvin_cycle_mean - rbact_mean) %>%
+  mutate(Calv_ex_rbact_ex_rbc = Calvin_cycle_mean - rbact_mean - Rubisco_mean) %>%
+  mutate(Calv_ex_rbact_ex_rbc_ex_chap = Calv_ex_rbact_ex_rbc - chaperonin_mean)
+  
+  
 
 
 # small subunit of rubisco plots
@@ -229,6 +98,86 @@ png(filename = paste('output/figures/20170217/', 'rb_small5-tavg_', 'R2-', round
   abline(lm(rb_small5 ~ tavg, data_means))
 dev.off()
   
+
+
+
+# cALVIN CYCLE ENZYME RELATIONSHIPS WITH EACH OTHER AND ENV VARIABLES
+
+
+source('scripts/transformations.R')
+
+source('scripts/prep_data_mg_per_mm2.R')
+
+# pull out particular proteins from protein_samples_D14 and arrange
+
+rbact <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.j02030.1.p', 'eucgr.j01234.1.p','eucgr.l03031.1.p','eucgr.b02310.1.p','eucgr.b02532.1.p'),] # rubisco activase, chaperonin
+rb <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.c03525.1.p', # rubisco large subunit
+                                                             'tr|t1qkk4|t1qkk4_eucgl'),]
+rb <- rbind(rb, rbact)
+rb <- rbind(rb, protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.e01261.1.p', 'eucgr.b01439.1.p', 'eucgr.f01476.1.p'),]) # PRK, PGLP, PGK
+
+rb <- rbind(rb, protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.j01502.1.p', 'eucgr.j01502.2.p', 'eucgr.c00150.1.p', 'eucgr.b03013.1.p', 'eucgr.k02223.1.p'),]) # small subunit of rubisco
+
+
+rb <- arrange(rb, Protein)
+names <- rb$Protein
+rb <- as.data.frame(t(rb[,2:314]))
+
+names(rb) <- names
+rb$sample <- rownames(rb)
+rownames(rb) <- NULL
+
+rb <- merge(rb, total_protein_D14)
+
+rb[,2:(ncol(rb)-1)] <- lapply(rb[,2:(ncol(rb)-1)],function(x) as.numeric(as.character(x)))
+
+#str(rb)
+
+# sum components of multi-protein complexes
+
+rb$rb_largesub <- rowSums(rb[,c('eucgr.c03525.1.p',
+                                'tr|t1qkk4|t1qkk4_eucgl'),])
+
+rb$rb_act <- rowSums(rb[,c('eucgr.j02030.1.p', 
+                           'eucgr.j01234.1.p',
+                           'eucgr.l03031.1.p',
+                           'eucgr.b02310.1.p')])
+
+
+# merge with full protein and env data sets
+
+bla <- merge(rb, protein_D14)
+bla <- merge(bla, climate_locs)
+bla <- merge(bla, replicates)
+
+# aggregate to ID-wise means
+
+data_means <- bla %>% group_by(ID) %>% summarise(Rubisco_mean = mean(Rubisco, na.rm=TRUE),
+                                                 Calvin_cycle_mean = mean(Calvin_cycle, na.rm=TRUE),
+                                                 Calvin_per_lightrxns_mean = mean((Calvin_cycle/Light_reactions), na.rm=TRUE),
+                                                 Calvin_per_lightrxns_SE = SE(Calvin_cycle/Light_reactions),
+                                                 PRK_mean = mean(eucgr.e01261.1.p, na.rm=TRUE),
+                                                 PGLP_mean = mean(eucgr.b01439.1.p, na.rm=TRUE),
+                                                 PGK_mean = mean(eucgr.f01476.1.p, na.rm=TRUE),
+                                                 Photorespiration_mean = mean(Photorespiration, na.rm=TRUE),
+                                                 rbact_mean = mean(rb_act, na.rm=TRUE),
+                                                 rbL_mean = mean(rb_largesub, na.rm=TRUE),
+                                                 chaperonin_mean = mean(eucgr.b02532.1.p, na.rm=TRUE),
+                                                 total_protein_mean = mean(total_protein),
+                                                 Photosystems_mean = mean(Photosystems, na.rm=TRUE),
+                                                 Light_rxns_mean = mean(Light_reactions, na.rm=TRUE),
+                                                 rb_small1 = mean(eucgr.j01502.1.p, n.rm=TRUE),
+                                                 rb_small2 = mean(eucgr.j01502.2.p, na.rm=TRUE),
+                                                 rb_small3 = mean(eucgr.c00150.1.p, na.rm=TRUE),
+                                                 rb_small4 = mean(eucgr.b03013.1.p, na.rm=TRUE),
+                                                 rb_small5 = mean(eucgr.k02223.1.p, na.rm=TRUE)) %>%
+  full_join(bla, by = 'ID') %>%
+  mutate(Calv_ex_rubisco = Calvin_cycle_mean - Rubisco_mean) %>%
+  mutate(Calv_ex_rbact = Calvin_cycle_mean - rbact_mean) %>%
+  mutate(Calv_ex_rbact_ex_rbc = Calvin_cycle_mean - rbact_mean - Rubisco_mean) %>%
+  mutate(Calv_ex_rbact_ex_rbc_ex_chap = Calv_ex_rbact_ex_rbc - chaperonin_mean)
+
+
 
 
 
@@ -438,131 +387,126 @@ dev.off()
 
 
 
+# calvin cycle / light rxns vs leafrad
 
-
-
-
-
-
-
-
-
-## PRK and calvin cycle enzymes
-
-source('scripts/transformations.R')
-
-Currently 1.3.3 (Calvin cycle): eucgr.f04463.1.p, eucgr.e01261.1.p
-
-Currently 4.1.11 (glycolysis): eucgr.f04463.1.p
-
-
-1.2.1, PS.photorespiration.phosphoglycolate phosphatase, eucgr.b01439.1.p
-
-
-source('scripts/transformations.R')
-
-rb <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.e01261.1.p', 'eucgr.b01439.1.p', 'eucgr.f01476.1.p'),]
-rb <- arrange(rb, Protein)
-
-names <- rb$Protein
-
-rb <- as.data.frame(t(rb[,2:314]))
-
-names(rb) <- names
-rb$sample <- rownames(rb)
-rownames(rb) <- NULL
-
-rb <- merge(rb, total_protein_D14)
-
-rb[,2:4] <- lapply(rb[,2:4],function(x) as.numeric(as.character(x)))
-
-#rb[,2:4] <- rb[,2:4]/rb$total_protein
-str(rb)
-
-bla <- merge(rb, protein_D14)
-bla <- merge(bla, climate_locs)
-bla <- merge(bla, replicates)
-
-data_means <- bla %>% group_by(ID) %>% summarise(Rubisco_mean = mean(Rubisco, na.rm=TRUE),
-                                                 PRK_mean = mean(eucgr.e01261.1.p, na.rm=TRUE),
-                                                 PGLP_mean = mean(eucgr.b01439.1.p, na.rm=TRUE),
-                                                 PGK_mean = mean(eucgr.f01476.1.p, na.rm=TRUE),
-                                                 Photorespiration_mean = mean(Photorespiration, na.rm=TRUE)) %>%
-  full_join(bla, by = 'ID')
-  
-plot((PGK_mean / Rubisco_mean) ~ tavg, data_means)
-abline(lm((PGK_mean / Rubisco_mean) ~ tavg, data_means))
-summary(lm((PGK_mean / Rubisco_mean) ~ tavg, data_means))
-
-plot((PGK_mean / Rubisco_mean) ~ PGLP_mean, data_means)
-abline(lm((PGK_mean / Rubisco_mean) ~ PGLP_mean, data_means))
-summary(lm((PGK_mean / Rubisco_mean) ~ PGLP_mean, data_means))
-
- 
-
-plot((PGK_mean / Rubisco_mean) ~ leafrad_mean, data_means)
-plot((PGK_mean / Rubisco_mean) ~ gap_mean, data_means)
-plot((PGK_mean / Rubisco_mean) ~ log10(prec), data_means)
-plot((PGK_mean / Rubisco_mean) ~ d13C, data_means)
-plot((PGK_mean / Rubisco_mean) ~ total_protein, data_means)
-
-
-plot(eucgr.e01261.1.p ~ Rubisco, bla)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-plot(bla$eucgr.j02030.1.p ~ bla$tavg)
-abline(lm(bla$eucgr.j02030.1.p ~ bla$tavg))
-summary(lm(bla$eucgr.j02030.1.p ~ bla$tavg))
-
-
-
-blax <- merge(bla, replicates)
-
-blax <- blax %>% group_by(ID) %>% summarise(rbact_mean = mean(eucgr.j02030.1.p, na.rm=TRUE),
-                                            rbact_SE = SE(eucgr.j02030.1.p))
-
-blax <- merge(blax, merge(climate_locs, replicates))
-
-plot(blax$rbact_mean ~ blax$tavg)
-
-rbact.lm <- summary(lm(blax$rbact_mean ~ blax$tavg))
-
-round(rbact.lm$coefficients[,4][2],2)
-
-
-h <- ggplot(blax, aes(x = tavg, y = rbact_mean)) + geom_point() 
-h <- h + geom_errorbar(aes(ymin = rbact_mean - rbact_SE, ymax = rbact_mean + rbact_SE), width = 0.2, alpha = 0.8)
-h <- h + geom_smooth(method = 'lm')
-h <- h + expand_limits(y=0)
-h <- h + annotate("text" , x = max(blax$tavg)*0.3, y = max(blax$rbact_mean), label = paste('R2 =', round(rbact.lm$r.squared,3), sep = " "))
-h <- h + annotate("text" , x = max(blax$tavg)*0.3, y = max(blax$rbact_mean)*0.9, label = paste('pval =', round(rbact.lm$coefficients[,4][2],2), sep = " "))
-h <- h + ylab('mean eucgr.j02030.1.p')
-h <- h + theme_bw()
-h <- h + theme(panel.grid.major = element_blank(),
+tiff('output/figures/20170217/calvinCyclePerLightRxns_vs_leafrad.tiff', width = 9, height = 9, units = 'cm', compression = 'none', res=600)
+x <- ggplot(data_means, aes(y = Calvin_per_lightrxns_mean, x = leafrad_mean)) + geom_point(size = 2) + geom_smooth(method='lm', se=FALSE)
+x <- x + geom_errorbar(width = 0.2, aes(ymin = Calvin_per_lightrxns_mean - Calvin_per_lightrxns_SE, ymax = Calvin_per_lightrxns_mean + Calvin_per_lightrxns_SE))
+x <- x + ylab('Calvin cycle / Light reactions abundance') + xlab('Mean annual irradiance MJ M-2 yr^-1')
+x <- x + theme_bw()
+x <- x + theme(panel.grid.major = element_blank(),
                panel.grid.minor = element_blank(), 
                legend.title=element_blank(),
                legend.position="bottom",
+               #   text = element_text(size = 18),
                axis.line = element_line(colour = "black"))
-h
+x
+dev.off()
+
+
+
+# large and small subunit molar ratios
+
+source('scripts/transformations.R')
+#source('scripts/prep_data_mg_per_mm2.R')
+
+
+rbL <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.c03525.1.p', # rubisco large subunit
+                                                             'tr|t1qkk4|t1qkk4_eucgl'),]
+rbL <- melt(rbL)
+rbL <- rbL %>% dplyr::group_by(variable) %>% dplyr::summarise(rbL_sum = sum(value))
+
+rbS <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.j01502.1.p', 'eucgr.j01502.2.p', 'eucgr.c00150.1.p', 'eucgr.b03013.1.p', 'eucgr.k02223.1.p'),] # small subunit of rubisco
+rbS <- melt(rbS)
+
+rbS <- rbS %>% dplyr::group_by(variable) %>% dplyr::summarise(rbS_sum = sum(value))
+
+bla <- merge(rbS,rbL)
+
+plot(bla$rbS_sum, bla$rbL_sum)
+
+mean(bla$rbS_sum/bla$rbL_sum)
+CV(bla$rbS_sum/bla$rbL_sum)
 
 
 
 
+
+
+
+
+
+plot(bla$rb_act ~ bla$rb_largesub)
+summary(lm(bla$rb_act ~ bla$rb_largesub))
+
+plot(bla$rb_act ~ bla$eucgr.f01476.1.p, xlab = 'PGK')
+summary(lm(bla$rb_act ~ bla$eucgr.f01476.1.p))
+     
+bla$Calv_ex_RBA <- bla$Calvin_cycle - bla$rb_act
+bla$Calv_ex_rb_ex_rbact <- bla$Calv_ex_rb - bla$Rubisco
+plot(bla$rb_act ~ bla$Calv_ex_rb, xlab = 'Calvin ex rbact')
+summary(lm(bla$rb_act ~ bla$Calv_ex_rb))
+
+plot(bla$rb_act ~ bla$Calv_ex_rb_ex_rbact, xlab = 'Calvin ex rbact ex rubisco')
+summary(lm(bla$rb_act ~ bla$Calv_ex_rb_ex_rbact))
+
+
+
+plot(data_means$rbact_mean/data_means$Calv_ex_rubisco ~ data_means$tavg)
+
+ggplot(data_means, aes(x = tavg, y = rbact_per_PGK)) + geom_point() + geom_smooth(method = 'lm', formula = y ~ x) 
+
+bla <- lm(data_means$rbact_per_PGK ~ data_means$tavg)
+bla2 <- lm(data_means$rbact_per_PGK ~ data_means$Rubisco_mean + data_means$tavg)
+AIC(bla,bla2)
+
+summary(bla)
+summary(bla2)
+
+        
+#data_means$photoresp_per_crack <- data_means$Photorespiration_mean / data_means$Calv_ex_rbact_ex_rbc_ex_chap
+data_means$photoresp_per_crack <- data_means$PGLP_mean / data_means$PRK_mean
+
+
+
+
+plot(data_means$photoresp_per_crack ~ data_means$tavg)
+abline(lm(data_means$photoresp_per_crack ~ data_means$tavg))
+summary(lm(data_means$photoresp_per_crack ~ data_means$tavg))
+
+plot(data_means$photoresp_per_crack ~ log10(data_means$prec))
+summary(lm(data_means$photoresp_per_crack ~ log10(data_means$prec)))
+
+plot(data_means$photoresp_per_crack ~ data_means$alpha)
+summary(lm(data_means$photoresp_per_crack ~ data_means$alpha))
+
+plot(data_means$photoresp_per_crack ~ data_means$d13C)
+summary(lm(data_means$photoresp_per_crack ~ data_means$d13C))
+
+plot(PGLP_mean/PRK_mean, data_means)
+summary(lm(PGLP_mean ~ PRK_mean, data_means))
+
+
+bla <- lm(scale(photoresp_per_crack) ~ scale(tavg) + scale(log10(prec)) + scale(LMA_g_per_m2), data_means)
+summary(bla)
+
+require(MuMIn)
+
+dredge(bla)
+
+bla <- varpart(data_means$photoresp_per_crack, 
+               ~tavg,
+               ~log10(prec),
+               ~LMA_g_per_m2,
+              data=data_means)
+bla
+plot(bla)
+
+
+
+ggplot(data_means, aes(y = PGLP_mean, x = PRK_mean)) + geom_smooth(method = 'lm') + geom_point(size = 5, aes(colour = tavg)) + scale_colour_gradientn(colours=c('cyan', 'red')) 
+
+bla <- lm(PGLP_mean ~ PRK_mean, data_means)
+summary(bla)
+
+cor(data_means$PGLP_mean, data_means$PRK_mean)

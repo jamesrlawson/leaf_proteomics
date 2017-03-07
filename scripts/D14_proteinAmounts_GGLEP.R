@@ -16,26 +16,25 @@ source('scripts/functions.R')
    # GGLEP <- GGLEP %>% summarise_at(vars(10:323), top2)
   
   # find protein areas relative to GGLEP area
-    # protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP))) 
+    # protein_areas[,2:ncol(protein_areas)] <- t(t(protein_areas[,2:ncol(protein_areas)])/as.vector(t(GGLEP))) 
   
     #ovalb <- protein_areas[protein_areas$Protein == "sp|OVAL_CHICK",] # or use ovalb top2top3
-    #protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(ovalb[,2:315]))) 
+    #protein_areas[,2:ncol(protein_areas)] <- t(t(protein_areas[,2:ncol(protein_areas)])/as.vector(t(ovalb[,2:ncol(ovalb)]))) 
   
   # find protein areas relative to GGLEP/DEDT averaged area
   
     # get GGLEP/DEDT top2/top2avg
     
     GGLEP_DEDT <- ion_areas[ion_areas$Peptide %in% c('GGLEPINFQTAADQAR', 'DEDTQAMPFR'),]
-    GGLEP_DEDT <- GGLEP_DEDT %>% group_by(Peptide) %>% summarise_at(vars(10:323), top2)
-    GGLEP_DEDT <- data.frame(t(rowMeans(t(GGLEP_DEDT[,2:315]))))
+    GGLEP_DEDT <- GGLEP_DEDT %>% group_by(Peptide) %>% summarise_at(vars(10:ncol(GGLEP_DEDT)), top2)
     
-    protein_areas[,2:315] <- t(t(protein_areas[,2:315])/as.vector(t(GGLEP_DEDT))) 
+    GGLEP_DEDT <- data.frame(t(rowMeans(t(GGLEP_DEDT[,2:ncol(GGLEP_DEDT)]))))
+    
+    protein_areas[,2:ncol(protein_areas)] <- t(t(protein_areas[,2:ncol(protein_areas)])/as.vector(t(GGLEP_DEDT))) 
   
   # multiply by 5.64x10^-11 (2.5 * 10^-6 g/cm2 / MW of ovalbumin - 44287) to get moles per cm2
   
-  protein_areas[,2:315] <- protein_areas[,2:315]*(5.64e-11)
-  
-  protein_areas[,2:315] <- protein_areas[,2:315]*10000 # (to convert moles/cm2 to moles/m2)
+  protein_areas[,2:ncol(protein_areas)] <- protein_areas[,2:ncol(protein_areas)]*(5.64e-11)
   
   
   write_csv(protein_areas, "data/D14_protein_moles_GGLEP-DEDT.csv")
@@ -56,9 +55,9 @@ source('scripts/functions.R')
   
   protein_amounts <- protein_areas
   
-  protein_amounts[,2:315] <- protein_amounts[,2:315] * protein_MW$MW # multiply by MW to get g/cm2
+  protein_amounts[,2:ncol(protein_amounts)] <- protein_amounts[,2:ncol(protein_amounts)] * protein_MW$MW # multiply by MW to get g/cm2
   
-  protein_amounts[,2:315] <- protein_amounts[,2:315] * (1e07) # multiply by 10^07 to get mg/m2
+  protein_amounts[,2:ncol(protein_amounts)] <- protein_amounts[,2:ncol(protein_amounts)] * (10^7) # multiply by 10^07 to get mg/m2
   
   
   write_csv(protein_amounts,"data/D14_protein_GGLEP-DEDT.csv")
@@ -75,7 +74,7 @@ source('scripts/functions.R')
     
     quality_check <- protein_amounts[protein_amounts$Protein=="sp|OVAL_CHICK",]
     
-    blah <- data.frame(t(quality_check[,2:315]))
+    blah <- data.frame(t(quality_check[,2:ncol(quality_check)]))
     blah$sample <- rownames(blah)
     names(blah)[1] <- 'ovalb_amount_MS_mg_per_m2'
     

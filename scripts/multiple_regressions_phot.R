@@ -5,7 +5,7 @@ source('scripts/transformations.R')
 source('scripts/prep_data.R')
 
 
-data_means <- data %>% group_by(ID) %>% summarise(mean = mean(Photosystems, na.rm=TRUE),
+data_means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(mean = mean(Photosystems, na.rm=TRUE),
                                                           SE = SE(Photosystems))
 data_means <- merge(data, data_means)
 data_means <- distinct(data_means, ID, .keep_all = TRUE)
@@ -185,13 +185,82 @@ summary(envcors.pca)
 biplot(envcors.pca)
 
 
+# Photosystems with PSI and PSII added
+
+data_means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(mean = mean(Photosystems, na.rm=TRUE),
+                                                                SE = SE(Photosystems),
+                                                                meanPSI = mean(PSI, na.rm=TRUE),
+                                                                meanPSII = mean(PSII, na.rm=TRUE))
+data_means <- merge(data, data_means)
+data_means <- distinct(data_means, ID, .keep_all = TRUE)
+
+
+g <- ggplot(data_means, aes(y = mean, x = gap_mean)) + geom_point() + geom_smooth(method = 'lm', se=FALSE) +xlab('gap mean') +ylab('Photosystems mg/m2')
+g <- g + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), alpha = 0.8)
+g <- g + geom_smooth(aes(y = meanPSI, x = gap_mean), method = 'lm', se = FALSE, colour = 'red')
+g <- g + geom_smooth(aes(y = meanPSII, x = gap_mean), method = 'lm', se = FALSE, colour = 'green')
+
+g
+
+
+## Photosystems vs total protein, colour scaled
+
+source('scripts/prep_data_mg_per_mm2.R')
+
+x <- ggplot(data, aes(x = total_protein, y = Photosystems)) + geom_point(aes(colour = gap)) + scale_colour_gradientn('canopy openness', colours=rainbow(2))
+x <- x + ylab('Photosystem protein abundance (mg/mm2)') + xlab('Total protein abundance (mm2/mg)')
+x <- x + theme_bw() + theme(axis.line = element_line(colour = "black"),
+                            panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(),
+                            panel.border = element_blank(),
+                            panel.background = element_blank(),
+                            legend.position="top"
+)
+x
+
+x <- ggplot(data, aes(x = total_protein, y = Calvin_cycle)) + geom_point(aes(colour = log10(pdmt))) + scale_colour_gradientn('Mean precip in driest month (log10)', colours=rainbow(2))
+x <- x + ylab('Calvin cycle protein abundance (mg/mm2)') + xlab('Total protein abundance (mm2/mg)')
+x <- x + theme_bw() + theme(axis.line = element_line(colour = "black"),
+                            panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(),
+                            panel.border = element_blank(),
+                            panel.background = element_blank(),
+                            legend.position="top"
+)
+x
+
+# total protein varparts
+
+total_protein.varpart <- varpart(data$total_protein_mean,
+                                 ~N_per_area,
+                                 ~LMA_g_per_m2,
+                                 ~log10(pwmt),
+                                 ~tavg,
+                                 data = data)
+total_protein.varpart
+plot(total_protein.varpart)
+
+bla <- lm(total_protein_mean ~ LMA_g_per_m2 + tavg, data)
+bla1 <- lm(total_protein_mean ~ LMA_g_per_m2 * tavg, data)
+bla2 <- lm(total_protein_mean ~ LMA_g_per_m2, data)
+bla3 <- lm(total_protein_mean ~ tavg, data)
+bla4 <- lm(total_protein_mean ~ tavg + log10(pwmt), data) 
+bla5 <- lm(total_protein_mean ~ LMA_g_per_m2 + tavg + log10(pwmt), data) 
+bla6 <- lm(total_protein_mean ~ LMA_g_per_m2 + tavg * log10(pwmt), data) 
+bla7 <- lm(total_protein_mean ~ LMA_g_per_m2 * tavg * log10(pwmt), data) 
+  
+AICc(bla,bla1,bla2,bla3,bla4,bla5,bla6,bla7)
+
+summary(lm(scale(total_protein_mean) ~ scale(LMA_g_per_m2) + scale(tavg) + scale(log(pwmt)), data))
+summary(lm(scale(total_protein_mean) ~ scale(LMA_g_per_m2) +  scale(log(pwmt)) * scale(tavg) , data))
+
 
 
 ##### rubisco standardised by Photosystems amounts #####
 # all being equal, calvin cycle amounts should stay constant for a given rubisco activity
 # so to respond to reduced CO2 availability at lower rainfall, rubisco proportion of calvin cycle should increase
 
-source('scripts/prep_data_.R')
+source('scripts/prep_data_mg_per_mm2.R')
 
 data$rubisco_stand <- data$Rubisco / data$Photosystems
 
@@ -203,3 +272,8 @@ data_means <- distinct(data_means, ID, .keep_all = TRUE)
 plot(rubisco_stand ~ gap, data_means)
 abline(lm(rubisco_stand ~ gap, data_means))
 summary(lm(rubisco_stand ~ gap, data_means))
+
+
+
+
+

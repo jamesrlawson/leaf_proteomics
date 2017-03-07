@@ -217,4 +217,18 @@ x <- x + theme_bw() + theme(axis.line = element_line(colour = "black"),
 x
 
 
+# calvin cycle vs pdmt with rubisco added in
 
+data_means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(mean = mean(Calvin_cycle, na.rm=TRUE),
+                                                                SE = SE(Calvin_cycle),
+                                                                meanRb = mean(Rubisco, na.rm=TRUE))
+                                                                
+data_means <- merge(data, data_means)
+data_means <- distinct(data_means, ID, .keep_all = TRUE)
+
+
+g <- ggplot(data_means, aes(y = mean, x = pdmt)) + geom_point() + geom_smooth(method = 'lm', se=FALSE) +xlab('gap mean') +ylab('Photosystems mg/m2')
+g <- g + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), alpha = 0.8)
+g <- g + geom_smooth(aes(y = meanRb, x = pdmt), method = 'lm', se = FALSE, colour = 'red')
+
+g

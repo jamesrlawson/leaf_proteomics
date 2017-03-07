@@ -708,3 +708,115 @@ regression_agg_ <- function(data, indepvar, logx = FALSE) {
   return(bla)
   
 }
+
+
+
+
+agg_plot_save <- function(data, depvar, indepvar, logx = FALSE, proportion, indepvarType, labs) {
+  
+  # labs should contain: 
+  #   a pretty form of the dependent variable (labs[1])
+  #   the x axis label (labs[2])
+  
+  require(lazyeval)
+  
+  dep_means <- data %>%
+    group_by(ID) %>%
+    summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
+               SE = lazyeval::interp(~SE(var), var = as.name(depvar))) %>%
+    full_join(data, by = 'ID')  %>%
+    distinct(mean, .keep_all=TRUE) 
+  
+  if(logx) {
+    
+    model <- summary(lm(dep_means$mean ~ log10(dep_means[[indepvar]])))
+    
+  } else {
+    
+    model <- summary(lm(dep_means$mean ~ dep_means[[indepvar]]))
+    
+  }
+  
+  
+  # directory to save to
+  
+  mainDir <- getwd()
+  subDir <- 'docs/manuscripts/euc manuscript/figs/polished'
+  
+  if (!file.exists(subDir)){
+    dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+  }
+  
+  svg(paste(subDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.svg', sep = ""), height = 6, width = 6*1.618)
+  
+  p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
+  
+  if(model$coefficients[,4][2] < 0.05) {
+    p <- p + geom_smooth(method = 'lm', se = F, colour = 'black')
+  }
+  
+  if(proportion) {
+    p <- p + xlab(labs[2]) +  ylab(paste('Species mean of ', labs[1], ' (proportion)', sep = ""))
+  } else {
+    p <- p + xlab(labs[2]) +  ylab(bquote('Species mean of' ~ .(labs[1]) ~ '(mg / ' ~ m^{2} ~ ')'))
+   
+  }
+  
+  #bquote('Assimilation ('*mu~ 'mol' ~CO[2]~ m^-2~s^-1*')')  
+  
+  p <- p + expand_limits(y=0)
+  
+  p <- p + theme_bw()
+  p <- p + theme(panel.grid.major = element_blank(),
+                 panel.grid.minor = element_blank(), 
+                 legend.title=element_blank(),
+                 legend.position="bottom",
+                 axis.line = element_line(colour = "black"),
+                 text = element_text(size = 16))
+  
+  number_ticks <- function(n) {function(limits) pretty(limits, n)}
+  
+  if(logx) {
+    
+    errorbar_width <- (log10(max(data[[indepvar]], na.rm=TRUE)) - log10(min(data[[indepvar]], na.rm=TRUE))) / 50
+    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
+    
+    if(indepvarType == 'gap') {
+      
+      p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE), alpha = 0.6)
+      
+    } else { if(indepvarType == 'leafrad') {
+      
+      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = gap_mean + gap_SE), alpha = 0.6)
+      
+    }
+    }
+    
+    p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10),trans='log10')
+    
+  } else {
+    
+    errorbar_width <- (max(data[[indepvar]], na.rm=TRUE) - min(data[[indepvar]], na.rm=TRUE)) / 50
+    p <- p + geom_errorbar(aes(ymin = mean - SE, ymax = mean + SE), width = errorbar_width, alpha = 0.8)
+    
+    if(indepvarType == 'gap') {
+      
+      p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE), alpha = 0.6)
+      
+    } else { if(indepvarType == 'leafrad') {
+      
+      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE), alpha = 0.6)
+      
+    }
+      
+    }
+    
+    p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
+    
+  }
+  
+  print(p)
+  
+  dev.off()
+  
+}
