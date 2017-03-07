@@ -711,15 +711,29 @@ regression_agg_ <- function(data, indepvar, logx = FALSE) {
 
 
 
+# this function outputs a pretty aggregated plot to your directory of choice
 
-agg_plot_save <- function(data, depvar, indepvar, logx = FALSE, proportion, indepvarType, labs) {
+agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarType, labs) {
   
-  # labs should contain: 
+  # data - the output of scripts/prep_data.R or sources/prep_data_mg_per_mm2.R (contains all climate/env variables and protein amounts)
+  # depvar - the dependent variable (e.g. 'Photosystems')
+  # indepvar - the independent variable (e.g. 'prec')
+  # logx - should x be logged? (x axis to be printed as log scaled)
+  # proportion - does the y axis label describe proportions or mg/mm2 ?
+  # indepvarType - standard, gap or leafrad (to use appropriate horizontal error bars - standard uses none)
+  # labs - should contain: 
   #   a pretty form of the dependent variable (labs[1])
   #   the x axis label (labs[2])
   
   require(lazyeval)
   
+  
+  if(proportion) {
+    source('scripts/prep_data.R')
+      } else {
+          source('scripts/prep_data_mg_per_mm2.R')
+  }
+
   dep_means <- data %>%
     group_by(ID) %>%
     summarise_(mean = interp(~mean(var, na.rm=TRUE), var = as.name(depvar)),
@@ -752,13 +766,13 @@ agg_plot_save <- function(data, depvar, indepvar, logx = FALSE, proportion, inde
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   
   if(model$coefficients[,4][2] < 0.05) {
-    p <- p + geom_smooth(method = 'lm', se = F, colour = 'black')
+    p <- p + geom_smooth(method = 'lm', se = F, colour = 'black', size = 0.5)
   }
   
   if(proportion) {
-    p <- p + xlab(labs[2]) +  ylab(paste('Species mean of ', labs[1], ' (proportion)', sep = ""))
+    p <- p + xlab(labs[2]) +  ylab(paste(labs[1], ' (proportion)', sep = ""))
   } else {
-    p <- p + xlab(labs[2]) +  ylab(bquote('Species mean of' ~ .(labs[1]) ~ '(mg / ' ~ m^{2} ~ ')'))
+    p <- p + xlab(labs[2]) +  ylab(bquote(.(labs[1]) ~ '(mg / ' ~ m^{2} ~ ')'))
    
   }
   
@@ -787,7 +801,7 @@ agg_plot_save <- function(data, depvar, indepvar, logx = FALSE, proportion, inde
       
     } else { if(indepvarType == 'leafrad') {
       
-      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = gap_mean + gap_SE), alpha = 0.6)
+      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE), alpha = 0.6)
       
     }
     }
