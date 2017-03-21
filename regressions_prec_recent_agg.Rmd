@@ -1,4 +1,4 @@
-## Linear regressions: relative [protein] vs. precip over last year (mm)
+## Linear regressions: relative [protein] vs. precip over last month (mm)
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
@@ -13,7 +13,7 @@ require(dplyr)
 require(lazyeval)
 source('scripts/prep_data.R')
 
-tab <- regression_agg(data, 'prec_recent', logx=TRUE)
+tab <- regression_agg(data, 'prec_recent_month', logx=FALSE)
 
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'prec_recent', logx=TRUE, labs = 'Precip over last year (log10(mm))')
+  agg_plot(data, depvar = i, indepvar = 'prec_recent_month', logx=FALSE, labs = 'Precip over last month (log10(mm))')
   
 }
 

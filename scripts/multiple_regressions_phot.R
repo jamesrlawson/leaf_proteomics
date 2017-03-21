@@ -6,7 +6,9 @@ source('scripts/prep_data.R')
 
 
 data_means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(mean = mean(Photosystems, na.rm=TRUE),
-                                                          SE = SE(Photosystems))
+                                                          SE = SE(Photosystems),
+                                                          N_per_area_mean = mean(N_per_area, na.rm=TRUE),
+                                                          LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE))
 data_means <- merge(data, data_means)
 data_means <- distinct(data_means, ID, .keep_all = TRUE)
 
@@ -231,7 +233,7 @@ x
 
 # total protein varparts
 
-total_protein.varpart <- varpart(data$total_protein_mean,
+total_protein.varpart <- varpart(data$total_protein,
                                  ~N_per_area,
                                  ~LMA_g_per_m2,
                                  ~log10(pwmt),
@@ -240,14 +242,14 @@ total_protein.varpart <- varpart(data$total_protein_mean,
 total_protein.varpart
 plot(total_protein.varpart)
 
-bla <- lm(total_protein_mean ~ LMA_g_per_m2 + tavg, data)
-bla1 <- lm(total_protein_mean ~ LMA_g_per_m2 * tavg, data)
-bla2 <- lm(total_protein_mean ~ LMA_g_per_m2, data)
-bla3 <- lm(total_protein_mean ~ tavg, data)
-bla4 <- lm(total_protein_mean ~ tavg + log10(pwmt), data) 
-bla5 <- lm(total_protein_mean ~ LMA_g_per_m2 + tavg + log10(pwmt), data) 
-bla6 <- lm(total_protein_mean ~ LMA_g_per_m2 + tavg * log10(pwmt), data) 
-bla7 <- lm(total_protein_mean ~ LMA_g_per_m2 * tavg * log10(pwmt), data) 
+bla <- lm(total_protein ~ LMA_g_per_m2 + tavg, data)
+bla1 <- lm(total_protein ~ LMA_g_per_m2 * tavg, data)
+bla2 <- lm(total_protein ~ LMA_g_per_m2, data)
+bla3 <- lm(total_protein ~ tavg, data)
+bla4 <- lm(total_protein ~ tavg + log10(pwmt), data) 
+bla5 <- lm(total_protein ~ LMA_g_per_m2 + tavg + log10(pwmt), data) 
+bla6 <- lm(total_protein ~ LMA_g_per_m2 + tavg * log10(pwmt), data) 
+bla7 <- lm(total_protein ~ LMA_g_per_m2 * tavg * log10(pwmt), data) 
   
 AICc(bla,bla1,bla2,bla3,bla4,bla5,bla6,bla7)
 
@@ -255,6 +257,17 @@ summary(lm(scale(total_protein_mean) ~ scale(LMA_g_per_m2) + scale(tavg) + scale
 summary(lm(scale(total_protein_mean) ~ scale(LMA_g_per_m2) +  scale(log(pwmt)) * scale(tavg) , data))
 
 
+total_protein.varpart <- varpart(data_means$total_protein_mean,
+                                 ~N_per_area_mean,
+                                 ~LMA_mean,
+                                 ~log10(pwmt),
+                                 ~tavg,
+                                 data = data_means)
+total_protein.varpart
+plot(total_protein.varpart)
+
+cor(data_means$total_protein_mean, data_means$N_per_area_mean)
+cor(data_means$total_protein_mean, data_means$LMA_mean)
 
 ##### rubisco standardised by Photosystems amounts #####
 # all being equal, calvin cycle amounts should stay constant for a given rubisco activity

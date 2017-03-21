@@ -713,7 +713,7 @@ regression_agg_ <- function(data, indepvar, logx = FALSE) {
 
 # this function outputs a pretty aggregated plot to your directory of choice
 
-agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarType, labs) {
+agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarType, labs, outDir, fileType = 'svg', goldenRatio = FALSE) {
   
   # data - the output of scripts/prep_data.R or sources/prep_data_mg_per_mm2.R (contains all climate/env variables and protein amounts)
   # depvar - the dependent variable (e.g. 'Photosystems')
@@ -724,9 +724,10 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   # labs - should contain: 
   #   a pretty form of the dependent variable (labs[1])
   #   the x axis label (labs[2])
+  # outdir - directory to output to
+  # golden ratio - plot dimensions golden ratio?
   
   require(lazyeval)
-  
   
   if(proportion) {
     source('scripts/prep_data.R')
@@ -754,14 +755,30 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   
   # directory to save to
   
-  mainDir <- getwd()
-  subDir <- 'docs/manuscripts/euc manuscript/figs/polished'
   
-  if (!file.exists(subDir)){
-    dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+  mainDir <- getwd()
+  outDir
+  
+  if (!file.exists(outDir)){
+    dir.create(file.path(mainDir, outDir), showWarnings = FALSE)
   }
   
-  svg(paste(subDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.svg', sep = ""), height = 6, width = 6*1.618)
+  if(goldenRatio) {
+    Width = 6*1.618
+  } else {
+    Width = 6
+  }
+    
+  
+  if(fileType == 'svg'){
+    svg(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.svg', sep = ""), height = 6, width = Width)
+  } else {
+    if(fileType == 'tiff') {
+      tiff(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.tiff', sep = ""), height = 6, width = Width, units = 'in', res = 600)
+    }
+  }
+    
+  # plot object
   
   p <- ggplot(dep_means, aes(y = mean, x = dep_means[[indepvar]])) + geom_point(size = 2)
   
@@ -786,7 +803,7 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
                  legend.title=element_blank(),
                  legend.position="bottom",
                  axis.line = element_line(colour = "black"),
-                 text = element_text(size = 16))
+                 text = element_text(size = 18))
   
   number_ticks <- function(n) {function(limits) pretty(limits, n)}
   

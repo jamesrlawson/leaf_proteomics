@@ -102,13 +102,21 @@ licor <- licor[licor$Cond > 0.05,]
 
 #climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
 
-# leaf_CN
+# leaf_CNP
 
 leaf_CN <- read_csv('data/leaf_CNP/leaf_CN.csv')
 leaf_CN <- leaf_CN[leaf_CN$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
 
 climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
+
+
+leaf_P <- read_csv('data/leaf_CNP/leaf_P.csv')
+leaf_P <- leaf_P[leaf_P$sample %in% climate_locs$sample,]
+climate_locs <- merge(leaf_P, climate_locs, all.y=TRUE, by = 'sample')
+
+climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
+
 
 # leaf age 
 

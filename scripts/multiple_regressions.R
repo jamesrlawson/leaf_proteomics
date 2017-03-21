@@ -6,7 +6,8 @@ source('scripts/prep_data.R')
 
 
 data_means <- data %>% group_by(ID) %>% summarise(mean = mean(Photosystems, na.rm=TRUE),
-                                                          SE = SE(Photosystems))
+                                                          SE = SE(Photosystems),
+                                                  N_per_area_mean = mean(N_per_area))
 data_means <- merge(data, data_means)
 data_means <- distinct(data_means, ID, .keep_all = TRUE)
 
@@ -96,6 +97,14 @@ summary(p)
 
 y = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(log10(data_means$prec))
 x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(log10(data_means$prec))
+
+(x - y)/x
+
+p <- lm(total_protein_mean ~ log10(pwmt), data_means)
+summary(p)
+
+y = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(log10(data_means$pwmt))
+x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(log10(data_means$pwmt))
 
 (x - y)/x
 
