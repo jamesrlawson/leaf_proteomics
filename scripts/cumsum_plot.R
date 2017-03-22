@@ -25,13 +25,16 @@ all_protein <- rbind(all_protein, do.call(rbind, my.list))
 blax <- all_protein %>% dplyr::group_by(rank) %>% dplyr::summarise(mean_cumsum = mean(cumsum), SE_cumsum = SE(cumsum))
 blax$maxcumsum <- max(blax$mean_cumsum)
 
-ggplot(blax, aes(x = rank, y = mean_cumsum/maxcumsum)) + geom_point(size = 0.1, alpha = 0.1) + 
+cumsumplot <- ggplot(blax, aes(x = rank, y = mean_cumsum/maxcumsum)) + geom_point(size = 0.1, alpha = 0.1) + 
   geom_ribbon(aes(ymin=mean_cumsum/maxcumsum - SE_cumsum/maxcumsum, ymax = mean_cumsum/maxcumsum + SE_cumsum/maxcumsum), alpha = 0.3) 
 
 
 
 
 ## cumsums for functional categories
+
+# find the ranks of proteins for a given functional group?
+# then for each rank represented by the func group of choice, find the proportion of maxcumsum accounted for by the cumsum of yer functional group
 
 protein_samples <- protein_samples_D14
 
@@ -56,26 +59,62 @@ for(i in 1:length(bin_arch.list)) {
 
 
 
+
+for(i in 1:length(unique(all_protein$sample))) {
+  
+  sample_subset <- all_protein[all_protein$sample %in% all_protein$sample[i],]
+  
+  func_group_prots <- c(protein_samples[grepl('_1.1.1', protein_samples$bin_arch),]$Protein, protein_samples[grepl('_1.1.2', protein_samples$bin_arch),]$Protein) # photosystems
+  
+#  func_group_prots <- protein_samples[grepl('_1.1', protein_samples$bin_arch),]$Protein # Light reactions
+  
+#  func_group_prots <- protein_samples[grepl('_1.3', protein_samples$bin_arch),]$Protein # Calvin_cycle
+  
+  
+  subset_proteins <- intersect(sample_subset$Protein, func_group_prots)
+  
+  bla <- sample_subset[sample_subset$Protein %in% subset_proteins,]
+  
+  bla$cumsum <- cumsum(bla$amount)
+  
+ # bla$total_cumsum <- blax[blax$rank %in% bla$rank,]$mean_cumsum
+  
+  all_protein_samplesub <- all_protein[all_protein$sample %in% all_protein$sample[i],]
+  
+  bla$total_cumsum <- all_protein_samplesub[all_protein_samplesub$rank %in% bla$rank,]$cumsum
+  
+  bla$proportion_of_total <- bla$cumsum / bla$total_cumsum
+  
+  plot(proportion_of_total ~ rank, bla)
+  
+  my.list[[i-1]] <- rank_subset
+  
+}
+
+
+
+
+####
 for(i in 1:length(unique(all_protein$sample))) {
   
   sample_subset <- all_protein[all_protein$sample %in% all_protein$sample[i],]
   
   func_group_prots <- protein_samples[grepl('_1.1', protein_samples$bin_arch),]$Protein
-
+  
   for(i in 1:max(all_protein$rank))
-  
+    
     rank_group <- c(1:i) # I don't think I even need the rank group, I can just redo the cumsums for the intersect(sample_subset$Protein , func_group_prots)
-                         # check out the rank_subset output df
-    rank_subset_proteins <- intersect(sample_subset[sample_subset$rank %in% rank_group,]$Protein, func_group_prots)
-    
-    rank_subset <- sample_subset[sample_subset$Protein %in% rank_subset_proteins,]
+  # check out the rank_subset output df
+  rank_subset_proteins <- intersect(sample_subset[sample_subset$rank %in% rank_group,]$Protein, func_group_prots)
   
-    rank_subset$cumsum <- cumsum(rank_subset$amount)
-    
+  rank_subset <- sample_subset[sample_subset$Protein %in% rank_subset_proteins,]
+  
+  rank_subset$cumsum <- cumsum(rank_subset$amount)
+  
   my.list[[i-1]] <- rank_subset
   
 }
-
+####
 
 
 
