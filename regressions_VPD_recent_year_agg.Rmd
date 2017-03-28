@@ -1,4 +1,4 @@
-## Linear regressions: relative [protein] vs. vapour pressure in last year (HPa)
+## Linear regressions: relative [protein] vs. mean vapour pressure deficit in last year (HPa)
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
@@ -13,7 +13,7 @@ require(dplyr)
 require(lazyeval)
 source('scripts/prep_data.R')
 
-tab <- regression_agg(data, 'VP_recent_year', logx=FALSE)
+tab <- regression_agg(data, 'VPD_recent_year', logx=FALSE)
 
 kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
@@ -27,7 +27,7 @@ modelorder <- read_csv('output/modelorder.csv')
 
 for(i in modelorder$submodel) {
   
-  agg_plot(data, depvar = i, indepvar = 'VP_recent_year', logx=FALSE, labs = 'vapour pressure in last year (HPa)')
+  agg_plot(data, depvar = i, indepvar = 'VPD_recent_year', logx=FALSE, labs = 'mean vapour pressure deficit in last year (HPa)')
   
 }
 
