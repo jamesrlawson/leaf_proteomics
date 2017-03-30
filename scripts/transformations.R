@@ -125,6 +125,9 @@ climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
 climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
 
 
+
+
+
 leaf_P <- read_csv('data/leaf_CNP/leaf_P.csv')
 leaf_P <- leaf_P[leaf_P$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_P, climate_locs, all.y=TRUE, by = 'sample')
@@ -172,7 +175,7 @@ climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
   
   chl <- na.omit(read_csv('data/chlorophyll.csv'))
   chl <- chl[chl$sample %in% protein_D14$sample,]
-#  climate_locs <- merge(chl, climate_locs, by = 'sample')
+ # climate_locs <- merge(chl, climate_locs, by = 'sample')
   
  
   
@@ -196,7 +199,18 @@ climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
   leafrad_mean <- climate_locs %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   climate_locs <- merge(climate_locs, leafrad_mean)
   
-
+  # calculate LMA mean and LMA SE
+  
+  LMA_mean <- climate_locs %>% group_by(ID) %>% summarise(LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE), LMA_SE = SE(LMA_g_per_m2))
+  climate_locs <- merge(climate_locs, LMA_mean)
+  
+  # calculate N_per_area mean and SE
+  
+  Narea_mean <- climate_locs %>% group_by(ID) %>% summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area))
+  climate_locs <- merge(climate_locs, Narea_mean)
+  
+  
+  
   soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
   soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
     filter(soil_P < 1500)
@@ -210,36 +224,41 @@ climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
  
  # delta C 13
  
- d13C <- read_csv('data/d13C.csv')
- d13C <- d13C[d13C$sample %in% protein_D14$sample,]
- climate_locs <- merge(d13C, climate_locs, by = 'sample', all=TRUE)
+ #d13C <- read_csv('data/d13C.csv')
+ #d13C <- d13C[d13C$sample %in% protein_D14$sample,]
+ #climate_locs <- merge(d13C, climate_locs, by = 'sample', all=TRUE)
  
- id <- unique(climate_locs$ID)
+ #id <- unique(climate_locs$ID)
  
 # fill in values so d13C for all leaf ages of a branch = mid value
  
- for(i in 1:length(id)) {
+# for(i in 1:length(id)) {
    
-   for(j in 1:3) {
+#   for(j in 1:3) {
      
-    temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
+#    temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
      
-     if(any(temp$leaf_age %in% 'mid')) {
+#     if(any(temp$leaf_age %in% 'mid')) {
        
-       temp[temp$leaf_age %in% 'mid',]$d13C
+#       temp[temp$leaf_age %in% 'mid',]$d13C
        
-       climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
+#       climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
        
-     }
+#     }
      
      
-   }
+#   }
    
- }
+# }
  
  
  climate_locs$ID <- NULL
 # climate_locs <- na.omit(climate_locs)
+ 
+ climate_locs <- climate_locs[!climate_locs$leaf_age %in% 'sen',]
+ 
+ protein_D14 <- na.omit(protein_D14)
+ protein_stand_D14 <- na.omit(protein_stand_D14)
  
  
  

@@ -1,5 +1,7 @@
 # sourced by binProteins.R
 
+require(readr)
+
 SE <- function(x) {
   x <- sd(x, na.rm=TRUE) / sqrt(length(x))
 }
@@ -133,9 +135,16 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   electron_transport_minATPsynth <- ddply(na.omit(electron_transport_minATPsynth), .(sample), summarise, sum = sum(sum))
   electron_transport_minATPsynth$bin_arch <- '_1.1.3_+_1.1.5_+_1.1.6_'
   
-  protein_bins <- rbind(protein_bins[,c('bin_arch','sample','sum')], rubisco, photosystems, TCA_orgtrans, redox, electron_transport_minATPsynth)
-  rm(rubisco,photosystems,TCA_orgtrans,redox, electron_transport_minATPsynth)
+  CHO_metabolism <- protein_bins[protein_bins$bin_arch %in% c('_2_', '_3_'),]
+  CHO_metabolism <- ddply(na.omit(CHO_metabolism), .(sample), summarise, sum = sum(sum))
+  CHO_metabolism$bin_arch <- '_2_+_3_'
+  
+  
+  protein_bins <- rbind(protein_bins[,c('bin_arch','sample','sum')], rubisco, photosystems, TCA_orgtrans, redox, electron_transport_minATPsynth, CHO_metabolism)
+  rm(rubisco,photosystems,TCA_orgtrans,redox, electron_transport_minATPsynth, CHO_metabolism)
   protein_bins$sample <- as.character(protein_bins$sample)
+  
+  protein_bins[!protein_bins$sample %in% c('BINCODE','NAME'),]
   
   # merge in bin names from mercator_bins
   
@@ -713,7 +722,7 @@ regression_agg_ <- function(data, indepvar, logx = FALSE) {
 
 # this function outputs a pretty aggregated plot to your directory of choice
 
-agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarType, labs, outDir, fileType = 'svg', goldenRatio = FALSE) {
+agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarType, labs, outDir, fileType = 'tiff', goldenRatio = FALSE) {
   
   # data - the output of scripts/prep_data.R or sources/prep_data_mg_per_mm2.R (contains all climate/env variables and protein amounts)
   # depvar - the dependent variable (e.g. 'Photosystems')
@@ -760,7 +769,7 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   outDir
   
   if (!file.exists(outDir)){
-    dir.create(file.path(mainDir, outDir), showWarnings = FALSE)
+    dir.create(file.path(mainDir, outDir), showWarnings = FALSE, recursive = TRUE)
   }
   
   if(goldenRatio) {
@@ -774,7 +783,7 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
     svg(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.svg', sep = ""), height = 6, width = Width)
   } else {
     if(fileType == 'tiff') {
-      tiff(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.tiff', sep = ""), height = 6, width = Width, units = 'in', res = 600)
+      tiff(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.tiff', sep = ""), height = 6, width = Width, units = 'in', res = 300)
     }
   }
     
@@ -797,10 +806,8 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   
   p <- p + expand_limits(y=0)
   
-  p <- p + theme_bw()
-  p <- p + theme(panel.grid.major = element_blank(),
-                 panel.grid.minor = element_blank(), 
-                 legend.title=element_blank(),
+  p <- p + theme_classic()
+  p <- p + theme(legend.title=element_blank(),
                  legend.position="bottom",
                  axis.line = element_line(colour = "black"),
                  text = element_text(size = 18))
@@ -838,10 +845,23 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
       
       p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE), alpha = 0.6)
       
+      
+    } else { if(indepvarType == 'LMA') {
+      
+      p <- p + geom_errorbarh(aes(xmin = LMA_mean - LMA_SE, xmax = LMA_mean + LMA_SE), alpha = 0.6)
+      
+    } else { if(indepvarType == 'Narea') {
+      
+      p <- p + geom_errorbarh(aes(xmin = Narea_mean - Narea_SE, xmax = Narea_mean + Narea_SE), alpha = 0.6)
+      
     }
       
     }
     
+    }
+      
+    }
+      
     p <- p + scale_x_continuous(breaks=scales::pretty_breaks(n=10))
     
   }
@@ -851,3 +871,4 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   dev.off()
   
 }
+
