@@ -26,9 +26,16 @@ all_protein <- rbind(all_protein, do.call(rbind, my.list))
 
 blax <- all_protein %>% dplyr::group_by(rank) %>% dplyr::summarise(mean_cumsum = mean(cumsum), SE_cumsum = SE(cumsum))
 blax$maxcumsum <- max(blax$mean_cumsum)
+blax$proportion <- blax$mean_cumsum/blax$maxcumsum
 
 cumsumplot <- ggplot(blax, aes(x = rank, y = mean_cumsum/maxcumsum)) + geom_point(size = 0.1, alpha = 0.1) + 
-  geom_ribbon(aes(ymin=mean_cumsum/maxcumsum - SE_cumsum/maxcumsum, ymax = mean_cumsum/maxcumsum + SE_cumsum/maxcumsum), alpha = 0.3) +
+ # geom_vline(xintercept = 469, size = 0.5, alpha = 0.5) +
+#  geom_hline(yintercept = 0.9, size = 0.5, alpha = 0.5) +
+  geom_vline(xintercept = 100, size = 0.5, alpha = 0.5) +
+  geom_hline(yintercept = 0.725, size = 0.5, alpha = 0.5) +
+  
+  
+  geom_ribbon(aes(ymin=mean_cumsum/maxcumsum - SE_cumsum/maxcumsum, ymax = mean_cumsum/maxcumsum + SE_cumsum/maxcumsum), alpha = 0.3, fill = 'blue') +
   xlab('Protein abundance rank') + ylab('Cumulative proportion of protein') +
   theme_classic() +
   theme(text = element_text(size = 17))
@@ -187,6 +194,8 @@ cumsumplot <- cumsumplot + xlim(0,200)
 cumsumplot <- cumsumplot + scale_colour_manual(values = c("blue", "red", "orange", "purple", "green", "gray"))
 cumsumplot <- cumsumplot + scale_fill_manual(values = c("blue", "red", "orange", "purple", "green", "gray"))
 cumsumplot <- cumsumplot + theme_classic()
+cumsumplot <- cumsumplot + theme(text = element_text(size = 17))
+
 
 cumsumplot
 
@@ -194,8 +203,12 @@ cumsumplot
 
 
 
-
-
+# mean and CV protein abudnances
+require(dplyr) 
+require(readr)
+meanCVprotein_abunds <- protein_D14_long %>% group_by(bin_arch_name) %>%
+                        dplyr::summarise(mean_abund = mean(sum, na.rm=TRUE), CV_abund = CV(sum), sd_abund = sd(sum, na.rm=TRUE))
+write_csv(meanCVprotein_abunds, 'output/protein_abunds.csv')
 
 # what are the most abundant functional groups?
 

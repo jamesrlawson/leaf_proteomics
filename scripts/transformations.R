@@ -191,22 +191,22 @@ climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
   
   # calculate gap means and gap SE
   
-  gap_mean <- climate_locs %>% group_by(ID) %>% summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+  gap_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
   climate_locs <- merge(climate_locs, gap_mean)
   
   # calculate leafrad means and leafrad SE
   
-  leafrad_mean <- climate_locs %>% group_by(ID) %>% summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
+  leafrad_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
   climate_locs <- merge(climate_locs, leafrad_mean)
   
   # calculate LMA mean and LMA SE
   
-  LMA_mean <- climate_locs %>% group_by(ID) %>% summarise(LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE), LMA_SE = SE(LMA_g_per_m2))
+  LMA_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE), LMA_SE = SE(LMA_g_per_m2))
   climate_locs <- merge(climate_locs, LMA_mean)
   
   # calculate N_per_area mean and SE
   
-  Narea_mean <- climate_locs %>% group_by(ID) %>% summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area))
+  Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
   climate_locs <- merge(climate_locs, Narea_mean)
   
   

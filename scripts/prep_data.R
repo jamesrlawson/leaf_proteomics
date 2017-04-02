@@ -16,8 +16,9 @@ data <- na.omit(data)
 
 # calculate total_protein means and SE
 
-total_protein_means <- data %>% group_by(ID) %>% summarise(total_protein_mean = mean(total_protein, na.rm=TRUE),
-                                                           total_protein_SE = SE(total_protein))
+total_protein_means <- data %>% group_by(ID) %>% dplyr::summarise(total_protein_mean = mean(total_protein, na.rm=TRUE),
+                                                           total_protein_SE = SE(total_protein),
+                                                           total_protein_CV = CV(total_protein))
 data <- merge(total_protein_means, data)
 
 
