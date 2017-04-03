@@ -6,8 +6,14 @@ agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'leafrad_mean', logx = FALSE, 
 agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'gap_mean', logx = FALSE, proportion = FALSE, indepvarType = 'gap', 
               labs =  c('LMA (g per m2)', 'canopy gap fraction (%)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
 
-agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'N_per_area', logx = FALSE, proportion = FALSE, indepvarType = 'LMA', 
+agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'N_per_area', logx = FALSE, proportion = FALSE, indepvarType = 'Narea', 
               labs =  c('LMA (g per m2)', 'N per area'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+
+agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'tavg', logx = FALSE, proportion = FALSE, indepvarType = 'standard', 
+              labs =  c('LMA (g per m2)', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+
+agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'prec', logx = TRUE, proportion = FALSE, indepvarType = 'standard', 
+              labs =  c('LMA (g per m2)', 'Mean annual precipitation (mm)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
 
 # relative and proportional funccats vs LMA
 
@@ -109,5 +115,35 @@ TPCVvsNareaCV <- ggplot(data, aes(x = Narea_CV, y = total_protein_CV)) + geom_po
   xlab('Variation in N per area (CV)') +
   ylab('Variation in total protein (CV)')
 TPCVvsNareaCV
+
+
+## Photosystems & Calvin_cycle vs total protein, colour scaled
+
+source('scripts/transformations.R')
+source('scripts/prep_data_mg_per_mm2.R')
+
+tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/photosys_vs_totalprotein.tiff', height = 6, width = 6, units = 'in', res =300)
+x <- ggplot(data, aes(x = total_protein, y = Photosystems)) + geom_point(aes(colour = gap)) + scale_colour_gradientn('Canopy openness (%)', colours=rainbow(2))
+x <- x + ylab('Photosystem protein abundance (mg/mm2)') + xlab('Total protein abundance (mm2/mg)')
+x <- x + theme_classic() + theme(text = element_text(size = 17),
+                                 legend.title=element_text(size=14),
+                                 legend.position="top"
+)
+x
+dev.off()
+
+cor(data$Photosys, data$total_protein)
+
+tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/calvin_vs_totalprotein.tiff', height = 6, width = 6, units = 'in', res =300)
+x <- ggplot(data, aes(x = total_protein, y = Calvin_cycle)) + geom_point(aes(colour = leaf_rad)) + scale_colour_gradientn('Mean annual irradiance @ leaf (MJ/m2/yr)', colours=rainbow(2))
+x <- x + ylab('Calvin cycle protein abundance (mg/mm2)') + xlab('Total protein abundance (mm2/mg)')
+x <- x + theme_classic() + theme(text = element_text(size = 17),
+                                 legend.title=element_text(size=14),
+                                 legend.position="top"
+)
+x
+dev.off()
+
+cor(data$Calvin_cycle, data$total_protein)
 
 
