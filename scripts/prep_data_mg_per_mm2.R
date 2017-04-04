@@ -12,7 +12,7 @@ data <- data[!duplicated(data$sample),]
 
 data <- filter(data, ID != 'melpal_106')
 
-data <- na.omit(data)
+#data <- na.omit(data)
 
 # calculate total_protein means and SE
 

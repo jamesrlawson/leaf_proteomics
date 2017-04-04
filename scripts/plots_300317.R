@@ -146,4 +146,30 @@ dev.off()
 
 cor(data$Calvin_cycle, data$total_protein)
 
+# means and ranges
+
+source('scripts/prep_data.R')
+
+calvmean <- data %>% group_by(ID) %>% summarise(calvmean = mean(Calvin_cycle, na.rm=TRUE), 
+                                                photmean = mean(Photosystems, na.rm=TRUE),
+                                                photorespmean = mean(Photorespiration, na.rm=TRUE))
+
+max(calvmean$calvmean) /min(calvmean$calvmean)
+mean(calvmean$calvmean, na.rm=TRUE)
+sd(calvmean$calvmean, na.rm=TRUE)
+
+
+max(calvmean$photmean) / min(calvmean$photmean)
+mean(calvmean$photmean, na.rm=TRUE)
+sd(calvmean$photmean, na.rm=TRUE)
+
+max(calvmean$photorespmean) / min(calvmean$photorespmean)
+min(calvmean$photorespmean)
+max(calvmean$photorespmean)
+mean(calvmean$photorespmean, na.rm=TRUE)
+sd(calvmean$photorespmean, na.rm=TRUE)
+
+max(data$total_protein_mean) / min(data$total_protein_mean)
+mean(data$total_protein_mean, na.rm=TRUE)
+sd(data$total_protein_mean, na.rm=TRUE)
 
