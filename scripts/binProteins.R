@@ -4,10 +4,10 @@ source('scripts/functions.R')
 
 require(readr)
 require(stringr)
+require(plyr)
 library(dplyr)
 library(tidyr)
 require(reshape2)
-require(plyr)
 
 mercator <- read_csv('data/mercator/D14_mercator.csv')
 
@@ -21,10 +21,12 @@ mercator_bins <- read_csv('data/mercator/mercator_bins.csv')
 # the order of elements which are at the same level is not relevant
 
 bin_arch.list <- list(
-
+  
   c('_1.1_', '_1.1.'),
   c('_1.1.1_', '_1.1.1.'),
+  c('_1.1.1.1_', '_1.1.1.1.'),
   c('_1.1.2_', '_1.1.2.'),
+  c('_1.1.2.1_', '_1.1.2.1.'),
   c('_1.1.3_', '_1.1.3.'),
   c('_1.1.4_', '_1.1.4.'),
   c('_1.1.5_', '_1.1.5.'),
@@ -55,6 +57,7 @@ bin_arch.list <- list(
   c('_28_','_28.'),
   c('_27_','_27.'))
 
+
 ## DISCOVERY DATA ##
 
 #protein_samples_D14 <- read_csv('data/D14_protein_sites.csv') # these are protein amounts calculated using ovalbumin equivalents
@@ -83,7 +86,7 @@ protein_bins_D14_spread <- spread(protein_bins_D14_spread, key = bin_arch_name, 
 protein_bins_D14_spread <- protein_bins_D14_spread[!protein_bins_D14_spread$sample %in% c('BINCODE', 'NAME'),]
 
 protein_stand_D14 <- merge(protein_bins_D14_spread, total_protein_D14, by = 'sample')
-protein_stand_D14[,2:28] <- protein_stand_D14[,2:28]/protein_stand_D14$total_protein
+protein_stand_D14[,2:(ncol(protein_stand_D14)-1)] <- protein_stand_D14[,2:(ncol(protein_stand_D14)-1)]/protein_stand_D14$total_protein
 rm(protein_bins_D14_spread)
 
 # absolute quants, unstandardised

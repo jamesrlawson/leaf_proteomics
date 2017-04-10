@@ -1,6 +1,10 @@
 bin_arch,bin_name
 _1.1.1_,PSII
 _1.1.2_,PSI
+_1.1.1.1_,LHC2
+_1.1.2.1_,LHC1
+_1.1.1_-_1.1.1.1_,PSII_min_LHC2
+_1.1.2_-_1.1.2.1_,PSI_min_LHC1
 _1.1.1_+_1.1.2_,Photosystems
 _1.1.3_,Cytochrome_b6f
 _1.1.3_+_1.1.5_+_1.1.6_,electron_transport_minATPsynth

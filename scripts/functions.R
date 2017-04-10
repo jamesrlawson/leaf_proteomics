@@ -83,11 +83,20 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   protein_bins <- melt(protein_samples, id = c('Protein', 'bin_arch'))
   names(protein_bins) <- c('Protein', 'bin_arch', 'sample', 'value')
   
-  protein_bins <- ddply(protein_bins, .(bin_arch, sample), summarise, sum = sum(as.numeric(value), na.rm=TRUE), nprot=length(value))
+  # protein_bins1 <- ddply(protein_bins, .(bin_arch, sample), summarise, sum = sum(as.numeric(value), na.rm=TRUE), nprot=length(value))
+  
+  protein_bins <- protein_bins %>% dplyr::group_by(bin_arch, sample) %>% dplyr::summarise(sum = sum(as.numeric(value), na.rm=TRUE), nprot=length(value)) %>% ungroup(.)
+  
   protein_bins <- na.omit(protein_bins)
   
   # recombobulate arch categories (where lower levels need to be incorporated into an higher level)
   protein_bins$sample <- as.character(protein_bins$sample)
+  
+  protein_bins[protein_bins$bin_arch == '_1.1.1_',]$sum <-     protein_bins[protein_bins$bin_arch == '_1.1.1_',]$sum +
+    protein_bins[protein_bins$bin_arch == '_1.1.1.1_',]$sum 
+  
+  protein_bins[protein_bins$bin_arch == '_1.1.2_',]$sum <-     protein_bins[protein_bins$bin_arch == '_1.1.2_',]$sum +
+    protein_bins[protein_bins$bin_arch == '_1.1.2.1_',]$sum 
   
   protein_bins[protein_bins$bin_arch == '_1.1_',]$sum <-     protein_bins[protein_bins$bin_arch == '_1.1_',]$sum +
     protein_bins[protein_bins$bin_arch == '_1.1.1_',]$sum +
@@ -111,7 +120,7 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   
   #depends if we want to include heat stress with abiotic stress
   protein_bins[protein_bins$bin_arch == '_20.2_',]$sum <- protein_bins[protein_bins$bin_arch == '_20.2_',]$sum +
-  protein_bins[protein_bins$bin_arch == '_20.2.1_',]$sum 
+    protein_bins[protein_bins$bin_arch == '_20.2.1_',]$sum 
   
   # add some summed bins for special cases
   
@@ -139,9 +148,28 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   CHO_metabolism <- ddply(na.omit(CHO_metabolism), .(sample), summarise, sum = sum(sum))
   CHO_metabolism$bin_arch <- '_2_+_3_'
   
+  LHC2 <- protein_bins[protein_bins$bin_arch %in% c('_1.1.1.1_'),]
+  LHC2 <- ddply(na.omit(LHC2), .(sample), summarise, sum = sum(sum))
+  LHC2 <- dplyr::arrange(LHC2, sample)
+  PSII_min_LHC2 <- protein_bins[protein_bins$bin_arch %in% c('_1.1.1_'),]
+  PSII_min_LHC2 <- ddply(na.omit(PSII_min_LHC2), .(sample), summarise, sum = sum(sum)) 
+  PSII_min_LHC2 <- dplyr::arrange(PSII_min_LHC2, sample)
+  PSII_min_LHC2$sum <- PSII_min_LHC2$sum - LHC2$sum # subtract sum of LHC2 protein amounts
+  PSII_min_LHC2$bin_arch <- '_1.1.1_-_1.1.1.1_'
   
-  protein_bins <- rbind(protein_bins[,c('bin_arch','sample','sum')], rubisco, photosystems, TCA_orgtrans, redox, electron_transport_minATPsynth, CHO_metabolism)
-  rm(rubisco,photosystems,TCA_orgtrans,redox, electron_transport_minATPsynth, CHO_metabolism)
+  LHC1 <- protein_bins[protein_bins$bin_arch %in% c('_1.1.2.1_'),]
+  LHC1 <- ddply(na.omit(LHC1), .(sample), summarise, sum = sum(sum))
+  LHC1 <- dplyr::arrange(LHC1, sample)
+  PSI_min_LHC1 <- protein_bins[protein_bins$bin_arch %in% c('_1.1.2_'),]
+  PSI_min_LHC1 <- ddply(na.omit(PSI_min_LHC1), .(sample), summarise, sum = sum(sum))
+  PSI_min_LHC1 <- dplyr::arrange(PSI_min_LHC1, sample)
+  PSI_min_LHC1$sum <- PSI_min_LHC1$sum - LHC1$sum # subtract sum of LHC1 protein amounts
+  PSI_min_LHC1$bin_arch <- '_1.1.2_-_1.1.2.1_'
+  
+  
+  protein_bins <- rbind(protein_bins[,c('bin_arch','sample','sum')], rubisco, photosystems, TCA_orgtrans, redox, electron_transport_minATPsynth, CHO_metabolism, PSII_min_LHC2, PSI_min_LHC1)
+  
+  rm(rubisco,photosystems,TCA_orgtrans,redox, electron_transport_minATPsynth, CHO_metabolism, PSII_min_LHC2, PSI_min_LHC1)
   protein_bins$sample <- as.character(protein_bins$sample)
   
   protein_bins[!protein_bins$sample %in% c('BINCODE','NAME'),]
@@ -173,6 +201,8 @@ populateProteinBins <- function(protein_samples, bin_arch.list) {
   return(protein_bins)
   
 }
+
+
 
 regression_output <- function(df, indepvar, logx) {
   
@@ -742,6 +772,12 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
     source('scripts/prep_data.R')
       } else {
           source('scripts/prep_data_mg_per_mm2.R')
+      }
+  
+  if(proportion) {
+    type = '_proportion_'
+  } else {
+    type = '_mg-per-m2_'
   }
 
   dep_means <- data %>%
@@ -780,10 +816,10 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
     
   
   if(fileType == 'svg'){
-    svg(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.svg', sep = ""), height = 6, width = Width)
+    svg(paste(outDir, '/', depvar, '_vs_', indepvar, type, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.svg', sep = ""), height = 6, width = Width)
   } else {
     if(fileType == 'tiff') {
-      tiff(paste(outDir, '/', depvar, '_vs_', indepvar, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.tiff', sep = ""), height = 6, width = Width, units = 'in', res = 300)
+      tiff(paste(outDir, '/', depvar, '_vs_', indepvar, type, '_R2-', round(model$r.squared,3), '_pval-', round(model$coefficients[,4][2],2),'.tiff', sep = ""), height = 6, width = Width, units = 'in', res = 300)
     }
   }
     
@@ -804,7 +840,7 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   
   #bquote('Assimilation ('*mu~ 'mol' ~CO[2]~ m^-2~s^-1*')')  
   
-  p <- p + expand_limits(y=0)
+  p <- p + expand_limits(y=0,x=0)
   
   p <- p + theme_classic()
   p <- p + theme(legend.title=element_blank(),

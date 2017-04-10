@@ -22,4 +22,9 @@ total_protein_means <- data %>% group_by(ID) %>% dplyr::summarise(total_protein_
 data <- merge(total_protein_means, data)
 
 
-data$calv_per_photo <- data$Calvin_cycle / data$Photosystems
+data$electron_transport <- data$electron_transport_minATPsynth + data$ATP_synthase_chloroplastic
+
+data$LHC <- data$LHC1 + data$LHC2
+
+data$LHC1_per_PSI <- data$LHC1 / data$PSI_min_LHC1
+data$LHC2_per_PSII <- data$LHC2 / data$PSII_min_LHC2

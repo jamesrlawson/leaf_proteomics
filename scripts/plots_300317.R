@@ -1,19 +1,19 @@
 source('scripts/transformations.R')
 
 agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'leafrad_mean', logx = FALSE, proportion = FALSE, indepvarType = 'leafrad', 
-              labs =  c('LMA (g per m2)', 'leaf level irradiance'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+              labs =  c('LMA (g per m2)', 'Mean annual irradiance @ leaf (MJ/m2/yr)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
 agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'gap_mean', logx = FALSE, proportion = FALSE, indepvarType = 'gap', 
-              labs =  c('LMA (g per m2)', 'canopy gap fraction (%)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+              labs =  c('LMA (g per m2)', 'Canopy openness (%)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
 agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'N_per_area', logx = FALSE, proportion = FALSE, indepvarType = 'Narea', 
-              labs =  c('LMA (g per m2)', 'N per area'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+              labs =  c('LMA (g per m2)', 'N per area'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
 agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'tavg', logx = FALSE, proportion = FALSE, indepvarType = 'standard', 
-              labs =  c('LMA (g per m2)', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+              labs =  c('LMA (g per m2)', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
 agg_plot_save(depvar = 'LMA_g_per_m2', indepvar = 'prec', logx = TRUE, proportion = FALSE, indepvarType = 'standard', 
-              labs =  c('LMA (g per m2)', 'Mean annual precipitation (mm)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
+              labs =  c('LMA (g per m2)', 'Mean annual precipitation (mm)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
 # relative and proportional funccats vs LMA
 
@@ -122,9 +122,9 @@ TPCVvsNareaCV
 source('scripts/transformations.R')
 source('scripts/prep_data_mg_per_mm2.R')
 
-tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/photosys_vs_totalprotein.tiff', height = 6, width = 6, units = 'in', res =300)
+tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/photosys_vs_totalprotein.tiff', height = 6, width = 6.5, units = 'in', res =300)
 x <- ggplot(data, aes(x = total_protein, y = Photosystems)) + geom_point(aes(colour = gap)) + scale_colour_gradientn('Canopy openness (%)', colours=rainbow(2))
-x <- x + ylab('Photosystem protein abundance (mg/mm2)') + xlab('Total protein abundance (mm2/mg)')
+x <- x + ylab('Photosystem protein abundance (mg/m2)') + xlab('Total protein abundance (mg/m2)') #+ xlim(0,150000)
 x <- x + theme_classic() + theme(text = element_text(size = 17),
                                  legend.title=element_text(size=14),
                                  legend.position="top"
@@ -134,11 +134,11 @@ dev.off()
 
 cor(data$Photosys, data$total_protein)
 
-tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/calvin_vs_totalprotein.tiff', height = 6, width = 6, units = 'in', res =300)
+tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/calvin_vs_totalprotein.tiff', height = 6, width = 6.5, units = 'in', res =300)
 x <- ggplot(data, aes(x = total_protein, y = Calvin_cycle)) + geom_point(aes(colour = leaf_rad)) + scale_colour_gradientn('Mean annual irradiance @ leaf (MJ/m2/yr)', colours=rainbow(2))
-x <- x + ylab('Calvin cycle protein abundance (mg/mm2)') + xlab('Total protein abundance (mm2/mg)')
+x <- x + ylab('Calvin cycle protein abundance (mg/m2)') + xlab('Total protein abundance (mg/m2)') #+ xlim(0,150000)
 x <- x + theme_classic() + theme(text = element_text(size = 17),
-                                 legend.title=element_text(size=14),
+                                 legend.title=element_text(size=15),
                                  legend.position="top"
 )
 x
@@ -148,7 +148,7 @@ cor(data$Calvin_cycle, data$total_protein)
 
 # means and ranges
 
-source('scripts/prep_data.R')
+source('scripts/prep_data_mg_per_mm2.R')
 
 calvmean <- data %>% group_by(ID) %>% summarise(calvmean = mean(Calvin_cycle, na.rm=TRUE), 
                                                 photmean = mean(Photosystems, na.rm=TRUE),
@@ -172,4 +172,24 @@ sd(calvmean$photorespmean, na.rm=TRUE)
 max(data$total_protein_mean) / min(data$total_protein_mean)
 mean(data$total_protein_mean, na.rm=TRUE)
 sd(data$total_protein_mean, na.rm=TRUE)
+
+
+
+min((data$total_protein_mean / data$LMA_g_per_m2) / 1000)
+max((data$total_protein_mean / data$LMA_g_per_m2) / 1000)
+mean((data$total_protein_mean / data$LMA_g_per_m2) / 1000)
+sd((data$total_protein_mean / data$LMA_g_per_m2) / 1000)
+
+
+
+
+
+
+agg_plot_save(depvar = 'mitochondrial_electron_transport_ATP_synthesis', indepvar = 'tavg', logx = FALSE, proportion = TRUE, indepvarType = 'standard', 
+              labs =  c('mitochondrial_electron_transport_ATP_synthesis', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
+
+agg_plot_save(depvar = 'mitochondrial_electron_transport_ATP_synthesis', indepvar = 'tavg', logx = FALSE, proportion = FALSE, indepvarType = 'standard', 
+              labs =  c('mitochondrial_electron_transport_ATP_synthesis', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
+
+
 
