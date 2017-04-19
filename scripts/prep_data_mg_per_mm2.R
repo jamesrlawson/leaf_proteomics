@@ -1,11 +1,11 @@
 replicates <- read_csv('output/replicates.csv')
-replicates <- replicates[replicates$sample %in% protein_D14_age$sample,]
+replicates <- replicates[replicates$sample %in% protein_D14$sample,]
 
 replicates <- merge(replicates, read_csv('data/lineage.csv'))
 
 climate_locs$biological_rep <- NULL
 
-data <- merge(protein_D14_age, climate_locs)
+data <- merge(protein_D14, climate_locs)
 #data$ID <- NULL
 data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised', 'species_confirmed', 'date'))
 data <- data[!duplicated(data$sample),]

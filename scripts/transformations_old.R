@@ -2,13 +2,6 @@
 # these dataframes can then be used in knitr .Rmd files found in the root directory to produce regression reports with scatterplots
 # showing relationships between a target env variable or trait and all protein functional category amounts
 
-# the following switches can be set to include or exclude traits/environmental variables which have missing data. 
- include_photosynthesis = FALSE
- include_chlorophyll = FALSE
- include_d13C = FALSE
- include_soil_N = FALSE
- include_soil_P = FALSE
-
 source('scripts/binProteins.R')
 
 sample_locations <- read_csv('data/sample_locations.csv')
@@ -114,9 +107,7 @@ licor <- na.omit(licor)
 
 licor <- licor[licor$Cond > 0.05,]
 
-if(include_photosynthesis) {
-  climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
-}
+#climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
 
 # leaf_CNP
 
@@ -126,6 +117,10 @@ climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
 
 climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
 
+
+
+
+
 leaf_P <- read_csv('data/leaf_CNP/leaf_P.csv')
 leaf_P <- leaf_P[leaf_P$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_P, climate_locs, all.y=TRUE, by = 'sample')
@@ -134,58 +129,59 @@ climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
 
 # leaf age 
 
-leaf_age <- read_csv('data/leaf_age.csv')
-leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
-leaf_age <- leaf_age[leaf_age$sample %in% climate_locs$sample,]
-climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
-
-climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
-
+  leaf_age <- read_csv('data/leaf_age.csv')
+  leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
+  leaf_age <- leaf_age[leaf_age$sample %in% climate_locs$sample,]
+  climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
+  
+  climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
+  
 # canopy openness
-
-gaps <- read_csv('data/sky_pics.csv')
-gaps <- gaps[gaps$sample %in% climate_locs$sample,]
-#gaps <- gaps[!duplicated(gaps[,c('sample', 'gap')]),]
-gaps$gap <- as.numeric(gaps$gap)
-
-climate_locs <- merge(gaps, climate_locs)
-rm(gaps)
-
-# adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.225)
-climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
-climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
-
+  
+  gaps <- read_csv('data/sky_pics.csv')
+  gaps <- gaps[gaps$sample %in% climate_locs$sample,]
+  #gaps <- gaps[!duplicated(gaps[,c('sample', 'gap')]),]
+  gaps$gap <- as.numeric(gaps$gap)
+  
+  climate_locs <- merge(gaps, climate_locs)
+  rm(gaps)
+  
+  # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.225)
+  climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
+  climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$leaf_age == 'old',]$gap * 0.775
+  
 # irradiance
-
-irradiance <- read_csv('data/irradiance.csv')
-
-irradiance <- irradiance[irradiance$Longitude %in% climate_locs$Longitude & irradiance$Latitude %in% climate_locs$Latitude,]
-irradiance <- irradiance[!duplicated(irradiance),]
-
-climate_locs <- merge(irradiance, climate_locs, by = c('Latitude', 'Longitude'))
-
-# irradiance at leaf
-
-climate_locs$leaf_rad <- climate_locs$irradiance * climate_locs$gap / 100  
-
-
+  
+  irradiance <- read_csv('data/irradiance.csv')
+  
+  irradiance <- irradiance[irradiance$Longitude %in% climate_locs$Longitude & irradiance$Latitude %in% climate_locs$Latitude,]
+  irradiance <- irradiance[!duplicated(irradiance),]
+  
+  climate_locs <- merge(irradiance, climate_locs, by = c('Latitude', 'Longitude'))
+  
+  # irradiance at leaf
+  
+  climate_locs$leaf_rad <- climate_locs$irradiance * climate_locs$gap / 100  
+  
+  
 # chlorophyll
-
-chl <- na.omit(read_csv('data/chlorophyll.csv'))
-chl <- chl[chl$sample %in% protein_D14$sample,]
-
-if(include_chlorophyll) {
-  climate_locs <- merge(chl, climate_locs, by = 'sample')
-}
-
-
-# add in replicate ID's
-
-replicates <- read_csv('output/replicates.csv')
-replicates$site_revised <- NULL
-
-climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
-
+  
+  chl <- na.omit(read_csv('data/chlorophyll.csv'))
+  chl <- chl[chl$sample %in% protein_D14$sample,]
+ # climate_locs <- merge(chl, climate_locs, by = 'sample')
+  
+ 
+  
+# soil and litter data
+  
+  # add in replicate ID's
+  
+  replicates <- read_csv('output/replicates.csv')
+  replicates$site_revised <- NULL
+  
+  climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
+  
+  
   # calculate gap means and gap SE
   
   gap_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
@@ -206,68 +202,71 @@ climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Lo
   Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
   climate_locs <- merge(climate_locs, Narea_mean)
   
-  # soil and litter data
-  
   soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
   soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
-  filter(soil_P < 1500)
-
+    filter(soil_P < 1500)
+  
   soil_N <- soil_N[soil_N$ID %in% climate_locs$ID,]
-
-  if(include_soil_N) {
-    climate_locs <- merge(climate_locs, soil_N, by = 'ID')
-  }
   
-  if(include_soil_P) {
-    climate_locs <- merge(climate_locs, soil_P, by = 'ID')
-  }
-
-# delta C 13
-
-if(include_d13C) {
+  #climate_locs <- merge(climate_locs, soil_N, by = 'ID')
+  #climate_locs <- merge(climate_locs, soil_P, by = 'ID')
   
-d13C <- read_csv('data/d13C.csv')
-d13C <- d13C[d13C$sample %in% protein_D14$sample,]
-climate_locs <- merge(d13C, climate_locs, by = 'sample', all=TRUE)
 
-id <- unique(climate_locs$ID)
-
+ 
+ # delta C 13
+ 
+ #d13C <- read_csv('data/d13C.csv')
+ #d13C <- d13C[d13C$sample %in% protein_D14$sample,]
+ #climate_locs <- merge(d13C, climate_locs, by = 'sample', all=TRUE)
+ 
+ #id <- unique(climate_locs$ID)
+ 
 # fill in values so d13C for all leaf ages of a branch = mid value
-
- for(i in 1:length(id)) {
-
-   for(j in 1:3) {
-
-    temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
-
-     if(any(temp$leaf_age %in% 'mid')) {
-
-       temp[temp$leaf_age %in% 'mid',]$d13C
-
-       climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
-
-     }
-
-   }
-
- }
-
-}
-  
-climate_locs$ID <- NULL
+ 
+# for(i in 1:length(id)) {
+   
+#   for(j in 1:3) {
+     
+#    temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
+     
+#     if(any(temp$leaf_age %in% 'mid')) {
+       
+#       temp[temp$leaf_age %in% 'mid',]$d13C
+       
+#       climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
+       
+#     }
+     
+     
+#   }
+   
+# }
+ 
+ 
+ climate_locs$ID <- NULL
 # climate_locs <- na.omit(climate_locs)
+ 
+ climate_locs <- climate_locs[!climate_locs$leaf_age %in% 'sen',]
+ 
+ protein_D14 <- na.omit(protein_D14)
+ protein_stand_D14 <- na.omit(protein_stand_D14)
+ 
+ 
+ 
+## these are the df's used in most of the knitr reports
 
-climate_locs <- climate_locs[!climate_locs$leaf_age %in% 'sen',]
+# relative [protein]
+protein_stand_D14_long <- melt(protein_stand_D14)
+names(protein_stand_D14_long) <- c('sample', 'bin_arch_name', 'sum')
 
-# these are the df's that are used in the knitr report
+protein_climate_D14_stand <- merge(climate_locs, protein_stand_D14_long, by = 'sample')
+protein_climate_D14_stand$bin_arch_name <- as.character(protein_climate_D14_stand$bin_arch_name)
 
-protein_D14 <- na.omit(protein_D14)
-protein_stand_D14 <- na.omit(protein_stand_D14)
+# absolute [protein]
+protein_D14_long <- melt(protein_D14)
+names(protein_D14_long) <- c('sample', 'bin_arch_name', 'sum')
 
-# cleanup
+protein_climate_D14 <- merge(climate_locs, protein_D14_long, by = 'sample')
+protein_climate_D14$bin_arch_name <- as.character(protein_climate_D14$bin_arch_name)
 
-rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leafrad_mean, licor, LMA_mean, Narea_mean, 
-   recent_clim, recent_clim_locs, replicates, soil_N, soil_P)
-
-gc(verbose=FALSE)
 

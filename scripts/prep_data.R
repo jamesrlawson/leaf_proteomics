@@ -1,11 +1,11 @@
 replicates <- read_csv('output/replicates.csv')
-replicates <- replicates[replicates$sample %in% protein_D14_age$sample,]
+replicates <- replicates[replicates$sample %in% protein_D14$sample,]
 
 replicates <- merge(replicates, read_csv('data/lineage.csv'))
 
 climate_locs$biological_rep <- NULL
 
-data <- merge(protein_stand_D14_age, climate_locs)
+data <- merge(protein_stand_D14, climate_locs)
 #data$ID <- NULL
 data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised', 'species_confirmed', 'date'))
 data <- data[!duplicated(data$sample),]
@@ -21,6 +21,7 @@ total_protein_means <- data %>% group_by(ID) %>% dplyr::summarise(total_protein_
                                                            total_protein_CV = CV(total_protein))
 data <- merge(total_protein_means, data)
 
+# add some extra data
 
 data$electron_transport <- data$electron_transport_minATPsynth + data$ATP_synthase_chloroplastic
 
