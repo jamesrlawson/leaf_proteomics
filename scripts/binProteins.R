@@ -1,99 +1,105 @@
-## PROCESS PROTEIN DATA INTO BINS BASED ON MERCATOR FUNCTIONAL CATEGORIES ##
+## ASSIGN PROTEINS TO FUNCTIONAL CATEGORIES AND CALCULATE PROTEIN AMOUNTS IN EACH CATEGORY ##
+require(readr)
+require(stringr)
+require(dplyr)
+require(tidyr)
 
 source('scripts/functions.R')
 
-require(readr)
-require(stringr)
-require(plyr)
-library(dplyr)
-library(tidyr)
-require(reshape2)
+mercator <- read_csv('data/mercator/D14_mercator_20170217.csv')
 
-mercator <- read_csv('data/mercator/D14_mercator.csv')
+# first add the mercator$NAME values for each protein in protein_samples_D14
 
-mercator_bins <- read_csv('data/mercator/mercator_bins.csv')
-
-# note that for this to work, all bincodes in asp_mercator.csv and mercator_bins.csv must be prefixed and suffixed by '_'
-# the following is a hierarchically ordered list of bincodes to be grepped over, where the first string in each list element defines the top level, 
-# and therefore a grep using this element as the pattern will only find proteins in the top level of the hierarchy,
-# while the second element allows the grep call to find all proteins below the top category
-# it is essential that elements in this list are ordered sequentially in a hierarchical fashion (i.e. higher levels must come before lower levels)
-# the order of elements which are at the same level is not relevant
-
-bin_arch.list <- list(
-  
-  c('_1.1_', '_1.1.'),
-  c('_1.1.1_', '_1.1.1.'),
-  c('_1.1.1.1_', '_1.1.1.1.'),
-  c('_1.1.2_', '_1.1.2.'),
-  c('_1.1.2.1_', '_1.1.2.1.'),
-  c('_1.1.3_', '_1.1.3.'),
-  c('_1.1.4_', '_1.1.4.'),
-  c('_1.1.5_', '_1.1.5.'),
-  c('_1.1.6_', '_1.1.6.'),
-  c('_1.2_', '_1.2.'),
-  c('_1.3_', '_1.3.'),
-  c('_1.3.1_', '_1.3.1.'),
-  c('_1.3.2_', '_1.3.2.'),
-  c('_2_','_2.'),
-  c('_3_','_3.'),
-  c('_4_','_4.'),
-  c('_8.1_', '_8.1.'),
-  c('_8.2_','_8.2.'),
-  c('_9_','_9.'),
-  c('_11_','_11.'),
-  c('_16_','_16.'),
-  c('_17_','_17.'),
-  c('_20_','_20.'),
-  c('_20.1_','_20.1.'),
-  c('_20.2_', '_20.2.'),
-  c('_20.2.1_','_20.2.1.'),
-  c('_21_','_21.'),
-  c('_22_','_22.'),
-  c('_26.9_','_26.9.'),
-  c('_30_','_30.'),
-  c('_29_','_29.'),
-  c('_29.6_','_29.6.'),
-  c('_28_','_28.'),
-  c('_27_','_27.'))
-
-
-## DISCOVERY DATA ##
-
-#protein_samples_D14 <- read_csv('data/D14_protein_sites.csv') # these are protein amounts calculated using ovalbumin equivalents
-#protein_samples_D14 <- read_csv('data/protein_amounts_by_signal_fraction_perArea_D14.csv') # these are protein amounts calculated using signal intensity fraction
 protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
-#protein_samples_D14 <- read_csv('data/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
 
-protein_samples_D14 <- protein_samples_D14[!names(protein_samples_D14) %in% c('YG029','YG031','YG030','YG028')]
-
-total_protein_D14 <- getTotalProtein(protein_samples_D14)
+getProteinBins <- function(protein_samples, mercator) {
+  
+  protein_samples$Protein <- tolower(protein_samples$Protein)
+  mercator$IDENTIFIER <- tolower(mercator$IDENTIFIER)
+  
+  protein_samples$BINCODE <- NA
+  protein_samples$NAME <- NA
+  
+  for(i in 1:length(protein_samples$Protein)) {
+    merc_row <- grep(protein_samples$Protein[i], mercator$IDENTIFIER, fixed = TRUE)
+    protein_samples$BINCODE[i] <- paste0(mercator[merc_row,]$BINCODE, collapse = ", ")
+    protein_samples$NAME[i] <- paste0(mercator[merc_row,]$NAME, collapse = ", ")
+  }
+  
+  return(protein_samples)
+  
+}
 
 protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 
-protein_bins_D14 <- populateProteinBins(protein_samples_D14, bin_arch.list)
-#protein_bins_D14 <- populateProteinBins_mean(protein_samples_D14, bin_arch.list)
+# then import the names of categories we're interested in from mercator_names* and use grep to find all proteins associated with those categories
+# put the results in instances of a list
+# mercator_names.csv contains search terms for protein categories. These searches are run on mercator$NAMES. 
+# search terms must be unique to the functional category to avoid non-target returns. 
+# for example, a search for 'photosystem I' will also pick up proteins from 'photosystem II' - to avoid this we search for 'photosystem I\.'
+# this works because all instances of proteins within 'photosystem I' are actually within subcategories. We'd miss some returns if there were proteins in the upper 'photosystem I' category.
+  # N.B. the '\' is an 'escape' and must be used because .'s are special in regular expressions and mean 'anything'. By using the escape we will actually search for the character '.'
+# search terms for top level categories can be made unique by using ' in front
 
+mercator_names <- read.csv('data/mercator/mercator_names.csv', header=T, stringsAsFactors = F) 
+mercator_names <- arrange(mercator_names, funccat)
 
-# relative quants, standardised by total_protein
+func_assigned.list <- vector('list', length(mercator_names$funccat))
 
-protein_bins_D14_spread <- na.omit(protein_bins_D14[,c('sample','bin_arch_name','sum')])
-protein_bins_D14_spread <- protein_bins_D14_spread[!protein_bins_D14_spread$sample %in% c('BINCODE','NAME'),]
+func_assigned <- data.frame()
 
-protein_bins_D14_spread <- protein_bins_D14_spread[!duplicated(protein_bins_D14_spread[,c('sample', 'bin_arch_name')]),]
+for(i in 1:length(mercator_names$funccat)) {
+  
+  name <- mercator_names$funccat[i]
+  
+  proteins <- protein_samples_D14[grep(name, protein_samples_D14$NAME),]
+  
+  proteins$funccat <- mercator_names$funccat[i]
+  
+  proteins <- distinct(proteins, Protein, .keep_all = TRUE)
+  
+  func_assigned.list[[i]] <- proteins
+  
+}
 
-protein_bins_D14_spread <- spread(protein_bins_D14_spread, key = bin_arch_name, value=sum)
-protein_bins_D14_spread <- protein_bins_D14_spread[!protein_bins_D14_spread$sample %in% c('BINCODE', 'NAME'),]
+func_assigned <- rbind(func_assigned, do.call(rbind, func_assigned.list))
+rm(func_assigned.list)
 
-protein_stand_D14 <- merge(protein_bins_D14_spread, total_protein_D14, by = 'sample')
-protein_stand_D14[,2:(ncol(protein_stand_D14)-1)] <- protein_stand_D14[,2:(ncol(protein_stand_D14)-1)]/protein_stand_D14$total_protein
-rm(protein_bins_D14_spread)
+# generate df with summed protein amounts for each category
 
-# absolute quants, unstandardised
+funccat_sums <- func_assigned %>% group_by(funccat) %>% summarise_at(vars(2:(ncol(protein_samples_D14)-2)), sum) %>% arrange(funccat)
+funccat_sums$funccat <- mercator_names$funccat_rename
 
-protein_D14 <- na.omit(protein_bins_D14[,c('sample','bin_arch_name','sum')])
-protein_D14 <- protein_D14[!protein_D14$sample %in% c('BINCODE','NAME'),]
-protein_D14 <- protein_D14[!duplicated(protein_D14[,c('sample', 'bin_arch_name')]),]
-protein_D14 <- spread(protein_D14, key = bin_arch_name, value=sum)
-protein_D14 <- protein_D14[!protein_D14$sample %in% c('BINCODE', 'NAME'),]
-protein_D14$total_protein <- protein_stand_D14$total_protein
+# transform df
+
+funccat_sums_t <- t(funccat_sums[,2:ncol(funccat_sums)])
+colnames(funccat_sums_t) <- funccat_sums$funccat
+funccat_sums_t <- as.data.frame(funccat_sums_t)
+funccat_sums_t$sample <- colnames(funccat_sums)[2:ncol(funccat_sums)]
+funccat_sums <- funccat_sums_t
+rm(funccat_sums_t)
+
+# create some custom categories
+
+funccat_sums$PSII_min_LHCII <- funccat_sums$photosystem_II - funccat_sums$LHC_I
+funccat_sums$PSI_min_LHCI <- funccat_sums$photosystem_II - funccat_sums$LHC_II
+funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosystem_II
+funccat_sums$electron_transport_minATPsynth <- funccat_sums$other_electron_carrier + funccat_sums$cytochrome_b6f
+funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
+funccat_sums$redox <- funccat_sums$redox + funccat_sums$glutathione_S_transferases
+
+# add in total (detected) protein and get relative abundances
+
+protein_D14 <- protein_samples_D14 %>% gather(key = sample, value = value, 2:(ncol(.)-2)) %>%
+  group_by(sample) %>%
+  dplyr::summarise(total_protein = sum(value, na.rm=TRUE)) %>%
+  full_join(funccat_sums, by = 'sample')
+
+protein_stand_D14 <- protein_D14 %>% 
+  mutate_at(vars(3:(ncol(.))), funs(. / total_protein)) # divide columns by total protein to get relative abundances
+
+# cleanup
+
+rm(func_assigned, mercator, mercator_names, proteins, funccat_sums, protein_samples_D14, i, name)
+gc(verbose = FALSE)
+

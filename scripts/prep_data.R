@@ -5,7 +5,7 @@ replicates <- merge(replicates, read_csv('data/lineage.csv'))
 
 climate_locs$biological_rep <- NULL
 
-data <- merge(protein_D14_age, climate_locs)
+data <- merge(protein_stand_D14_age, climate_locs)
 #data$ID <- NULL
 data <- merge(data, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'site_revised', 'species_confirmed', 'date'))
 data <- data[!duplicated(data$sample),]
@@ -16,9 +16,11 @@ data <- filter(data, ID != 'melpal_106')
 
 # calculate total_protein means and SE
 
-total_protein_means <- data %>% group_by(ID) %>% summarise(total_protein_mean = mean(total_protein, na.rm=TRUE),
-                                                           total_protein_SE = SE(total_protein))
+total_protein_means <- data %>% group_by(ID) %>% dplyr::summarise(total_protein_mean = mean(total_protein, na.rm=TRUE),
+                                                           total_protein_SE = SE(total_protein),
+                                                           total_protein_CV = CV(total_protein))
 data <- merge(total_protein_means, data)
+
 
 data$electron_transport <- data$electron_transport_minATPsynth + data$ATP_synthase_chloroplastic
 

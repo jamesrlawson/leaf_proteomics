@@ -2,15 +2,8 @@
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 source('scripts/transformations.R')
-require(ggplot2)
-require(vegan)
-library(readr)
-library(knitr)
-require(plyr)
-require(reshape2)
-require(dplyr)
-require(lazyeval)
 source('scripts/prep_data.R')
+library(knitr)
 
 tab <- regression_agg(data, 'gap_mean', logx=FALSE)
 

@@ -1,6 +1,13 @@
 # sourced by binProteins.R
 
+require(lazyeval)
 require(readr)
+require(ggplot2)
+require(vegan)
+library(readr)
+require(plyr)
+require(reshape2)
+require(dplyr)
 
 SE <- function(x) {
   x <- sd(x, na.rm=TRUE) / sqrt(length(x))
