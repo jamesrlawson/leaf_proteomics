@@ -1,0 +1,29 @@
+## Linear regressions: proportional [protein] vs. Amax
+
+# Summary stats for linear models
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+include_photosynthesis = TRUE
+
+source('scripts/transformations.R')
+source('scripts/prep_data_mg_per_mm2.R')
+library(knitr)
+
+tab <- regression_agg(data, 'photo_max', logx=FALSE)
+
+kable(tab, "markdown", align="l", padding=10)
+write_csv(tab, 'output/modelorder.csv')
+
+modelorder <- read_csv('output/modelorder.csv')
+````
+
+# Linear regressions
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+for(i in modelorder$submodel) {
+  
+  agg_plot(data, depvar = i, indepvar = 'photo_max', logx=FALSE, labs = 'Amax')
+  
+}
+
+````

@@ -1,4 +1,7 @@
 ## ASSIGN PROTEINS TO FUNCTIONAL CATEGORIES AND CALCULATE PROTEIN AMOUNTS IN EACH CATEGORY ##
+
+# called by transformations.R
+
 require(readr)
 require(stringr)
 require(dplyr)
@@ -18,24 +21,6 @@ if(moles) {
 }
 
 # first add the mercator$NAME values for each protein in protein_samples_D14
-
-getProteinBins <- function(protein_samples, mercator) {
-  
-  protein_samples$Protein <- tolower(protein_samples$Protein)
-  mercator$IDENTIFIER <- tolower(mercator$IDENTIFIER)
-  
-  protein_samples$BINCODE <- NA
-  protein_samples$NAME <- NA
-  
-  for(i in 1:length(protein_samples$Protein)) {
-    merc_row <- grep(protein_samples$Protein[i], mercator$IDENTIFIER, fixed = TRUE)
-    protein_samples$BINCODE[i] <- paste0(mercator[merc_row,]$BINCODE, collapse = ", ")
-    protein_samples$NAME[i] <- paste0(mercator[merc_row,]$NAME, collapse = ", ")
-  }
-  
-  return(protein_samples)
-  
-}
 
 protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 
@@ -99,6 +84,8 @@ funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth +
 funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
 funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
 funccat_sums$LHCI_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
+funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
+funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
 
 # add in total (detected) protein and get relative abundances
 

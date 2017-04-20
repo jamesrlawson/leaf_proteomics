@@ -1,3 +1,5 @@
+# called by scripts/functions which use ID's to aggregate data 
+
 replicates <- read_csv('output/replicates.csv')
 replicates <- replicates[replicates$sample %in% protein_D14$sample,]
 
@@ -21,3 +23,7 @@ total_protein_means <- data %>% group_by(ID) %>% dplyr::summarise(total_protein_
                                                            total_protein_CV = CV(total_protein))
 data <- merge(total_protein_means, data)
 
+
+if(include_chlorophyll) {
+  data$Cl_per_LHC <- data$mg_Cl_total_per_m2 / data$LHC
+}

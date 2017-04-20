@@ -1,21 +1,16 @@
-## Linear regressions: relative [protein] vs. total chlorophyll (umol/m2)
+## Linear regressions: total [protein] vs. total chlorophyll (umol/m2)
 
 # Summary stats for linear models
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+include_chlorophyll = TRUE
+
 source('scripts/transformations.R')
-require(ggplot2)
-require(vegan)
-library(readr)
+source('scripts/prep_data_mg_per_mm2.R')
 library(knitr)
-require(plyr)
-require(reshape2)
-require(dplyr)
-require(lazyeval)
-source('scripts/prep_data_.R')
 
 tab <- regression_agg(data, 'mg_Cl_total_per_m2', logx=TRUE)
 
-kable(tab, "markdown", align="l", padding=10)
+#kable(tab, "markdown", align="l", padding=10)
 write_csv(tab, 'output/modelorder.csv')
 
 modelorder <- read_csv('output/modelorder.csv')

@@ -8,11 +8,27 @@ mg_per_m2 = TRUE
 moles = FALSE
 
 # the following switches can be set to include or exclude traits/environmental variables which have missing data. 
+# code will look for preexisting definitions set in knitr files first. Default is to skip these variables.
+
+if(!exists('include_photosynthesis')) {
  include_photosynthesis = FALSE
+}
+
+if(!exists('include_chlorophyll')) {
  include_chlorophyll = FALSE
+}
+
+if(!exists('include_d13C')) {
  include_d13C = FALSE
+}
+
+if(!exists('include_soil_N')) {
  include_soil_N = FALSE
+}
+
+if(!exists('include_soil_P')) {
  include_soil_P = FALSE
+}
 
 source('scripts/binProteins.R')
 
@@ -272,7 +288,7 @@ protein_stand_D14 <- na.omit(protein_stand_D14)
 # cleanup
 
 rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LMA_mean, Narea_mean, 
-   recent_clim, recent_clim_locs, replicates, soil_N, soil_P)
+   recent_clim, recent_clim_locs, replicates, soil_N, soil_P, d13C)
 
 gc(verbose=FALSE)
 
