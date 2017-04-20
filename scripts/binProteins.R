@@ -8,9 +8,16 @@ source('scripts/functions.R')
 
 mercator <- read_csv('data/mercator/D14_mercator_20170217.csv')
 
-# first add the mercator$NAME values for each protein in protein_samples_D14
+# 'mg_per_m2' and 'moles' switches are defined in transformations.R
+if(mg_per_m2) {
+  protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
+}
 
-protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
+if(moles) {
+  protein_samples_D14 <- read_csv('data/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
+}
+
+# first add the mercator$NAME values for each protein in protein_samples_D14
 
 getProteinBins <- function(protein_samples, mercator) {
   
@@ -87,6 +94,11 @@ funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosyst
 funccat_sums$electron_transport_minATPsynth <- funccat_sums$other_electron_carrier + funccat_sums$cytochrome_b6f
 funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
 funccat_sums$redox <- funccat_sums$redox + funccat_sums$glutathione_S_transferases
+
+funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
+funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
+funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
+funccat_sums$LHCI_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
 
 # add in total (detected) protein and get relative abundances
 

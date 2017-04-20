@@ -2,6 +2,11 @@
 # these dataframes can then be used in knitr .Rmd files found in the root directory to produce regression reports with scatterplots
 # showing relationships between a target env variable or trait and all protein functional category amounts
 
+# the following switches determine if protein data used is in mg_per_m2 or moles (used in binProteins.R)
+
+mg_per_m2 = TRUE
+moles = FALSE
+
 # the following switches can be set to include or exclude traits/environmental variables which have missing data. 
  include_photosynthesis = FALSE
  include_chlorophyll = FALSE
@@ -266,7 +271,7 @@ protein_stand_D14 <- na.omit(protein_stand_D14)
 
 # cleanup
 
-rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leafrad_mean, licor, LMA_mean, Narea_mean, 
+rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LMA_mean, Narea_mean, 
    recent_clim, recent_clim_locs, replicates, soil_N, soil_P)
 
 gc(verbose=FALSE)

@@ -21,11 +21,3 @@ total_protein_means <- data %>% group_by(ID) %>% dplyr::summarise(total_protein_
                                                            total_protein_CV = CV(total_protein))
 data <- merge(total_protein_means, data)
 
-# add some extra data
-
-data$electron_transport <- data$electron_transport_minATPsynth + data$ATP_synthase_chloroplastic
-
-data$LHC <- data$LHC_I + data$LHC_II
-
-data$LHCI_per_PSI <- data$LHC_I / data$PSI_min_LHCI
-data$LHCI_per_PSII <- data$LHC_II / data$PSII_min_LHCII
