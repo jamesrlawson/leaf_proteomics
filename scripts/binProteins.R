@@ -79,6 +79,7 @@ funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosyst
 funccat_sums$electron_transport_minATPsynth <- funccat_sums$other_electron_carrier + funccat_sums$cytochrome_b6f
 funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
 funccat_sums$redox <- funccat_sums$redox + funccat_sums$glutathione_S_transferases
+funccat_sums$stress <- funccat_sums$stress + funccat_sums$glutathione_S_transferases
 
 funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
 funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II

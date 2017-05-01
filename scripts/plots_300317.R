@@ -23,10 +23,10 @@ agg_plot_save(depvar = 'Photosystems', indepvar = 'LMA_mean', logx = FALSE, prop
 agg_plot_save(depvar = 'Photosystems', indepvar = 'LMA_mean', logx = FALSE, proportion = TRUE, indepvarType = 'LMA', 
               labs =  c('Photosystems', 'Leaf mass per area (g / m2)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
 
-agg_plot_save(depvar = 'Calvin_cycle', indepvar = 'LMA_mean', logx = FALSE, proportion = FALSE, indepvarType = 'LMA', 
+agg_plot_save(depvar = 'calvin_cycle', indepvar = 'LMA_mean', logx = FALSE, proportion = FALSE, indepvarType = 'LMA', 
               labs =  c('Calvin cycle', 'Leaf mass per area (g / m2)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
 
-agg_plot_save(depvar = 'Calvin_cycle', indepvar = 'LMA_mean', logx = FALSE, proportion = TRUE, indepvarType = 'LMA', 
+agg_plot_save(depvar = 'calvin_cycle', indepvar = 'LMA_mean', logx = FALSE, proportion = TRUE, indepvarType = 'LMA', 
               labs =  c('Calvin cycle', 'Leaf mass per area (g / m2)'), outDir = 'output/figures/20170329/tiff', goldenRatio = FALSE)
 
 agg_plot_save(depvar = 'LHC', indepvar = 'LMA_mean', logx = FALSE, proportion = TRUE, indepvarType = 'LMA', 
@@ -76,16 +76,16 @@ agg_plot_save(depvar = 'Photosystems', indepvar = 'prec', logx = TRUE, proportio
 
 
 
-agg_plot_save(depvar = 'Calvin_cycle', indepvar = 'tavg', logx = FALSE, proportion = TRUE, indepvarType = 'standard', 
+agg_plot_save(depvar = 'calvin_cycle', indepvar = 'tavg', logx = FALSE, proportion = TRUE, indepvarType = 'standard', 
               labs =  c('Calvin cycle protein', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
-agg_plot_save(depvar = 'Calvin_cycle', indepvar = 'gap_mean', logx = FALSE, proportion = TRUE, indepvarType = 'gap', 
+agg_plot_save(depvar = 'calvin_cycle', indepvar = 'gap_mean', logx = FALSE, proportion = TRUE, indepvarType = 'gap', 
               labs =  c('Calvin cycle protein', 'Canopy openness (%)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
-agg_plot_save(depvar = 'Calvin_cycle', indepvar = 'leafrad_mean', logx = FALSE, proportion = TRUE, indepvarType = 'leafrad', 
+agg_plot_save(depvar = 'calvin_cycle', indepvar = 'leafrad_mean', logx = FALSE, proportion = TRUE, indepvarType = 'leafrad', 
               labs =  c('Calvin cycle protein', 'Mean annual irradiance @ leaf (MJ/m2/yr)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
-agg_plot_save(depvar = 'Calvin_cycle', indepvar = 'prec', logx = TRUE, proportion = TRUE, indepvarType = 'standard', 
+agg_plot_save(depvar = 'calvin_cycle', indepvar = 'prec', logx = TRUE, proportion = TRUE, indepvarType = 'standard', 
               labs =  c('Calvin cycle protein', 'Mean annual precipitation (mm)'), outDir = 'output/figures/20170329/tiff', goldenRatio = TRUE)
 
 
@@ -126,7 +126,7 @@ TPCVvsNareaCV <- ggplot(data, aes(x = Narea_CV, y = total_protein_CV)) + geom_po
 TPCVvsNareaCV
 
 
-## Photosystems & Calvin_cycle vs total protein, colour scaled
+## Photosystems & calvin_cycle vs total protein, colour scaled
 
 source('scripts/transformations.R')
 source('scripts/prep_data_mg_per_mm2.R')
@@ -141,10 +141,10 @@ x <- x + theme_classic() + theme(text = element_text(size = 17),
 x
 dev.off()
 
-cor(data$Photosys, data$total_protein)
+cor(data$Photosystems, data$total_protein)
 
 tiff('C:/Users/James/Desktop/stuff/PEPMOB/D14/output/figures/20170329/tiff/calvin_vs_totalprotein.tiff', height = 6, width = 6.5, units = 'in', res =300)
-x <- ggplot(data, aes(x = total_protein, y = Calvin_cycle)) + geom_point(aes(colour = leaf_rad)) + scale_colour_gradientn('Mean annual irradiance @ leaf (MJ/m2/yr)', colours=rainbow(2))
+x <- ggplot(data, aes(x = total_protein, y = calvin_cycle)) + geom_point(aes(colour = leaf_rad)) + scale_colour_gradientn('Mean annual irradiance @ leaf (MJ/m2/yr)', colours=rainbow(2))
 x <- x + ylab('Calvin cycle protein abundance (mg/m2)') + xlab('Total protein abundance (mg/m2)') #+ xlim(0,150000)
 x <- x + theme_classic() + theme(text = element_text(size = 17),
                                  legend.title=element_text(size=15),
@@ -153,13 +153,13 @@ x <- x + theme_classic() + theme(text = element_text(size = 17),
 x
 dev.off()
 
-cor(data$Calvin_cycle, data$total_protein)
+cor(data$calvin_cycle, data$total_protein)
 
 # means and ranges
 
 source('scripts/prep_data_mg_per_mm2.R')
 
-calvmean <- data %>% group_by(ID) %>% summarise(calvmean = mean(Calvin_cycle, na.rm=TRUE), 
+calvmean <- data %>% group_by(ID) %>% summarise(calvmean = mean(calvin_cycle, na.rm=TRUE), 
                                                 photmean = mean(Photosystems, na.rm=TRUE),
                                                 photorespmean = mean(Photorespiration, na.rm=TRUE))
 

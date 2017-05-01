@@ -33,7 +33,7 @@ euc_swath_reanalysed <- euc_swath_reanalysed %>% subset(., select=which(!duplica
 # load FDR data, rename columns, remove decoys and discard proteins below identification probability threshold
 
 euc_swath_reanalysed_FDR <- load_excel_files('data/large_files/swath/', 'FDR')
-euc_swath_reanalysed_FDR <- cbind(euc_swath_reanalysed_FDR[,1:7], euc_swath_reanalysed_FDR[,10:ncol(euc_swath_reanalysed_FDR)] %>% select(contains('sample')))
+euc_swath_reanalysed_FDR <- cbind(euc_swath_reanalysed_FDR[,1:7], euc_swath_reanalysed_FDR[,10:ncol(euc_swath_reanalysed_FDR)] %>% dplyr::select(contains('sample')))
 names(euc_swath_reanalysed_FDR)[8:ncol(euc_swath_reanalysed_FDR)] <- do.call(rbind, str_split(names(euc_swath_reanalysed_FDR[,8:ncol(euc_swath_reanalysed_FDR)]), pattern = " "))[,2]
 euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, Decoy == 0)
 
