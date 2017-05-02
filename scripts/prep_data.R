@@ -27,3 +27,5 @@ data <- merge(total_protein_means, data)
 if(include_chlorophyll) {
   data$Cl_per_LHC <- data$mg_Cl_total_per_m2 / data$LHC
 }
+
+data$prec <- data$prec/1000

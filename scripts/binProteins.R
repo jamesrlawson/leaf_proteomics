@@ -83,10 +83,10 @@ funccat_sums$stress <- funccat_sums$stress + funccat_sums$glutathione_S_transfer
 
 funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
 funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
+funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
 funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
 funccat_sums$LHCI_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
 funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
-funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
 
 # add in total (detected) protein and get relative abundances
 
@@ -96,7 +96,7 @@ protein_D14 <- protein_samples_D14 %>% gather(key = sample, value = value, 2:(nc
   full_join(funccat_sums, by = 'sample')
 
 protein_stand_D14 <- protein_D14 %>% 
-  mutate_at(vars(3:(ncol(.))), funs(. / total_protein)) # divide columns by total protein to get relative abundances
+  mutate_at(vars(3:(ncol(.)-3)), funs(. / total_protein)) # divide columns by total protein to get relative abundances
 
 # cleanup
 

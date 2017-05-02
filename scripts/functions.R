@@ -507,7 +507,7 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
 
 # this function outputs a pretty aggregated plot to your directory of choice, with stacked points for different funccats
 
-agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarType, labs, outDir, fileType = 'tiff', goldenRatio = FALSE) {
+agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarType, labs, outDir, fileType = 'tiff', goldenRatio = FALSE, total_prot = FALSE) {
   
   # data - the output of scripts/prep_data.R or sources/prep_data_mg_per_mm2.R (contains all climate/env variables and protein amounts)
   # depvar - the dependent variable (e.g. 'Photosystems')
@@ -535,7 +535,7 @@ agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarT
     type = '_mg-per-m2_'
   }
   
-  if(proportion) { # if proportional, just use calvin cycle and photosystems
+  if(proportion | total_prot) { # if proportional or total_protein to be indepvar, only aggregate calvin cycle and photosystems
     
     dep_means <- group_by(data, ID) %>%
       dplyr::summarise(calv = mean(calvin_cycle, na.rm=TRUE),
@@ -573,13 +573,13 @@ agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarT
   if(logx) { # get significance TRUE/FALSE for model, depending on if logx or not
     sig_calv <- summary(lm(dep_means[dep_means$funccat %in% 'calv',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'calv',][[indepvar]])))$coefficients[,4][2] < 0.05
     sig_phot <- summary(lm(dep_means[dep_means$funccat %in% 'phot',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'phot',][[indepvar]])))$coefficients[,4][2] < 0.05
-    if(!proportion) {
+    if(!proportion && !total_prot) {
       sig_total_prot <- summary(lm(dep_means[dep_means$funccat %in% 'total_prot',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'total_prot',][[indepvar]])))$coefficients[,4][2] < 0.05
     }  
   } else {
     sig_calv <- summary(lm(dep_means[dep_means$funccat %in% 'calv',]$protein_mean ~ dep_means[dep_means$funccat %in% 'calv',][[indepvar]]))$coefficients[,4][2] < 0.05
     sig_phot <- summary(lm(dep_means[dep_means$funccat %in% 'phot',]$protein_mean ~ dep_means[dep_means$funccat %in% 'phot',][[indepvar]]))$coefficients[,4][2] < 0.05
-    if(!proportion) {
+    if(!proportion && !total_prot) {
       sig_total_prot <- summary(lm(dep_means[dep_means$funccat %in% 'total_prot',]$protein_mean ~ dep_means[dep_means$funccat %in% 'total_prot',][[indepvar]]))$coefficients[,4][2] < 0.05
     }  
   }
@@ -587,7 +587,7 @@ agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarT
   dep_means$sig <- NA
   dep_means[dep_means$funccat == 'calv',]$sig <- sig_calv
   dep_means[dep_means$funccat == 'phot',]$sig <- sig_phot
-  if(!proportion) {
+  if(!proportion && !total_prot) {
     dep_means[dep_means$funccat == 'total_prot',]$sig <- sig_total_prot
   }
   # directory to save to
@@ -642,15 +642,15 @@ agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarT
   if(logx) {
     
     errorbar_width <- (log10(max(data[[indepvar]], na.rm=TRUE)) - log10(min(data[[indepvar]], na.rm=TRUE))) / 50
-    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = errorbar_width, alpha = 0.8, size = 0.5)
+    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = errorbar_width, alpha = 0.3, size = 0.5)
     
     if(indepvarType == 'gap') {
       
-      p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE, colour = funccat), alpha = 0.6, size = 0.5)
+      p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE, colour = funccat), alpha = 0.3, size = 0.5)
       
     } else { if(indepvarType == 'leafrad') {
       
-      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE, colour = funccat), alpha = 0.6, size = 0.5)
+      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE, colour = funccat), alpha = 0.3, size = 0.5)
       
     }
     }
@@ -660,24 +660,30 @@ agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarT
   } else {
     
     errorbar_width <- (max(data[[indepvar]], na.rm=TRUE) - min(data[[indepvar]], na.rm=TRUE)) / 50
-    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = errorbar_width, alpha = 0.8, size = 0.5)
+    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = errorbar_width, alpha = 0.3, size = 0.5)
     
     if(indepvarType == 'gap') {
       
-      p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE, colour = funccat), alpha = 0.6, size = 0.5)
+      p <- p + geom_errorbarh(aes(xmin = gap_mean - gap_SE, xmax = gap_mean + gap_SE, colour = funccat), alpha = 0.3, size = 0.5)
       
     } else { if(indepvarType == 'leafrad') {
       
-      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE, colour = funccat), alpha = 0.6, size = 0.5)
+      p <- p + geom_errorbarh(aes(xmin = leafrad_mean - leafrad_SE, xmax = leafrad_mean + leafrad_SE, colour = funccat), alpha = 0.3, size = 0.5)
       
       
     } else { if(indepvarType == 'LMA') {
       
-      p <- p + geom_errorbarh(aes(xmin = LMA_mean - LMA_SE, xmax = LMA_mean + LMA_SE, colour = funccat), alpha = 0.6, size = 0.5)
+      p <- p + geom_errorbarh(aes(xmin = LMA_mean - LMA_SE, xmax = LMA_mean + LMA_SE, colour = funccat), alpha = 0.3, size = 0.5)
       
     } else { if(indepvarType == 'Narea') {
       
-      p <- p + geom_errorbarh(aes(xmin = Narea_mean - Narea_SE, xmax = Narea_mean + Narea_SE, colour = funccat), alpha = 0.6, size = 0.5)
+      p <- p + geom_errorbarh(aes(xmin = Narea_mean - Narea_SE, xmax = Narea_mean + Narea_SE, colour = funccat), alpha = 0.3, size = 0.5)
+      
+    } else { if(indepvarType == 'total_protein') {
+     
+      p <- p + geom_errorbarh(aes(xmin = total_protein_mean - total_protein_SE, xmax = total_protein_mean + total_protein_SE, colour = funccat), alpha = 0.3, size = 0.5)
+       
+    }
       
     }
       
