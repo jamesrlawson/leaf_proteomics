@@ -757,11 +757,12 @@ effect_size <- function(proportion, depvar, logx) {
       }
     }
     
+    
     propChange <- (x - y)/x
     
-    model.info <-  data.frame(cbind(depvar, proportion, indepvars[i],x,y,propChange))
+    model.info <-  data.frame(cbind(depvar, proportion, indepvars[i],x,y,propChange), round(summary(p)$coefficients[,4][2],2), round(summary(p)$r.squared,3))
     
-    names(model.info) <- c('depvar','proportional','indepvar','minval','maxval','change') 
+    names(model.info) <- c('depvar','proportional','indepvar','minval','maxval','change', 'pval', 'R2') 
     rownames(model.info) <- NULL
     
     my.list[[i]] <- model.info
