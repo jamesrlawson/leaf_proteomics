@@ -702,3 +702,77 @@ agg_plot_save_combined <- function(proportion, indepvar, logx = FALSE, indepvarT
   dev.off()
   
 }
+
+# this function outputs a table of modelled minimum and maximum values and proprotion change over env gradients for protein categories of interest
+
+effect_size <- function(proportion, depvar, logx) {
+  
+  indepvars <- c(logx = 'prec',  # name the element with 'logx' if logged values should be used
+                 'tavg', 
+                 'gap_mean', 
+                 'leafrad_mean', 
+                 'LMA_mean') 
+  
+  if(proportion) {
+    source('scripts/prep_data.R')
+  } else { if(!proportion) {
+    source('scripts/prep_data_mg_per_mm2.R')
+  }
+  }
+  
+  data_means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(phot_mean = mean(Photosystems, na.rm=TRUE),
+                                                                  phot_SE = SE(Photosystems),
+                                                                  calv_mean = mean(calvin_cycle, na.rm=TRUE),
+                                                                  calv_SE = mean(calvin_cycle))
+  data_means <- merge(data, data_means)
+  data_means <- distinct(data_means, ID, .keep_all = TRUE)
+  
+  df <- data.frame()
+  
+  my.list <-vector("list", length(indepvars))
+  
+  for(i in 1:length(indepvars)) {
+    
+    # proportion change in model
+    
+    logx <- names(indepvars)[i]
+    logx <- logx == 'logx'
+    
+    if(logx) {
+      p <- lm(data_means[[depvar]] ~ log10(data_means[[indepvars[i]]]), data_means)
+    } else {
+      if(!logx) {
+        p <- lm(data_means[[depvar]] ~ data_means[[indepvars[i]]], data_means)
+      }
+    }
+    summary(p)
+    
+    if(logx) {
+      y = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(log10(data_means[[indepvars[i]]]))
+      x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(log10(data_means[[indepvars[i]]]))
+    } else { 
+      if(!logx) {
+        y = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(data_means[[indepvars[i]]])
+        x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(data_means[[indepvars[i]]])
+      }
+    }
+    
+    propChange <- (x - y)/x
+    
+    model.info <-  data.frame(cbind(depvar, proportion, indepvars[i],x,y,propChange))
+    
+    names(model.info) <- c('depvar','proportional','indepvar','minval','maxval','change') 
+    rownames(model.info) <- NULL
+    
+    my.list[[i]] <- model.info
+    
+  }
+  
+  df <- rbind(df, do.call(rbind, my.list))
+  
+  df[,1:3] <- lapply(df[,1:3], function(x) as.character(x))
+  df[,4:6] <- lapply(df[,4:6], function(x) as.numeric(as.character(x)))
+  
+  return(df)
+}
+
