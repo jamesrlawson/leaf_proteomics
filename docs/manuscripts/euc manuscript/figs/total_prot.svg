@@ -15,7 +15,10 @@
    id="svg207250"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="New document 44">
+   sodipodi:docname="total_prot.svg"
+   inkscape:export-filename="C:\Users\James\Desktop\stuff\PEPMOB\D14\docs\manuscripts\euc manuscript\figs\total_prot.png"
+   inkscape:export-xdpi="600"
+   inkscape:export-ydpi="600">
   <defs
      id="defs207252">
     <clipPath
@@ -1806,9 +1809,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
+     inkscape:zoom="0.69665275"
      inkscape:cx="969.53869"
-     inkscape:cy="388.16572"
+     inkscape:cy="571.72949"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1844,7 +1847,9 @@
        width="1345.5231"
        height="1058.6403"
        x="-996.01038"
-       y="-111.33355" />
+       y="-111.33355"
+       inkscape:export-xdpi="600"
+       inkscape:export-ydpi="600" />
     <g
        id="surface146"
        transform="matrix(1.25,0,0,1.25,-996.57909,-109.06639)">

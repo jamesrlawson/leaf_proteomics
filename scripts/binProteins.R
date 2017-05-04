@@ -85,7 +85,7 @@ funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth +
 funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
 funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
 funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
-funccat_sums$LHCI_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
+funccat_sums$LHCII_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
 funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
 
 # add in total (detected) protein and get relative abundances

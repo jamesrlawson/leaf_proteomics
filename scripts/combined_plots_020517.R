@@ -57,6 +57,14 @@ write_csv(effect_size_all, 'output/effect_size_all.csv')
 
 ## Photosystems & calvin_cycle vs total protein, colour scaled
 
+source('scripts/prep_data_mg_per_mm2.R')
+
+bla <- gather(data, key = 'funccat', value = 'protein_amount', Photosystems, calvin_cycle, -total_protein)
+
+ggplot(bla, aes(x = total_protein, y = protein_amount)) + geom_point(aes(shape = funccat, colour = leaf_rad)) + scale_colour_gradientn('Mean annual irradiance @ leaf (MJ/m2/yr)', colours=rainbow(2))
+
+
+
 source('scripts/transformations.R')
 source('scripts/prep_data_mg_per_mm2.R')
 

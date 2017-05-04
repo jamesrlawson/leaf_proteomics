@@ -22,6 +22,14 @@ if(!exists('include_d13C')) {
  include_d13C = FALSE
 }
 
+if(!exists('include_leaf_N')) {
+  include_leaf_N = FALSE
+}
+
+if(!exists('include_leaf_P')) {
+  include_leaf_P = FALSE
+}
+
 if(!exists('include_soil_N')) {
  include_soil_N = FALSE
 }
@@ -143,15 +151,19 @@ if(include_photosynthesis) {
 
 leaf_CN <- read_csv('data/leaf_CNP/leaf_CN.csv')
 leaf_CN <- leaf_CN[leaf_CN$sample %in% climate_locs$sample,]
-climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
 
-climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
+if(include_leaf_N) {
+  climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
+  climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
+}
 
 leaf_P <- read_csv('data/leaf_CNP/leaf_P.csv')
 leaf_P <- leaf_P[leaf_P$sample %in% climate_locs$sample,]
-climate_locs <- merge(leaf_P, climate_locs, all.y=TRUE, by = 'sample')
 
-climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
+if(include_leaf_P) {
+  climate_locs <- merge(leaf_P, climate_locs, all.y=TRUE, by = 'sample')
+  climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
+}
 
 # leaf age 
 
@@ -224,8 +236,10 @@ climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Lo
   
   # calculate N_per_area mean and SE
   
-  Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
-  climate_locs <- merge(climate_locs, Narea_mean)
+  if(include_leaf_N) {
+    Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
+    climate_locs <- merge(climate_locs, Narea_mean)
+  }
   
   # soil and litter data
   
