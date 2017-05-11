@@ -3,43 +3,43 @@ source('scripts/functions.R')
 
 
 agg_plot_save_combined(indepvar = 'prec', logx = TRUE, proportion = FALSE, indepvarType = 'standard', 
-              labs =  c('Protein amount', 'Mean annual precip. (m/yr)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+              labs =  c('Protein amount', 'Mean annual precip. (m/yr)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'prec', logx = TRUE, proportion = TRUE, indepvarType = 'standard', 
-              labs =  c('Protein amount', 'Mean annual precip. (m/yr)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+              labs =  c('Protein amount', 'Mean annual precip. (m/yr)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 
 agg_plot_save_combined(indepvar = 'gap_mean', logx = FALSE, proportion = FALSE, indepvarType = 'gap', 
-              labs =  c('Protein amount', 'Canopy openness (%)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+              labs =  c('Protein amount', 'Canopy openness (%)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'gap_mean', logx = FALSE, proportion = TRUE, indepvarType = 'gap', 
-              labs =  c('Protein amount', 'Canopy openness (%)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+              labs =  c('Protein amount', 'Canopy openness (%)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 
 agg_plot_save_combined(indepvar = 'leafrad_mean', logx = FALSE, proportion = FALSE, indepvarType = 'leafrad', 
-                       labs =  c('Protein amount', 'Irradiance (MJ/m2/year)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+                       labs =  c('Protein amount', 'Irradiance (MJ/m2/year)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'leafrad_mean', logx = FALSE, proportion = TRUE, indepvarType = 'leafrad', 
-                       labs =  c('Protein amount', 'Irradiance (MJ/m2/year)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+                       labs =  c('Protein amount', 'Irradiance (MJ/m2/year)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'tavg', logx = FALSE, proportion = FALSE, indepvarType = 'standard', 
-                       labs =  c('Protein amount', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+                       labs =  c('Protein amount', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'tavg', logx = FALSE, proportion = TRUE, indepvarType = 'standard', 
-                       labs =  c('Protein amount', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+                       labs =  c('Protein amount', 'Mean annual temperature (oC)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'LMA_mean', logx = FALSE, proportion = FALSE, indepvarType = 'LMA', 
-                       labs =  c('Protein amount', 'LMA (g/m2)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+                       labs =  c('Protein amount', 'LMA (g/m2)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 agg_plot_save_combined(indepvar = 'LMA_mean', logx = FALSE, proportion = TRUE, indepvarType = 'LMA', 
-                       labs =  c('Protein amount', 'LMA (g/m2)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg')
+                       labs =  c('Protein amount', 'LMA (g/m2)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff')
 
 
 agg_plot_save_combined(indepvar = 'total_protein_mean', logx = FALSE, proportion = FALSE, indepvarType = 'total_protein', 
-                       labs =  c('Protein amount', 'total protein (mg/m2)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg', total_prot = TRUE)
+                       labs =  c('Protein amount', 'total protein (mg/m2)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff', total_prot = TRUE)
 
 agg_plot_save_combined(indepvar = 'total_protein_mean', logx = FALSE, proportion = TRUE, indepvarType = 'total_protein', 
-                       labs =  c('Protein amount', 'total protein (mg/m2)'), outDir = 'output/figures/20170501/svg', goldenRatio = FALSE, fileType = 'svg', total_prot = TRUE)
+                       labs =  c('Protein amount', 'total protein (mg/m2)'), outDir = 'output/figures/20170501/tiff', goldenRatio = FALSE, fileType = 'tiff', total_prot = TRUE)
 
 
 # modelled changes in protein amounts across env gradients

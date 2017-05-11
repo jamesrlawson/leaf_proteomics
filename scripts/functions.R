@@ -748,19 +748,19 @@ effect_size <- function(proportion, depvar, logx) {
     summary(p)
     
     if(logx) {
-      y = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(log10(data_means[[indepvars[i]]]))
-      x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(log10(data_means[[indepvars[i]]]))
+      start = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(log10(data_means[[indepvars[i]]]))
+      end = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(log10(data_means[[indepvars[i]]]))
     } else { 
       if(!logx) {
-        y = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(data_means[[indepvars[i]]])
-        x = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(data_means[[indepvars[i]]])
+        start = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * min(data_means[[indepvars[i]]])
+        end = as.numeric(coef(p)[1]) + as.numeric(coef(p)[2]) * max(data_means[[indepvars[i]]])
       }
     }
     
     
-    propChange <- (x - y)/x
+    propChange <- (end - start)/start
     
-    model.info <-  data.frame(cbind(depvar, proportion, indepvars[i],x,y,propChange), round(summary(p)$coefficients[,4][2],2), round(summary(p)$r.squared,3))
+    model.info <-  data.frame(cbind(depvar, proportion, indepvars[i],start,end,propChange), round(summary(p)$coefficients[,4][2],2), round(summary(p)$r.squared,3))
     
     names(model.info) <- c('depvar','proportional','indepvar','minval','maxval','change', 'pval', 'R2') 
     rownames(model.info) <- NULL
