@@ -56,11 +56,11 @@ reorder_cormat_env <- function(cormat, trait = trait_vars, env = env_vars) {
   # Use correlation between variables as distance, forces env_vars to front
   dd <- as.dist((1-cormat)/2)
   hc <- hclust(dd)
-#  env_vars <- c('LMA_g_per_m2',
-#                'prec',
-#                'tavg',
-#                'leaf_rad',
-#                'gap')
+  #  env_vars <- c('LMA_g_per_m2',
+  #                'prec',
+  #                'tavg',
+  #                'leaf_rad',
+  #                'gap')
   env_vars_ <- which(colnames(cormat) %in% env)
   trait_vars_ <- which(colnames(cormat) %in% trait)
   hc$order <- c(hc$order[hc$order %in% env_vars_],
@@ -68,7 +68,7 @@ reorder_cormat_env <- function(cormat, trait = trait_vars, env = env_vars) {
                 hc$order[!hc$order %in% env_vars_])
   cormat <-cormat[hc$order, hc$order]
 }
-  
+
 protein_cats <- c('Rubisco', 
                   'calvin_cycle', 
                   'Photosystems', 
@@ -130,9 +130,9 @@ rm(mg_per_m2, moles)
 
 
 rm(include_photosynthesis,
-include_d13C,
-include_leaf_N,
-include_leaf_P,
-include_soil_N,
-include_soil_P,
-include_chlorophyll)
+   include_d13C,
+   include_leaf_N,
+   include_leaf_P,
+   include_soil_N,
+   include_soil_P,
+   include_chlorophyll)
