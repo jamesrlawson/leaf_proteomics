@@ -15,15 +15,15 @@ if(!exists('moles')) {
 # code will look for preexisting definitions set in knitr files first. Default is to skip these variables.
 
 if(!exists('include_photosynthesis')) {
- include_photosynthesis = FALSE
+  include_photosynthesis = FALSE
 }
 
 if(!exists('include_chlorophyll')) {
- include_chlorophyll = FALSE
+  include_chlorophyll = FALSE
 }
 
 if(!exists('include_d13C')) {
- include_d13C = FALSE
+  include_d13C = FALSE
 }
 
 if(!exists('include_leaf_N')) {
@@ -35,11 +35,11 @@ if(!exists('include_leaf_P')) {
 }
 
 if(!exists('include_soil_N')) {
- include_soil_N = FALSE
+  include_soil_N = FALSE
 }
 
 if(!exists('include_soil_P')) {
- include_soil_P = FALSE
+  include_soil_P = FALSE
 }
 
 source('scripts/binProteins.R')
@@ -215,7 +215,7 @@ chl <- na.omit(read_csv('data/chlorophyll.csv'))
 chl <- chl[chl$sample %in% protein_D14$sample,]
 
 if(include_chlorophyll) {
-  climate_locs <- merge(chl, climate_locs, by = 'sample')
+  climate_locs <- merge(chl, climate_locs, by = 'sample', all.y=TRUE)
 }
 
 
@@ -226,80 +226,82 @@ replicates$site_revised <- NULL
 
 climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
 
-  # calculate gap means and gap SE
-  
-  gap_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
-  climate_locs <- merge(climate_locs, gap_mean)
-  
-  # calculate leafrad means and leafrad SE
-  
-  leafrad_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
-  climate_locs <- merge(climate_locs, leafrad_mean)
-  
-  # calculate LMA mean and LMA SE
-  
-  LMA_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE), LMA_SE = SE(LMA_g_per_m2))
-  climate_locs <- merge(climate_locs, LMA_mean)
-  
-  # calculate N_per_area mean and SE
-  
-  if(include_leaf_N) {
-    Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
-    climate_locs <- merge(climate_locs, Narea_mean)
-  }
-  
-  # soil and litter data
-  
-  soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
-  soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
+# calculate gap means and gap SE
+
+gap_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
+climate_locs <- merge(climate_locs, gap_mean)
+
+# calculate leafrad means and leafrad SE
+
+leafrad_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
+climate_locs <- merge(climate_locs, leafrad_mean)
+
+# calculate LMA mean and LMA SE
+
+LMA_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE), LMA_SE = SE(LMA_g_per_m2))
+climate_locs <- merge(climate_locs, LMA_mean)
+
+# calculate N_per_area mean and SE
+
+if(include_leaf_N) {
+  Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
+  climate_locs <- merge(Narea_mean, climate_locs, all.y = TRUE)
+}
+
+# soil and litter data
+
+soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
+soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
   filter(soil_P < 1500)
 
-  soil_N <- soil_N[soil_N$ID %in% climate_locs$ID,]
+soil_N <- soil_N[soil_N$ID %in% climate_locs$ID,]
 
-  if(include_soil_N) {
-    climate_locs <- merge(climate_locs, soil_N, by = 'ID')
-  }
-  
-  if(include_soil_P) {
-    climate_locs <- merge(climate_locs, soil_P, by = 'ID')
-  }
+if(include_soil_N) {
+  climate_locs <- merge(soil_N, climate_locs, by = 'ID', all.y = TRUE)
+}
+
+if(include_soil_P) {
+  climate_locs <- merge(soil_P, climate_locs, by = 'ID', all.y = TRUE)
+}
 
 # delta C 13
 
 if(include_d13C) {
   
-d13C <- read_csv('data/d13C.csv')
-d13C <- d13C[d13C$sample %in% protein_D14$sample,]
-climate_locs <- merge(d13C, climate_locs, by = 'sample', all=TRUE)
-
-id <- unique(climate_locs$ID)
-
-# fill in values so d13C for all leaf ages of a branch = mid value
-
- for(i in 1:length(id)) {
-
-   for(j in 1:3) {
-
-    temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
-
-     if(any(temp$leaf_age %in% 'mid')) {
-
-       temp[temp$leaf_age %in% 'mid',]$d13C
-
-       climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
-
-     }
-
-   }
-
- }
-
-}
+  d13C <- read_csv('data/d13C.csv')
+  d13C <- d13C[d13C$sample %in% protein_D14$sample,]
+  climate_locs <- merge(d13C, climate_locs, by = 'sample', all.y=TRUE)
   
+  id <- unique(climate_locs$ID)
+  
+  # fill in values so d13C for all leaf ages of a branch = mid value
+  
+  for(i in 1:length(id)) {
+    
+    for(j in 1:3) {
+      
+      temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
+      
+      if(any(temp$leaf_age %in% 'mid')) {
+        
+        temp[temp$leaf_age %in% 'mid',]$d13C
+        
+        climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
+        
+      }
+      
+    }
+    
+  }
+  
+}
+
 climate_locs$ID <- NULL
 # climate_locs <- na.omit(climate_locs)
 
 climate_locs <- climate_locs[!climate_locs$leaf_age %in% 'sen',]
+
+
 
 # these are the df's that are used in the knitr report
 
@@ -312,4 +314,3 @@ rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LM
    recent_clim, recent_clim_locs, replicates, soil_N, soil_P, d13C)
 
 gc(verbose=FALSE)
-

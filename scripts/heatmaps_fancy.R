@@ -3,6 +3,8 @@ require(Hmisc)
 
 # heatmaps looking at correlations between protein funccats
 
+# uses 291 observations / 224
+
 inc_photosynthesis = TRUE  # different from include_photosynthesis so it doesn't immediately affect transformations.R
 include_d13C = TRUE
 include_leaf_N = TRUE
@@ -73,7 +75,7 @@ bla <- full_join(cormat_all, cormat_all.P, by = c('Var1', 'Var2'))
 p <- ggplot(bla, aes(x = Var1, y = Var2))
 p <- p  + geom_raster(data = subset(bla, value.y < 0.05), aes(fill = value.x))
 p <- p + ggtitle('Correlation heatmap (lower = abs, upper = rel)')
-p <- p + scale_fill_gradient2(low = "blue", high = "red", mid = "yellow", 
+p <- p + scale_fill_gradient2(low = "red", high = "green", mid = "white", 
                               midpoint = 0, limit = c(-1,1), space = "Lab", 
                               name="Pearson\nCorrelation")
 p <- p + theme_minimal()  + theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1)) + coord_fixed()
