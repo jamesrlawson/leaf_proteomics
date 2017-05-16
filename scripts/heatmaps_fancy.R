@@ -2,7 +2,7 @@ require(broom)
 
 # heatmaps looking at correlations between protein funccats
 
-include_photosynthesis = TRUE
+inc_photosynthesis = TRUE  # different from include_photosynthesis so it doesn't immediately affect transformations.R
 include_d13C = TRUE
 include_leaf_N = TRUE
 include_leaf_P = TRUE
@@ -25,10 +25,6 @@ if(include_soil_P) {
 
 trait_vars <- c('LMA_g_per_m2')
 
-if(include_photosynthesis) {
-  trait_vars <- c(trait_vars, 'photo_max', 'Cond') 
-}
-
 if(include_d13C) {
   trait_vars <- c(trait_vars, 'd13C') 
 }
@@ -44,7 +40,6 @@ if(include_leaf_P) {
 if(include_chlorophyll) {
   trait_vars <- c(trait_vars, 'mg_Cl_total_per_m2') 
 }
-
 source('scripts/transformations.R')
 
 reorder_cormat <- function(cormat){
@@ -198,20 +193,91 @@ p
 rm(mg_per_m2, moles)
 
 
+
+
 ### both ###
 
+
 source('scripts/prep_data.R')
+
 prot <- data
 prot$calvin_cycle <- prot$calvin_cycle - prot$Rubisco
 prot$prec <- log10(prot$prec)
-cormat.prot_rel <- Hmisc::rcorr(as.matrix(prot[,cor_vars]), type = 'pearson')
+
+
+if(inc_photosynthesis) {
+  
+  # alter trait_vars and cor_vars to include gas exchange vars
+  if(!any(trait_vars %in% 'photo_max')) {
+    trait_vars <- c(trait_vars, 'photo_max', 'Cond') 
+  }
+  cor_vars <- c(protein_cats, trait_vars, env_vars)
+  
+  # add place holder columns for Cond and photo_max
+  
+  prot$Cond <- runif(nrow(prot))
+  prot$photo_max <- runif(nrow(prot))
+
+  cormat.prot_rel <- Hmisc::rcorr(as.matrix(prot[,cor_vars]), type = 'pearson')
+  
+  include_photosynthesis = TRUE
+  
+  source('scripts/transformations.R')
+  source('scripts/prep_data.R')
+  
+  rm(include_photosynthesis)
+  
+  prot_photo <- data
+  prot_photo$calvin_cycle <- prot_photo$calvin_cycle - prot_photo$Rubisco
+  prot_photo$prec <- log10(prot_photo$prec)
+  
+  cormat.prot_photo <- Hmisc::rcorr(as.matrix(prot_photo[,cor_vars]), type = 'pearson')
+  cormat.prot_rel$r[,which(rownames(cormat.prot_rel$r) %in% c('photo_max', 'Cond'))] <- cormat.prot_photo$r[,which(rownames(cormat.prot_photo$r) %in% c('photo_max', 'Cond'))]
+  cormat.prot_rel$P[,which(rownames(cormat.prot_rel$P) %in% c('photo_max', 'Cond'))] <- cormat.prot_photo$P[,which(rownames(cormat.prot_photo$P) %in% c('photo_max', 'Cond'))]
+  
+}
+
+
+
 source('scripts/prep_data_mg_per_mm2.R')
 prot <- data
 prot$calvin_cycle <- prot$calvin_cycle - prot$Rubisco
 prot$prec <- log10(prot$prec)
-cormat.prot_abs <- Hmisc::rcorr(as.matrix(prot[,cor_vars]), type = 'pearson')
 
-x <-  which(cormat.prot_rel$P < 0.05, arr.ind=TRUE)
+
+if(inc_photosynthesis) {
+  
+  # alter trait_vars and cor_vars to include gas exchange vars
+  if(!any(trait_vars %in% 'photo_max')) {
+    trait_vars <- c(trait_vars, 'photo_max', 'Cond') 
+  }
+  cor_vars <- c(protein_cats, trait_vars, env_vars)
+  
+  # add place holder columns for Cond and photo_max
+  
+  prot$Cond <- runif(nrow(prot))
+  prot$photo_max <- runif(nrow(prot))
+  
+  cormat.prot_abs <- Hmisc::rcorr(as.matrix(prot[,cor_vars]), type = 'pearson')
+  
+  include_photosynthesis = TRUE
+  
+  source('scripts/transformations.R')
+  source('scripts/prep_data_mg_per_mm2.R')
+  
+  rm(include_photosynthesis)
+  
+  prot_photo <- data
+  prot_photo$calvin_cycle <- prot_photo$calvin_cycle - prot_photo$Rubisco
+  prot_photo$prec <- log10(prot_photo$prec)
+  
+  cormat.prot_photo <- Hmisc::rcorr(as.matrix(prot_photo[,cor_vars]), type = 'pearson')
+  cormat.prot_abs$r[,which(rownames(cormat.prot_abs$r) %in% c('photo_max', 'Cond'))] <- cormat.prot_photo$r[,which(rownames(cormat.prot_photo$r) %in% c('photo_max', 'Cond'))]
+  cormat.prot_abs$P[,which(rownames(cormat.prot_abs$P) %in% c('photo_max', 'Cond'))] <- cormat.prot_photo$P[,which(rownames(cormat.prot_photo$P) %in% c('photo_max', 'Cond'))]
+  
+}
+
+
 
 cormat_all <- cormat.prot_abs$r
 cormat_all[upper.tri(cormat_all)] <- cormat.prot_rel$r[upper.tri(cormat.prot_rel$r)]
