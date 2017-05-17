@@ -1,6 +1,5 @@
 species_full,species_confirmed,lineage
 Angophora costata,angcos,Angophora_Corymbia
-Angophora hispida,anghis,Angophora_Corymbia
 Corymbia citriodora,corcit,Angophora_Corymbia
 Corymbia clarksoniana,corcla,Angophora_Corymbia
 Corymbia eximia,corexi,Angophora_Corymbia
@@ -16,7 +15,6 @@ Eucalyptus haemastoma,euchae,Eucalyptus
 Eucalyptus mediocris,eucmed,Eucalyptus
 Eucalyptus nitida,eucnit,Eucalyptus
 Eucalyptus oblonga,eucobl,Eucalyptus
-Eucalyptus regnans,eucreg,Eucalyptus
 Eucalyptus sparsifolia,eucspa,Eucalyptus
 Eucalyptus tenuiramis,eucten,Eucalyptus
 Eucalyptus atrata,eucatr,Symphyomyrtus

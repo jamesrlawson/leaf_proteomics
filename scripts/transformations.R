@@ -80,6 +80,10 @@ climate_locs <- merge(sample_locations, climate, by = c('Longitude', 'Latitude')
 climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
 climate_locs <- climate_locs[climate_locs$sample %in% unique(protein_stand_D14$sample),]
 
+climate_locs_test <- vector('numeric', length = 20) # create a vector to contain nrow(climate_locs) values for testing
+n <- 1 # we'll iterate n every time a merge is conducted
+climate_locs_test[n] <- nrow(climate_locs)
+
 # climatic data calculated for one year preceding sample collection
 recent_clim <- read_csv('data/recent_year_clim.csv')
 recent_clim$date <- NULL
@@ -92,6 +96,8 @@ recent_clim_locs <- recent_clim_locs[recent_clim_locs$sample %in% unique(protein
 
 climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species', 'Longitude', 'Latitude'))
 
+n <- n + 1 # we'll iterate n every time a merge is conducted
+climate_locs_test[n] <- nrow(climate_locs)
 
 # climatic data calculated for 30 days preceding sample collection
 
@@ -107,6 +113,9 @@ recent_clim_locs <- recent_clim_locs[recent_clim_locs$sample %in% unique(protein
 rm(sample_locations,climate)
 
 climate_locs <- merge(climate_locs, recent_clim_locs, by = c('sample', 'species', 'Longitude', 'Latitude', 'site_revised'))
+
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
 
 #climate_locs$tavg_recent <- round(climate_locs$tavg_recent , 2)
 
@@ -124,6 +133,8 @@ LMA_LWC$LWC_percent  <- as.numeric(LMA_LWC$LWC_percent)
 climate_locs <- merge(LMA_LWC, climate_locs)
 rm(LMA_LWC)
 
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
 
 # photosynthesis
 
@@ -152,6 +163,10 @@ licor <- dplyr::select(licor, photo_max, Cond, sample)
 
 if(include_photosynthesis) {
   climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 # leaf_CNP
@@ -162,6 +177,10 @@ leaf_CN <- leaf_CN[leaf_CN$sample %in% climate_locs$sample,]
 if(include_leaf_N) {
   climate_locs <- merge(leaf_CN, climate_locs, all.y=TRUE, by = 'sample')
   climate_locs$N_per_area <- climate_locs$N * 10 * climate_locs$LMA_g_per_m2
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 leaf_P <- read_csv('data/leaf_CNP/leaf_P.csv')
@@ -170,6 +189,10 @@ leaf_P <- leaf_P[leaf_P$sample %in% climate_locs$sample,]
 if(include_leaf_P) {
   climate_locs <- merge(leaf_P, climate_locs, all.y=TRUE, by = 'sample')
   climate_locs$P_per_area <- climate_locs$P * 10 * climate_locs$LMA_g_per_m2
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 # leaf age 
@@ -181,6 +204,9 @@ climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
 
 climate_locs <- climate_locs[!duplicated(climate_locs$sample),]
 
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
+
 # canopy openness
 
 gaps <- read_csv('data/sky_pics.csv')
@@ -190,6 +216,9 @@ gaps$gap <- as.numeric(gaps$gap)
 
 climate_locs <- merge(gaps, climate_locs)
 rm(gaps)
+
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
 
 # adjust gap fraction for leaf age (c.f. Reich et al. 2009) - averaged values for corgum and E. haemostoma (0.225)
 climate_locs[climate_locs$leaf_age == 'mid',]$gap <- climate_locs[climate_locs$leaf_age == 'mid',]$gap * 0.8875
@@ -204,6 +233,9 @@ irradiance <- irradiance[!duplicated(irradiance),]
 
 climate_locs <- merge(irradiance, climate_locs, by = c('Latitude', 'Longitude'))
 
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
+
 # irradiance at leaf
 
 climate_locs$leaf_rad <- climate_locs$irradiance * climate_locs$gap / 100  
@@ -216,6 +248,10 @@ chl <- chl[chl$sample %in% protein_D14$sample,]
 
 if(include_chlorophyll) {
   climate_locs <- merge(chl, climate_locs, by = 'sample', all.y=TRUE)
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 
@@ -226,26 +262,41 @@ replicates$site_revised <- NULL
 
 climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
 
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
+
 # calculate gap means and gap SE
 
 gap_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(gap_mean = mean(gap, na.rm=TRUE), gap_SE = SE(gap))
 climate_locs <- merge(climate_locs, gap_mean)
+
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
 
 # calculate leafrad means and leafrad SE
 
 leafrad_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(leafrad_mean = mean(leaf_rad, na.rm=TRUE), leafrad_SE = SE(leaf_rad))
 climate_locs <- merge(climate_locs, leafrad_mean)
 
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
+
 # calculate LMA mean and LMA SE
 
 LMA_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(LMA_mean = mean(LMA_g_per_m2, na.rm=TRUE), LMA_SE = SE(LMA_g_per_m2))
 climate_locs <- merge(climate_locs, LMA_mean)
+
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
 
 # calculate N_per_area mean and SE
 
 if(include_leaf_N) {
   Narea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Narea_mean = mean(N_per_area, na.rm=TRUE), Narea_SE = SE(N_per_area), Narea_CV = CV(N_per_area))
   climate_locs <- merge(Narea_mean, climate_locs, all.y = TRUE)
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
 }
 
 # soil and litter data
@@ -258,10 +309,18 @@ soil_N <- soil_N[soil_N$ID %in% climate_locs$ID,]
 
 if(include_soil_N) {
   climate_locs <- merge(soil_N, climate_locs, by = 'ID', all.y = TRUE)
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 if(include_soil_P) {
   climate_locs <- merge(soil_P, climate_locs, by = 'ID', all.y = TRUE)
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 # delta C 13
@@ -294,6 +353,9 @@ if(include_d13C) {
     
   }
   
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+  
 }
 
 climate_locs$ID <- NULL
@@ -301,7 +363,8 @@ climate_locs$ID <- NULL
 
 climate_locs <- climate_locs[!climate_locs$leaf_age %in% 'sen',]
 
-
+n <- n + 1
+climate_locs_test[n] <- nrow(climate_locs)
 
 # these are the df's that are used in the knitr report
 
