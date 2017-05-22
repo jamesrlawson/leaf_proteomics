@@ -53,8 +53,6 @@ effect_size_all   <-  rbind(effect_size(proportion=TRUE, depvar = 'phot_mean'),
 write_csv(effect_size_all, 'output/effect_size_all.csv')
 
 
-
-
 ## Photosystems & calvin_cycle vs total protein, colour scaled
 
 source('scripts/prep_data_mg_per_mm2.R')

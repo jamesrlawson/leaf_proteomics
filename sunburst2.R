@@ -106,7 +106,7 @@ get_sunburstData <- function(column) {
   #to_sunburst$funccat_sum <- as.integer(to_sunburst$funccat_sum)
   
   
-  bla <- str_split(to_sunburst$NAME, '-')
+  bla <- stringr::str_split(to_sunburst$NAME, '-')
   
   bla <- rbind.fill(lapply(bla,function(y){as.data.frame(t(y),stringsAsFactors=FALSE)}))
   

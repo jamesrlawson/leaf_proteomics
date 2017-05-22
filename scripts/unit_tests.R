@@ -22,5 +22,6 @@ test_that("n=9 for all species-site combinations", {
   
   expect_that(unique(bla$n_per_ID), equals(9))
   
-}
+})
 
+source('scripts/transformations.R')
