@@ -31,15 +31,13 @@ if(proportion) { # set labels conditional on proportion
 dep_means <- group_by(data, ID) %>% 
   dplyr::summarise(other_calv = mean(calvin_cycle, na.rm=TRUE) - mean(Rubisco, na.rm=TRUE),     
                    rub = mean(Rubisco, na.rm=TRUE),    
-                   phot = mean(Photosystems_min_LHC, na.rm=TRUE),   
-                   LHC_ = mean(LHC, na.rm=TRUE)) %>%   
+                   phot = mean(Photosystems, na.rm=TRUE)) %>%   
   gather(key = 'funccat', value = 'protein_mean', -ID)
 
 dep_means <- group_by(data, ID) %>% 
   dplyr::summarise(other_calv = SE(calvin_cycle) - SE(Rubisco),     
                    rub = SE(Rubisco), 
-                   phot = SE(Photosystems_min_LHC),  
-                   LHC_ = SE(LHC)) %>%
+                   phot = SE(Photosystems_min_LHC)) %>%
   gather(key = 'funccat', value = 'protein_SE', -ID) %>%  
   full_join(dep_means, by = c('ID', 'funccat')) %>%  
   full_join(data, by = 'ID') %>% 
@@ -49,19 +47,16 @@ if(logx) { # get significance TRUE/FALSE for model, depending on if logx or not
   sig_othercalv <- summary(lm(dep_means[dep_means$funccat %in% 'other_calv',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'other_calv',][[indepvar]])))$coefficients[,4][2] < 0.05  
   sig_rub <- summary(lm(dep_means[dep_means$funccat %in% 'rub',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'rub',][[indepvar]])))$coefficients[,4][2] < 0.05 
   sig_phot <- summary(lm(dep_means[dep_means$funccat %in% 'phot',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'phot',][[indepvar]])))$coefficients[,4][2] < 0.05 
-  sig_LHC <- summary(lm(dep_means[dep_means$funccat %in% 'LHC_',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'LHC_',][[indepvar]])))$coefficients[,4][2] < 0.05 
 } else {
   sig_othercalv <- summary(lm(dep_means[dep_means$funccat %in% 'other_calv',]$protein_mean ~ dep_means[dep_means$funccat %in% 'other_calv',][[indepvar]]))$coefficients[,4][2] < 0.05 
   sig_rub <- summary(lm(dep_means[dep_means$funccat %in% 'rub',]$protein_mean ~ dep_means[dep_means$funccat %in% 'rub',][[indepvar]]))$coefficients[,4][2] < 0.05
   sig_phot <- summary(lm(dep_means[dep_means$funccat %in% 'phot',]$protein_mean ~ dep_means[dep_means$funccat %in% 'phot',][[indepvar]]))$coefficients[,4][2] < 0.05
-  sig_LHC <- summary(lm(dep_means[dep_means$funccat %in% 'LHC_',]$protein_mean ~ dep_means[dep_means$funccat %in% 'LHC_',][[indepvar]]))$coefficients[,4][2] < 0.05 
 }
 
 dep_means$sig <- NA 
 dep_means[dep_means$funccat == 'other_calv',]$sig <- sig_othercalv                                
 dep_means[dep_means$funccat == 'rub',]$sig <- sig_rub
 dep_means[dep_means$funccat == 'phot',]$sig <- sig_phot 
-dep_means[dep_means$funccat == 'LHC_',]$sig <- sig_LHC                                  
 
 # directory to save to
 mainDir <- getwd() 
@@ -92,7 +87,7 @@ p <- ggplot(data = dep_means, aes(y = protein_mean, x = dep_means[[indepvar]])) 
 
 p <- p + geom_smooth(data = dep_means[dep_means$sig == TRUE,], aes(y = protein_mean, x = get(indepvar), colour = funccat), method = 'lm', se = F, size = 0.5)
 
-p <- p + scale_colour_manual(values = c('blue','forestgreen','red', 'orange'))
+p <- p + scale_colour_manual(values = c('blue','forestgreen','red'))
 
 if(proportion) {
   p <- p + xlab(labs[2]) +  ylab(paste(labs[1], ' (proportion)', sep = ""))
