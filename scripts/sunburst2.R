@@ -149,11 +149,11 @@ sunburst(bla)
 bla <- get_sunburstData(1)
 blax <- str_split(bla$NAME, pattern = '-') 
 
-y <- rbind.fill(lapply(blax,function(y){as.data.frame(t(y),stringsAsFactors=FALSE)}))[,1:3]
+y <- rbind.fill(lapply(blax,function(y){as.data.frame(t(y),stringsAsFactors=FALSE)}))[,1:4]
 bla <- cbind(y,bla[,-1])
 
 
-bla <- bla %>% group_by(V1,V2,V3) %>% dplyr::summarise(funccat_sum = sum(funccat_sum)) %>% group_by(V1,V2,V3) %>% arrange(funccat_sum)
+bla <- bla %>% group_by(V1,V2,V3,V4) %>% dplyr::summarise(funccat_sum = sum(funccat_sum)) %>% ungroup(.)
 
 write_csv(bla, 'output/sunburst.csv')
 
@@ -183,6 +183,3 @@ x <- str_split(blo$NAME, pattern = ',')
 y <- rbind.fill(lapply(x,function(y){as.data.frame(t(y),stringsAsFactors=FALSE)}))[1]
 
 View(select(blo, NAME, mean))
-
-
-

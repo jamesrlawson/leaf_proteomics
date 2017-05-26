@@ -846,7 +846,7 @@ aggplot_save_combined_2 <- function(proportion, indepvar, logx = FALSE, indepvar
   if(goldenRatio) { 
     Width = 6*1.618 
   } else {
-    Width = 7.5 
+    Width = 6.5 
   } 
   
   
@@ -881,13 +881,15 @@ aggplot_save_combined_2 <- function(proportion, indepvar, logx = FALSE, indepvar
                  legend.position="bottom",
                  axis.line = element_line(colour = "black"),
                  text = element_text(size = 18))
+  p <- p + expand_limits(y=0)
+  
   
   number_ticks <- function(n) {function(limits) pretty(limits, n)}
   
   if(logx) {
     
     errorbar_width <- (log10(max(data[[indepvar]], na.rm=TRUE)) - log10(min(data[[indepvar]], na.rm=TRUE))) / 50
-    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = errorbar_width, alpha = 0.3, size = 0.5)
+    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = 0, alpha = 0.3, size = 0.5)
     
     if(indepvarType == 'gap') {
       
@@ -905,7 +907,7 @@ aggplot_save_combined_2 <- function(proportion, indepvar, logx = FALSE, indepvar
   } else {
     
     errorbar_width <- (max(data[[indepvar]], na.rm=TRUE) - min(data[[indepvar]], na.rm=TRUE)) / 50
-    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = errorbar_width, alpha = 0.3, size = 0.5)
+    p <- p + geom_errorbar(aes(colour = funccat, ymin = protein_mean - protein_SE, ymax = protein_mean + protein_SE), width = 0, alpha = 0.3, size = 0.5)
     
     if(indepvarType == 'gap') {
       

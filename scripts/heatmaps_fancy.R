@@ -44,7 +44,8 @@ if(include_chlorophyll) {
   trait_vars <- c(trait_vars, 'mg_Cl_total_per_m2') 
 }
 
-prot_vars <- c('Rubisco', 
+prot_vars <- c('total_protein',
+               'Rubisco', 
                'calvin_cycle', 
                'Photosystems', 
                'ATP_synthase_chloroplastic',
