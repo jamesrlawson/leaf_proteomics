@@ -44,12 +44,12 @@ if(!exists('include_soil_P')) {
 
 source('scripts/binProteins.R')
 
-sample_locations <- read_csv('data/sample_locations.csv')
-climate <- read_csv('data/discovery_site_climate.csv')
+sample_locations <- read_csv('data/misc_data/sample_locations.csv')
+climate <- read_csv('data/environmental_data/discovery_site_climate.csv')
 
 # prentice alpha
 
-alpha <- read.csv('data/alph.csv', header=T, stringsAsFactors = F)
+alpha <- read.csv('data/environmental_data/alph.csv', header=T, stringsAsFactors = F)
 x <- data.frame()
 
 for(i in 70:112) {
@@ -85,7 +85,7 @@ n <- 1 # we'll iterate n every time a merge is conducted
 climate_locs_test[n] <- nrow(climate_locs)
 
 # climatic data calculated for one year preceding sample collection
-recent_clim <- read_csv('data/recent_year_clim.csv')
+recent_clim <- read_csv('data/environmental_data/recent_year_clim.csv')
 recent_clim$date <- NULL
 recent_clim$Latitude <- round(recent_clim$Latitude, 2)
 recent_clim$Longitude <- round(recent_clim$Longitude, 2)
@@ -101,7 +101,7 @@ climate_locs_test[n] <- nrow(climate_locs)
 
 # climatic data calculated for 30 days preceding sample collection
 
-recent_clim <- read_csv('data/recent_month_clim.csv')
+recent_clim <- read_csv('data/environmental_data/recent_month_clim.csv')
 recent_clim$date <- NULL
 recent_clim$Latitude <- round(recent_clim$Latitude, 2)
 recent_clim$Longitude <- round(recent_clim$Longitude, 2)
@@ -125,7 +125,7 @@ climate_locs_test[n] <- nrow(climate_locs)
 
 # LMA & LWC
 
-LMA_LWC <- read_csv('data/LMA_LWC.csv')
+LMA_LWC <- read_csv('data/leaf_data/misc/LMA_LWC.csv')
 LMA_LWC <- LMA_LWC[LMA_LWC$sample %in% climate_locs$sample,]
 LMA_LWC$LMA_g_per_m2  <- as.numeric(LMA_LWC$LMA_g_per_m2)
 LMA_LWC$LWC_percent  <- as.numeric(LMA_LWC$LWC_percent)
@@ -138,7 +138,7 @@ climate_locs_test[n] <- nrow(climate_locs)
 
 # photosynthesis
 
-licor <- read.csv('data/licor/licor_data_canon2.csv', header=TRUE, stringsAsFactors = FALSE)
+licor <- read.csv('data/leaf_data/licor/licor_data_canon2.csv', header=TRUE, stringsAsFactors = FALSE)
 licor <- na.omit(licor)
 
 licor <- licor[licor$sample %in% climate_locs$sample,]
@@ -171,7 +171,7 @@ if(include_photosynthesis) {
 
 # leaf_CNP
 
-leaf_CN <- read_csv('data/leaf_CNP/leaf_CN.csv')
+leaf_CN <- read_csv('data/leaf_data/CNP/leaf_CN.csv')
 leaf_CN <- leaf_CN[leaf_CN$sample %in% climate_locs$sample,]
 
 if(include_leaf_N) {
@@ -183,7 +183,7 @@ if(include_leaf_N) {
   
 }
 
-leaf_P <- read_csv('data/leaf_CNP/leaf_P.csv')
+leaf_P <- read_csv('data/leaf_data/CNP/leaf_P.csv')
 leaf_P <- leaf_P[leaf_P$sample %in% climate_locs$sample,]
 
 if(include_leaf_P) {
@@ -197,7 +197,7 @@ if(include_leaf_P) {
 
 # leaf age 
 
-leaf_age <- read_csv('data/leaf_age.csv')
+leaf_age <- read_csv('data/leaf_data/misc/leaf_age.csv')
 leaf_age <- leaf_age[!duplicated(leaf_age[,c('sample', 'leaf_age')]),]
 leaf_age <- leaf_age[leaf_age$sample %in% climate_locs$sample,]
 climate_locs <- merge(leaf_age, climate_locs, all.y=TRUE, by = 'sample')
@@ -209,7 +209,7 @@ climate_locs_test[n] <- nrow(climate_locs)
 
 # canopy openness
 
-gaps <- read_csv('data/sky_pics.csv')
+gaps <- read_csv('data/leaf_data/gap/sky_pics.csv')
 gaps <- gaps[gaps$sample %in% climate_locs$sample,]
 #gaps <- gaps[!duplicated(gaps[,c('sample', 'gap')]),]
 gaps$gap <- as.numeric(gaps$gap)
@@ -226,7 +226,7 @@ climate_locs[climate_locs$leaf_age == 'old',]$gap <- climate_locs[climate_locs$l
 
 # irradiance
 
-irradiance <- read_csv('data/irradiance.csv')
+irradiance <- read_csv('data/environmental_data/irradiance.csv')
 
 irradiance <- irradiance[irradiance$Longitude %in% climate_locs$Longitude & irradiance$Latitude %in% climate_locs$Latitude,]
 irradiance <- irradiance[!duplicated(irradiance),]
@@ -243,7 +243,7 @@ climate_locs$leaf_rad <- climate_locs$irradiance * climate_locs$gap / 100
 
 # chlorophyll
 
-chl <- na.omit(read_csv('data/chlorophyll.csv'))
+chl <- na.omit(read_csv('data/leaf_data/chlorophyll/chlorophyll.csv'))
 chl <- chl[chl$sample %in% protein_D14$sample,]
 
 if(include_chlorophyll) {
@@ -257,7 +257,7 @@ if(include_chlorophyll) {
 
 # add in replicate ID's
 
-replicates <- read_csv('output/replicates.csv')
+replicates <- read_csv('data/misc_data/replicates.csv')
 replicates$site_revised <- NULL
 
 climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age'))
@@ -301,8 +301,8 @@ if(include_leaf_N) {
 
 # soil and litter data
 
-soil_N <- read_csv('data/leaf_CNP/soil_N.csv')
-soil_P <- read_csv('data/leaf_CNP/soil_P.csv') %>% 
+soil_N <- read_csv('data/leaf_data/CNP/soil_N.csv')
+soil_P <- read_csv('data/leaf_data/CNP/soil_P.csv') %>% 
   filter(soil_P < 1500)
 
 soil_N <- soil_N[soil_N$ID %in% climate_locs$ID,]
@@ -327,7 +327,7 @@ if(include_soil_P) {
 
 if(include_d13C) {
   
-  d13C <- read_csv('data/d13C.csv')
+  d13C <- read_csv('data/leaf_data/misc/d13C.csv')
   d13C <- d13C[d13C$sample %in% protein_D14$sample,]
   climate_locs <- merge(d13C, climate_locs, by = 'sample', all.y=TRUE)
   

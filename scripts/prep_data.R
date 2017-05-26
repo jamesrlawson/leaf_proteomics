@@ -1,9 +1,9 @@
 # called by scripts/functions which use ID's to aggregate data 
 
-replicates <- read_csv('output/replicates.csv')
+replicates <- read_csv('data/misc_data/replicates.csv')
 replicates <- replicates[replicates$sample %in% protein_D14$sample,]
 
-replicates <- merge(replicates, read_csv('data/lineage.csv'))
+replicates <- merge(replicates, read_csv('data/leaf_data/misc/lineage.csv'))
 
 climate_locs$biological_rep <- NULL
 

@@ -13,7 +13,7 @@ reorder_cormat <- function(cormat){
 
 # for imposing mapman structure...
 
-mercator <- read_csv('data/mercator/D14_mercator_20170217.csv')
+mercator <- read_csv('data/proteomics_data/mercator/euc/D14_mercator_20170217.csv')
 
 protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 
@@ -26,7 +26,7 @@ protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 # N.B. the '\' is an 'escape' and must be used because .'s are special in regular expressions and mean 'anything'. By using the escape we will actually search for the character '.'
 # search terms for top level categories can be made unique by using ' in front
 
-mercator_names <- read.csv('data/mercator/mercator_names.csv', header=T, stringsAsFactors = F) 
+mercator_names <- read.csv('data/proteomics_data/mercator/mercator_names.csv', header=T, stringsAsFactors = F) 
 mercator_names <- arrange(mercator_names, funccat)
 
 func_assigned.list <- vector('list', length(mercator_names$funccat))
@@ -118,7 +118,7 @@ p
 rm(mg_per_m2, moles)
 
 
-protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv')
+protein_samples_D14 <- read_csv('data/proteomics_data/proteomics/derived/euc/D14_protein_GGLEP-DEDT.csv')
 allprot_prots <- protein_samples_D14$Protein
 allprot <- t(protein_samples_D14[,2:ncol(protein_samples_D14)])
 colnames(allprot) <- allprot_prots

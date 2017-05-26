@@ -13,10 +13,10 @@ for (j in 1:length(sequence)) {
   
   source('scripts/transformations_quick.R')
   
-  replicates <- read_csv('output/replicates.csv')
+  replicates <- read_csv('data/misc_data/replicates.csv')
   replicates <- replicates[replicates$sample %in% protein_stand_D14_age$sample,]
   
-  replicates <- merge(replicates, read_csv('data/lineage.csv'))
+  replicates <- merge(replicates, read_csv('data/leaf_data/misc/lineage.csv'))
   
   climate_locs$biological_rep <- NULL
   

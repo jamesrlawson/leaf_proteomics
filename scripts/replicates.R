@@ -2,7 +2,7 @@ require(readr)
 require(dplyr)
 require(tidyr)
 
-replicates <- read_csv('data/misc/replicates_raw.csv')
+replicates <- read_csv('data/misc_data/replicates_raw.csv')
 replicates$Latitude <- round(replicates$Latitude, 2)
 replicates$Longitude <- round(replicates$Longitude, 2)
 
@@ -14,4 +14,4 @@ replicates <- merge(replicates, replicates_short, by = c('species_confirmed', 'L
 
 names(replicates)[4] <- 'sample'
 
-write_csv(replicates, 'data/misc/replicates.csv')
+write_csv(replicates, 'data/misc_data/replicates.csv')

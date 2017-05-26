@@ -7,8 +7,8 @@ source('scripts/functions.R')
 
 ### calculate protein amounts in GGLEP_DEDT equivalents ###
  
-  protein_areas <- read_csv('data/protein_areas_top2top2.csv')
-  ion_areas <- read_csv('data/large_files/D14_ion_areas_new_ion_library.csv')
+  protein_areas <- read_csv('data/proteomics_data/proteomics/derived/euc/protein_areas_top2top2.csv')
+  ion_areas <- read_csv('data/proteomics_data/proteomics/derived/euc/D14_ion_areas_new_ion_library.csv')
   
   # get GGLEP top2 areas for each sample
   
@@ -37,13 +37,13 @@ source('scripts/functions.R')
   protein_areas[,2:ncol(protein_areas)] <- protein_areas[,2:ncol(protein_areas)]*(5.64e-11)
   
   
-  write_csv(protein_areas, "data/D14_protein_moles_GGLEP-DEDT.csv")
+  write_csv(protein_areas, "data/proteomics_data/proteomics/derived/euc/D14_protein_moles_GGLEP-DEDT.csv")
   
   # multiply by the molecular weight to get g/cm2
   
   source('scripts/protein_MW.R')
   
-  protein_MW <- rbind(read_csv('data/D14_protein_MW.csv'), read_csv('data/extraMWs.csv'))
+  protein_MW <- rbind(read_csv('data/proteomics_data/sequences/euc/D14_protein_MW.csv'), read_csv('data/proteomics_data/sequences/euc/extraMWs.csv'))
   
   protein_areas <- protein_areas[!protein_areas$Protein %in% setdiff(protein_areas$Protein, protein_MW$Protein),]
   
@@ -60,7 +60,7 @@ source('scripts/functions.R')
   protein_amounts[,2:ncol(protein_amounts)] <- protein_amounts[,2:ncol(protein_amounts)] * (10^7) # multiply by 10^07 to get mg/m2
   
   
-  write_csv(protein_amounts,"data/D14_protein_GGLEP-DEDT.csv")
+  write_csv(protein_amounts,"data/proteomics_data/proteomics/derived/euc/D14_protein_GGLEP-DEDT.csv")
 
 
   
@@ -70,7 +70,7 @@ source('scripts/functions.R')
   
   qual_check <- function() {
     
-    protein_assay <- read_csv('data/protein_assay.csv')
+    protein_assay <- read_csv('data/proteomics_data/sequences/euc/protein_assay.csv')
     
     quality_check <- protein_amounts[protein_amounts$Protein=="sp|OVAL_CHICK",]
     
@@ -116,7 +116,7 @@ for(i in cols) {
   
 }
 
-protein_assay <- read_csv('data/protein_assay.csv')
+protein_assay <- read_csv('data/proteomics_data/sequences/euc/protein_assay.csv')
 protein_amounts <- gather(protein_fractions, 'sample', 'protein_fraction', cols)
 protein_amounts <- merge(protein_amounts, protein_assay, by = "sample")       
 protein_amounts$protein_per_dry_weight <- protein_amounts$protein_fraction * protein_amounts$assay_protein_per_area_mg_per_g

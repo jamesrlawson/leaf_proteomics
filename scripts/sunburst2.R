@@ -12,15 +12,15 @@ require(tidyr)
 
 source('scripts/functions.R')
 
-mercator <- read_csv('data/mercator/D14_mercator_20170217.csv')
+mercator <- read_csv('data/proteomics_data/mercator/euc/D14_mercator_20170217.csv')
 
 # 'mg_per_m2' and 'moles' switches are defined in transformations.R
 if(mg_per_m2) {
-  protein_samples_D14 <- read_csv('data/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
+  protein_samples_D14 <- read_csv('data/proteomics_data/proteomics/derived/euc/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
 }
 
 if(moles) {
-  protein_samples_D14 <- read_csv('data/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
+  protein_samples_D14 <- read_csv('data/proteomics_data/proteomics/derived/euc/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
 }
 
 # first add the mercator$NAME values for each protein in protein_samples_D14

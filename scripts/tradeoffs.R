@@ -6,7 +6,7 @@ protein_D14$PS_ratio <- protein_D14$PSI/protein_D14$PSII
 
 protein_clim_D14 <- merge(protein_D14, climate_locs, by = 'sample')
 
-chl <- na.omit(read_csv('data/chlorophyll.csv'))
+chl <- na.omit(read_csv('data/RESTRUCTURING/leaf_data/chlorophyll/chlorophyll.csv'))
 chl <- chl[chl$sample %in% protein_D14$sample,]
 
 protein_clim_D14 <- merge(chl, protein_clim_D14, by = 'sample')
