@@ -4,7 +4,7 @@
 .Rproj.user
 /figure
 data/proteomics_data/proteomics/raw
-data/proteomics_data/proteomics/legacy/D14_ion_areas_all_samples.csv
+data/proteomics_data/legacy/D14_ion_areas_all_samples.csv
 data/proteomics_data/proteomics/derived/euc/D14_ion_areas_new_ion_library.csv
 /output/figures
 /docs/talks
