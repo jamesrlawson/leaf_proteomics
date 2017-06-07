@@ -5,8 +5,7 @@ source('scripts/transformations.R')
 source('scripts/prep_data.R')
 
 
-data_means <- data %>% group_by(ID) %>% summarise(mean = mean(Calvin_cycle, na.rm=TRUE),
-                                                          SE = SE(Calvin_cycle))
+data_means <- data %>% group_by(ID) %>% dplyr::summarise(mean = mean(Photosystems, na.rm=TRUE))
 data_means <- merge(data, data_means)
 data_means <- distinct(data_means, ID, .keep_all = TRUE)
 
@@ -19,7 +18,7 @@ i <- varpart(data_means$mean,
              ~leafrad_mean,
              ~gap_mean,
             ~log10(prec),
-       #     ~tavg,
+            ~tavg,
      # ~pdmt,
       #       ~total_protein_mean,
        #      ~leaf_age,
@@ -27,7 +26,9 @@ i <- varpart(data_means$mean,
 i 
 plot(i)
 
-summary(lm(mean ~ gap_mean, data_means))
+summary(lm(mean ~ tavg * log10(prec), data_means))
+
+ summary(lm(mean ~ gap_mean, data_means))
 summary(lm(mean ~ leafrad_mean, data_means))
 summary(lm(mean ~ log10(prec), data_means))
 summary(lm(mean ~ pdmt, data_means))

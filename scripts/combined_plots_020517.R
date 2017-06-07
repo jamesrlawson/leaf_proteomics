@@ -89,3 +89,12 @@ x
 dev.off()
 
 cor(data$calvin_cycle, data$total_protein)
+
+
+source('scripts/transformations.R')
+source('scripts/prep_data.R')
+
+a <- group_by(data, ID) %>% dplyr::summarise(Phot = mean(Photosystems),
+                                             Calv = mean(calvin_cycle),
+                                             rub = mean(rubisco))
+

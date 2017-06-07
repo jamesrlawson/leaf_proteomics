@@ -29,3 +29,9 @@ if(include_chlorophyll) {
 }
 
 data$prec <- data$prec/1000
+
+
+
+data$jmax <- data$cytochrome_b6f 
+
+data$jmax_over_vcmax <- data$jmax / data$calvin_cycle

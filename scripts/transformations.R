@@ -151,6 +151,8 @@ licor <- tidyr::spread(licor, CO2_level, Photo)
 licor$photo_max <- as.numeric(licor$photo_max)
 licor$photo_amb <- as.numeric(licor$photo_amb)
 licor$Cond <- as.numeric(licor$Cond)
+licor$Ci <- as.numeric(licor$Ci)
+licor$Tleaf <- as.numeric(licor$Tleaf)
 
 #licor$photo_max <- NULL
 licor$photo_amb <- NULL
@@ -159,7 +161,9 @@ licor <- na.omit(licor)
 
 licor <- licor[licor$Cond > 0.05,]
 
-licor <- dplyr::select(licor, photo_max, Cond, sample)
+licor <- dplyr::select(licor, photo_max, Cond, Ci, Tleaf, sample)
+#licor <- dplyr::select(licor, photo_amb, Cond, Ci, Tleaf, sample)
+
 
 if(include_photosynthesis) {
   climate_locs <- merge(licor, climate_locs, all.y=TRUE, by = 'sample') # this is causing points to be deleted due to the na.omit(protein_climate_D14_stand) in the .Rmd's

@@ -44,6 +44,10 @@ if(include_chlorophyll) {
   trait_vars <- c(trait_vars, 'mg_Cl_total_per_m2') 
 }
 
+if(inc_photosynthesis) {
+  trait_vars <- c(trait_vars, 'photo_max', 'Cond') 
+}
+
 prot_vars <- c('total_protein',
                'Rubisco', 
                'calvin_cycle', 
