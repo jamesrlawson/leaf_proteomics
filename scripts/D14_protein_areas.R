@@ -17,13 +17,14 @@ load_excel_files <- function(path, sheet) {
   }
   
   filenames = paste0(path, list.files(path))
+  filenames = filenames[grep('txt', filenames, invert=TRUE)]
   tables <- lapply(filenames, load_excel_arrange, sheet = sheet)
   do.call(cbind, tables)
 }
 
 # load ion areas, rename columns
 
-euc_swath_reanalysed <- load_excel_files('data/proteomics_data/proteomics/raw/euc/swath', 'Area - ions')
+euc_swath_reanalysed <- load_excel_files('data/proteomics_data/proteomics/raw/euc/swath/', 'Area - ions')
 euc_swath_reanalysed <- cbind(euc_swath_reanalysed[,1:9], euc_swath_reanalysed[,10:ncol(euc_swath_reanalysed)] %>% select(contains('sample')))
 names(euc_swath_reanalysed)[10:ncol(euc_swath_reanalysed)] <- do.call(rbind, str_split(names(euc_swath_reanalysed[,10:ncol(euc_swath_reanalysed)]), pattern = " "))[,1]
 
@@ -32,7 +33,7 @@ euc_swath_reanalysed <- euc_swath_reanalysed %>% subset(., select=which(!duplica
 
 # load FDR data, rename columns, remove decoys and discard proteins below identification probability threshold
 
-euc_swath_reanalysed_FDR <- load_excel_files('data/proteomics_data/proteomics/raw/euc/swath', 'FDR')
+euc_swath_reanalysed_FDR <- load_excel_files('data/proteomics_data/proteomics/raw/euc/swath/', 'FDR')
 euc_swath_reanalysed_FDR <- cbind(euc_swath_reanalysed_FDR[,1:7], euc_swath_reanalysed_FDR[,10:ncol(euc_swath_reanalysed_FDR)] %>% dplyr::select(contains('sample')))
 names(euc_swath_reanalysed_FDR)[8:ncol(euc_swath_reanalysed_FDR)] <- do.call(rbind, str_split(names(euc_swath_reanalysed_FDR[,8:ncol(euc_swath_reanalysed_FDR)]), pattern = " "))[,2]
 euc_swath_reanalysed_FDR <- subset(euc_swath_reanalysed_FDR, Decoy == 0)
@@ -62,7 +63,7 @@ ion_areas <- ion_areas[-grep('RRRRR', ion_areas$Protein),]
 #  group_by(Protein) %>%
 #  summarise_at(vars(3:316), top3)
 
-#write_csv(protein_areas, 'data/protein_areas.csv')
+#write_csv(protein_areas, 'data/proteomics_data/proteomics/derived/euc/protein_areas.csv')
 
 # get protein areas using top2top2 method
 
@@ -75,31 +76,3 @@ protein_areas <- protein_areas %>%
   summarise_at(vars(3:ncol(protein_areas)), top2avg)
 
 write_csv(protein_areas, 'data/proteomics_data/proteomics/derived/euc/protein_areas_top2top2.csv')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

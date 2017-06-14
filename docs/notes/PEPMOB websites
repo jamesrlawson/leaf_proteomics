@@ -1,0 +1,15 @@
+PEPMOB websites
+
+to get apache webserver, download xanpp package, has mqsql and php all installed
+
+xanpp gets installed into root dir
+
+go to htdocs, that's where you put JS and PHP files
+
+go to xanpp control panel, get option to start services
+
+skype binds to port 80, have to change default port for apache from 80, go to apache config httpd.conf, set 'listen'
+
+go to localhost:81/ in browser, apache will serve up whatever's in htdocs folder
+- can reset this folder in httpd.conf under DocumentRoot
+
