@@ -64,3 +64,14 @@ plot(data$photo_max ~ data$N_per_area)
 
 blah$etrans <- blah$electron_transport_minATPsynth + blah$ATP_synthase_chloroplastic
 cor(blah$Jmax,blah$etrans)
+
+plot(blah$Jmax ~ blah$electron_transport_minATPsynth)
+
+bla.lm <- lm(Jmax ~ protein + stress + Rubisco + TCA_org_transformation + cytochrome_b6f + other_electron_carrier + Photosystems + calvin_cycle + photorespiration + ATP_synthase_chloroplastic + electron_transport + glycolysis + hormone_metabolism, blah)
+
+bla.dredge <- dredge(bla.lm, m.max = 3, extra = c('R^2', 'adjR^2'))
+
+plot(blah$Jmax ~ blah$protein)
+plot(blah$Jmax ~ blah$cytochrome_b6f)
+
+plot(protein ~ cytochrome_b6f, blah)

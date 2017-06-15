@@ -59,7 +59,7 @@ other_ion_areas <- ion_areas[grep(paste(unique(qconcat$Peptide_clean), collapse=
 
 qconcat_ion_areas <- ion_areas[grep(paste(unique(qconcat$Peptide_clean), collapse='|'), ion_areas$Peptide),]
 
-qconcat_ion_areas$ion_means <- rowMeans(qconcat_ion_areas[,10:ncol(qconcat_ion_areas)]) # get rowMeans across samples for each ion 
+qconcat_ion_areas$ion_means <- rowMeans(qconcat_ion_areas[,10:ncol(qconcat_ion_areas)], na.rm=TRUE) # get rowMeans across samples for each ion 
 
 # strip out labels from peptide names so that we get averaged positions for both labelled and unlabelled ions
 qconcat_ion_areas$Peptide_clean <- gsub('\\[\\+[0-9][0-9]\\]', '', qconcat_ion_areas$Peptide) 
@@ -71,21 +71,40 @@ qconcat_top2_ions <- dplyr::group_by(qconcat_ion_areas, Protein, Peptide) %>% to
 
 check_ions <- function(df) {
 
-  df <- subset(qconcat_top2_ions, Protein == "AT1G42970.1")
+  #df <- subset(qconcat_top2_ions, Protein == "ATCG00340.1")
   
-  df <- subset(df, Peptide_clean == "VIITAPAK")
+ # df <- subset(df, Peptide_clean == "DKPVALSIVQAR")
   
-  df <- dplyr::group_by(df, Peptide) %>% dplyr::mutate(check = sum(`Fragment MZ`))
+ # df <- dplyr::group_by(df, Peptide) %>% dplyr::mutate(check = sum(`Fragment MZ`))
   
   label <- as.numeric(max(gsub('[^0-9]', "", df$Peptide)))
   
-  max(df$check) - mean(df$check) < (label + 0.1) && max(df$check) - mean(df$check) > (label - 0.1)
-
+  if(label %in% 810) {
+   label <- 18 
+  }
+  
+  df$check <- NA
+  
+  ion1_diff <- (sort(df$`Fragment MZ`)[2] - sort(df$`Fragment MZ`)[1]) * df[order(df$`Fragment MZ`),]$`Fragment Charge`[1]
+  df[order(df$`Fragment MZ`),]$check[1:2] <- ion1_diff > (label - 0.1) && ion1_diff < (label + 0.1)
+  
+  if(length(unique(df$`Fragment MZ`)) > 2) {
+    ion2_diff <- (sort(df$`Fragment MZ`)[4] - sort(df$`Fragment MZ`)[3]) * df[order(df$`Fragment MZ`),]$`Fragment Charge`[3]
+    df[order(df$`Fragment MZ`),]$check[3:4] <- ion2_diff > (label - 0.1) && ion2_diff < (label + 0.1)
+  }
 }
 
-x <- dplyr::group_by(qconcat_top2_ions, Protein, Peptide_clean) %>% dplyr::do(check_ions(.))
 
 x <- ddply(qconcat_top2_ions, .(Protein, Peptide_clean), check_ions)
+x_false <- subset(x, V1 == FALSE)
+
+x1 <- qconcat_top2_ions[qconcat_top2_ions$Peptide_clean %in% x_false$Peptide_clean,]
+x2 <- qconcat_ion_areas[qconcat_ion_areas$Peptide_clean %in% x_false$Peptide_clean,]
+
+
+
+
+
 
 qconcat_ion_areas <- qconcat_ion_areas[grep(paste(unique(qconcat_top2_ions$`Fragment MZ`), collapse='|'), qconcat_ion_areas$`Fragment MZ`),]
 qconcat_ion_areas$Peptide_clean <- NULL

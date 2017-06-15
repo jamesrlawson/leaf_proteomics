@@ -154,15 +154,15 @@ licor$Cond <- as.numeric(licor$Cond)
 licor$Ci <- as.numeric(licor$Ci)
 licor$Tleaf <- as.numeric(licor$Tleaf)
 
-#licor$photo_max <- NULL
-licor$photo_amb <- NULL
+licor$photo_max <- NULL
+#licor$photo_amb <- NULL
 
 licor <- na.omit(licor)
 
 licor <- licor[licor$Cond > 0.05,]
 
-licor <- dplyr::select(licor, photo_max, Cond, Ci, Tleaf, sample)
-#licor <- dplyr::select(licor, photo_amb, Cond, Ci, Tleaf, sample)
+#licor <- dplyr::select(licor, photo_max, Cond, Ci, Tleaf, sample)
+licor <- dplyr::select(licor, photo_amb, Cond, Ci, Tleaf, sample)
 
 
 if(include_photosynthesis) {
