@@ -69,13 +69,90 @@ qconcat_top2_ions <- dplyr::group_by(qconcat_ion_areas, Protein, Peptide) %>% to
 
 # are the top 2 ions the same for qconcat peptides?
 
+
+# subset by Peptide_clean, then sort by fragment mz / fragment charge, 
+# then take the top 2 pairs where the difference between them is the label mass
+
+pairwise_avg_top2 <- function(bla) {
+  
+  bla <- subset(qconcat_ion_areas, Peptide_clean == "VIITAPAK")
+  
+  bla <- bla[order(bla$`Fragment MZ`),]
+  
+# if(length(unique(bla$Peptide_clean)) != length(unique(bla$Peptide))) { # i.e. if the df doesn't just contain either labelled or unlabelled peptides
+    
+    # could modify labelled fragment MZ's so that they're the same as unlabelled fragent MZ's... remove label amount and then round everything 
+    
+    #label <- as.numeric(max(gsub('[^0-9]', "", bla$Peptide)))
+    
+    bla$label <- as.numeric(gsub('[^0-9]', "", bla$Peptide))
+    
+    if(any(bla$label %in% '810')) {
+      bla[bla$label %in% '810',]$label <- 18
+    }
+    
+    bla[is.na(bla$label),]$label <- 0
+    
+    bla$Fragment_MZ_charge <- bla$`Fragment MZ` * bla$`Fragment Charge`
+    
+    bla$Fragment_MZ_charge_adj <- bla$Fragment_MZ_charge
+    
+    bla$Fragment_MZ_charge_adj <- bla$Fragment_MZ_charge_adj - bla$label
+    
+    bla$Fragment_MZ_charge_adj <- round(bla$Fragment_MZ_charge_adj, 0)
+    
+    # so now i can sort or run operations by fragment mz / charge
+    
+    # now need to subset dataset to only keep paired ions??
+    
+    # na.omit it first to get rid of rare ions
+    
+    bla <- na.omit(bla)
+    
+    # how do i get top2 pairs? get a pairwise average ion area?
+    
+    bla <- dplyr::group_by(bla, Fragment_MZ_charge_adj) %>% dplyr::summarise(pairwise_avg_ion_mean = mean(ion_means),
+                                                                             labelled_unlabelled = length(ion_means)) %>%
+      full_join(bla) %>% 
+      filter(labelled_unlabelled == 2) %>%
+   #   filter(ions_per_peptide == 2) %>%
+      dplyr::group_by(Peptide) %>% top_n(2, pairwise_avg_ion_mean) %>%
+      dplyr::group_by(Peptide) %>% dplyr::mutate(ions_per_peptide = length(Peptide))
+      
+    
+    
+    #browser()
+    
+    return(bla)
+    
+  }
+  
+}
+
+
+x <- ddply(qconcat_ion_areas, .(Peptide_clean), pairwise_avg_top2)
+
+# problem: for some peptides, there is only 1 ion that is present in all samples
+
+
+VIITAPAK <- na.omit(ion_areas[grep('VIITAPAK', ion_areas$Peptide),])
+VIITAPAK_x <- na.omit(x[grep('VIITAPAK', x$Peptide),])
+
+
+
+# still not picking up ions that are doubly labelled
+length(unique(x$Peptide_clean))
+length(unique(qconcat_ion_areas$Peptide_clean))
+
+
+
+
+
 check_ions <- function(df) {
 
   #df <- subset(qconcat_top2_ions, Protein == "ATCG00340.1")
   
  # df <- subset(df, Peptide_clean == "DKPVALSIVQAR")
-  
- # df <- dplyr::group_by(df, Peptide) %>% dplyr::mutate(check = sum(`Fragment MZ`))
   
   label <- as.numeric(max(gsub('[^0-9]', "", df$Peptide)))
   
@@ -94,6 +171,9 @@ check_ions <- function(df) {
   }
 }
 
+x <- ddply(x, .(Protein, Peptide_clean), check_ions)
+
+
 
 x <- ddply(qconcat_top2_ions, .(Protein, Peptide_clean), check_ions)
 x_false <- subset(x, V1 == FALSE)
@@ -102,7 +182,9 @@ x1 <- qconcat_top2_ions[qconcat_top2_ions$Peptide_clean %in% x_false$Peptide_cle
 x2 <- qconcat_ion_areas[qconcat_ion_areas$Peptide_clean %in% x_false$Peptide_clean,]
 
 
+# appears that some of the top2 ions are not present in both sets. Need away to find ions that are present in both sets.
 
+# could do top3, run the checks, subset out the FALSE's and then do top2?
 
 
 
