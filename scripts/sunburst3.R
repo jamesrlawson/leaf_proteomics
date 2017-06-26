@@ -29,7 +29,9 @@ protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 
 protein_samples_D14$mean <- rowMeans(protein_samples_D14[,c(2:(ncol(protein_samples_D14)-3))]) # calculate mean values across all samples
 
-get_sunburstData <- function(column) {
+# this will create data for a mean across all samples
+
+get_sunburstData_mean <- function(column) {
   
   to_sunburst <- dplyr::select(protein_samples_D14, Protein, NAME, mean)
   
@@ -83,7 +85,7 @@ get_sunburstData <- function(column) {
   
 }
 
-bla <- get_sunburstData(1)
+bla <- get_sunburstData_mean(1)
 
 
 
@@ -129,6 +131,107 @@ for(j in 1:nrow(bla)) {
 }
 
 write_csv(bla, 'output/sunburst.csv')
+
+
+# this will create sunburst data for every sample
+
+get_sunburstData_all <- function(column) {
+  
+  to_sunburst <- dplyr::select(protein_samples_D14, -BINCODE)
+  
+  # some gsubs to get names into the right format for string splitting
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = "\\'",
+                                              replacement = "", x)})
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = "-",
+                                              replacement = "_", x)})
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = " ",
+                                              replacement = "_", x)})
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = ",_",
+                                              replacement = ",", x)})
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = "([0-9])(,)([0-9])", # create 3 capturing groups (first number)(comma)(second number)
+                                              replacement = "\\1\\3", x)}) # replacement is first capture and third capture
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = "\\.",
+                                              replacement = "-", x)})
+  
+  to_sunburst$NAME <- sapply(to_sunburst$NAME, 
+                             function(x){gsub(pattern = " ",
+                                              replacement = "", x)})
+  
+  x <- stringr::str_split(to_sunburst$NAME, ',') # split by ',' which should separate multiple functional category assignments
+  
+  y <- rbind.fill(lapply(x,function(y){as.data.frame(t(y),stringsAsFactors=FALSE)})) # build a df from x which fills blanks with NA's
+  
+  to_sunburst$NAME <- y[,column] # to_sunburst's name is now equal to just the first functional assignment
+  
+  bla <- stringr::str_split(to_sunburst$NAME, '-') # now split out the name into multiple columns
+  
+  bla <- rbind.fill(lapply(bla,function(y){as.data.frame(t(y),stringsAsFactors=FALSE)}))
+  
+  to_sunburst <- cbind(bla, to_sunburst) # and create a df with the split name and all the protein amount data
+  
+  # combine values for proteins in same V7 level, for every sample
+  to_sunburst <- group_by(to_sunburst, V1,V2,V3,V4,V5,V6,V7) %>% 
+    dplyr::summarise_at(vars(9:(ncol(to_sunburst)-1)), sum) %>% ungroup(.) %>% filter(!V1 %in% "") 
+  
+  replicates <- read_csv('data/misc_data/replicates.csv') 
+  replicates <- replicates[replicates$sample %in% names(protein_samples_D14)[2:327],]
+  
+  to_sunburst <- gather(to_sunburst, key = 'sample', value = 'value', 8:333) %>% 
+    full_join(replicates, by = 'sample') %>% 
+    dplyr::group_by(V1,V2,V3,V4,V5,V6,V7,ID) %>%
+    dplyr::summarise(ID_mean = mean(value, na.rm=TRUE)) %>%
+    spread(key=ID, value=ID_mean)
+  
+  return(to_sunburst)
+  
+}
+
+mercator <- read_csv('data/proteomics_data/mercator/euc/D14_mercator_20170217.csv')
+
+# 'mg_per_m2' and 'moles' switches are defined in transformations.R
+if(mg_per_m2) {
+  protein_samples_D14 <- read_csv('data/proteomics_data/proteomics/derived/euc/D14_protein_GGLEP-DEDT.csv') # protein amounts calculated using D14 ion library, in avg(GGLEP/DEDT) equivalents
+}
+
+if(moles) {
+  protein_samples_D14 <- read_csv('data/proteomics_data/proteomics/derived/euc/D14_protein_moles_GGLEP-DEDT.csv') # protein amounts as above but in moles (not multiplied by MW)
+}
+
+# first add the mercator$NAME values for each protein in protein_samples_D14
+
+protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
+
+bla <- get_sunburstData_all(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
