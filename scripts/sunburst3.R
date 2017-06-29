@@ -88,49 +88,7 @@ get_sunburstData_mean <- function(column) {
 bla <- get_sunburstData_mean(1)
 
 
-
-# use a loop to ask, for a given row, does the last column have a parent column? if not then create. 
-# then does second to last column have a parent? if not then create...
-
-blanames <- names(bla[,1:7])
-
-for(i in rev(2:length(blanames))) {
-  
-parent_col <- blanames[i-1]
-
-child_col <- blanames[i]
-
-for(j in 1:nrow(bla)) {
-
-  vec_j <- bla[j,1:7]
-
-  parent <- as.character(vec_j[(i-1)])
-  
-
-  is.na(bla[j,child_col])
-  
-  
- # if(!any(bla[[parent_col]] %in% parent)) {
-  
-  if(!is.na(bla[j,child_col])) { # if there isn't an NA value in the child column, create an extra row. this will make dupes but we can handle that...
-  
-    vec_parent <- vec_j
-    vec_parent[(i-1):7] <- NA
-    vec_parent <- cbind(vec_parent, mean = NA)
-    
-    bla <- rbind(bla, vec_parent)
-      
-    bla <- distinct(bla, V1,V2,V3,V4,V5,V6,V7,mean, .keep_all=TRUE)
-    
-  }
-  
-#  browser()
-  
-}
-
-}
-
-write_csv(bla, 'output/sunburst.csv')
+write_csv(bla, 'output/sunburst_mean.csv')
 
 
 # this will create sunburst data for every sample
@@ -215,6 +173,21 @@ protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
 
 bla <- get_sunburstData_all(1)
 
+write_csv(bla, 'output/sunburst_all_IDs.csv')
+
+
+# climate_locs file for Adam
+
+source('scripts/transformations.R')
+
+replicates <- read_csv('data/misc_data/replicates.csv')
+replicates$site_revised <- NULL
+
+climate_locs <- merge(climate_locs, replicates, by = c('sample', 'Latitude', 'Longitude', 'leaf_age', 'biological_rep', 'date'))
+
+climate_locs <- select(climate_locs, -date, -site_id.x, -site_id.y, -species_confirmed.y)
+
+write_csv(climate_locs, 'output/climate_locations_IDs.csv')
 
 
 
@@ -231,6 +204,46 @@ bla <- get_sunburstData_all(1)
 
 
 
+# use a loop to ask, for a given row, does the last column have a parent column? if not then create. 
+# then does second to last column have a parent? if not then create...
+
+blanames <- names(bla[,1:7])
+
+for(i in rev(2:length(blanames))) {
+  
+  parent_col <- blanames[i-1]
+  
+  child_col <- blanames[i]
+  
+  for(j in 1:nrow(bla)) {
+    
+    vec_j <- bla[j,1:7]
+    
+    parent <- as.character(vec_j[(i-1)])
+    
+    
+    is.na(bla[j,child_col])
+    
+    
+    # if(!any(bla[[parent_col]] %in% parent)) {
+    
+    if(!is.na(bla[j,child_col])) { # if there isn't an NA value in the child column, create an extra row. this will make dupes but we can handle that...
+      
+      vec_parent <- vec_j
+      vec_parent[(i-1):7] <- NA
+      vec_parent <- cbind(vec_parent, mean = NA)
+      
+      bla <- rbind(bla, vec_parent)
+      
+      bla <- distinct(bla, V1,V2,V3,V4,V5,V6,V7,mean, .keep_all=TRUE)
+      
+    }
+    
+    #  browser()
+    
+  }
+  
+}
 
 
 
