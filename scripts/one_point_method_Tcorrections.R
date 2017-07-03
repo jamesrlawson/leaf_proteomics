@@ -64,19 +64,60 @@ source('scripts/transformations.R')
 
 source('scripts/prep_data_mg_per_mm2.R')
 
-bla <- select(data, sample, photo_amb, Ci, Tleaf)# %>%
-#   filter(Ci > 150) %>%
-#   filter(Ci < 350)
+bla <- select(data, sample, photo_amb, Ci, Tleaf) %>%
+   filter(Ci > 150) %>%
+   filter(Ci < 350)
 bla <- na.omit(bla)
 
 bla$Vcmax <- Vcmax(bla$photo_amb, bla$Ci, bla$Tleaf)
 
 blah <- merge(data, bla, by = c('sample','Ci', 'photo_amb'))
 
-#blah <- filter(blah, Jmax > 30)
 blah <- filter(blah, photo_amb > 1)
 
 plot(blah$photo_amb ~ blah$N_per_area)
+
+blah <- dplyr::select(blah, sample, Vcmax)
+
+Vcmax_out <- blah
+
+write_csv(Vcmax_out, 'output/vcmax.csv')
+
+
+
+
+# Jmax
+
+include_photosynthesis=TRUE
+include_leaf_N = TRUE
+
+source('scripts/transformations_photomax.R')
+
+source('scripts/prep_data_mg_per_mm2.R')
+
+bla <- select(data, sample, photo_max, Ci, Tleaf) 
+bla <- na.omit(bla)
+
+bla$Jmax <- Jmax(bla$photo_max, bla$Ci, bla$Tleaf)
+
+blah <- merge(data, bla, by = c('sample','Ci', 'photo_max'))
+
+blah <- filter(blah, Jmax > 30)
+
+blah <- dplyr::select(blah, sample, Jmax)
+
+Jmax_out <- blah
+
+write_csv(Jmax_out, 'output/Jmax.csv')
+
+
+
+one_point <- merge(Jmax_out, Vcmax_out, by = 'sample')
+
+write_csv(one_point, 'output/one_point.csv')
+
+
+####
 
 blah$etrans <- blah$electron_transport_minATPsynth + blah$ATP_synthase_chloroplastic
 cor(blah$Vcmax,blah$etrans)
