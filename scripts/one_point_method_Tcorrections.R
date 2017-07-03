@@ -117,6 +117,11 @@ one_point <- merge(Jmax_out, Vcmax_out, by = 'sample')
 write_csv(one_point, 'output/one_point.csv')
 
 
+
+
+
+
+
 ####
 
 blah$etrans <- blah$electron_transport_minATPsynth + blah$ATP_synthase_chloroplastic
