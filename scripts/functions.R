@@ -435,7 +435,7 @@ agg_plot_save <- function(proportion, depvar, indepvar, logx = FALSE, indepvarTy
   
   #bquote('Assimilation ('*mu~ 'mol' ~CO[2]~ m^-2~s^-1*')')  
   
-  p <- p + expand_limits(y=0,x=0)
+  p <- p + expand_limits(y=0)
   
   p <- p + theme_classic()
   p <- p + theme(legend.title=element_blank(),
