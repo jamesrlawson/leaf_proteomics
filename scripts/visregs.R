@@ -206,4 +206,3 @@ plot(calv_mean ~ leaf_protein_content, data)
 summary(lm(calv_mean ~ leaf_protein_content, data))
 abline(lm(calv_mean ~ leaf_protein_content, data))
 
-

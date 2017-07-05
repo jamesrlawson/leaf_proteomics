@@ -100,6 +100,6 @@ protein_stand_D14 <- protein_D14 %>%
 
 # cleanup
 
-rm(func_assigned, mercator, mercator_names, proteins, funccat_sums, protein_samples_D14, i, name)
+rm(func_assigned, mercator, mercator_names, proteins, funccat_sums, i, name)
 gc(verbose = FALSE)
 

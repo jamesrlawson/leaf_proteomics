@@ -1,5 +1,8 @@
 # cumulative protein abundance plots
 
+mg_per_m2=TRUE
+moles=FALSE
+
 source('scripts/binProteins.R')
 
 require(ggplot2)
@@ -27,6 +30,7 @@ all_protein <- rbind(all_protein, do.call(rbind, my.list))
 blax <- all_protein %>% dplyr::group_by(rank) %>% dplyr::summarise(mean_cumsum = mean(cumsum), SE_cumsum = SE(cumsum))
 blax$maxcumsum <- max(blax$mean_cumsum)
 blax$proportion <- blax$mean_cumsum/blax$maxcumsum
+#blax$rank_pc <- blax$rank/max(blax$rank)
 
 cumsumplot <- ggplot(blax, aes(x = rank, y = mean_cumsum/maxcumsum)) + geom_point(size = 0.1, alpha = 0.1) + 
  # geom_vline(xintercept = 469, size = 0.5, alpha = 0.5) +
