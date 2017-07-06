@@ -190,7 +190,9 @@ agg_plot_save(proportion = FALSE, depvar = 'total_protein', indepvar = 'LMA_mean
 source('scripts/prep_data.R')
 
 means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(calv_mean = mean(calvin_cycle, na.rm=TRUE),
-                                                           phot_mean = mean(Photosystems, na.rm=TRUE)) 
+                                                           phot_mean = mean(Photosystems, na.rm=TRUE),
+                                                           phot_SE = SE(Photosystems),
+                                                           calv_SE = SE(calvin_cycle)) 
 data <-  dplyr::full_join(data, means)
 data <- dplyr::distinct(data, calv_mean, phot_mean, leafrad_mean, .keep_all=TRUE)
 
@@ -205,4 +207,8 @@ abline(lm(phot_mean ~ leaf_protein_content, data))
 plot(calv_mean ~ leaf_protein_content, data)
 summary(lm(calv_mean ~ leaf_protein_content, data))
 abline(lm(calv_mean ~ leaf_protein_content, data))
+
+
+blah <- lm(Photosystems ~ N_per_area, data)
+summary(blah)
 

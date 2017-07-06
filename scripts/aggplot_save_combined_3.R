@@ -209,3 +209,13 @@ aggplot_save_combined_3(indepvar = 'total_protein_mean', logx = FALSE, proportio
 
 aggplot_save_combined_3(indepvar = 'total_protein_mean', logx = FALSE, proportion = TRUE, indepvarType = 'total_protein', 
                         labs =  c('Protein amount', 'total protein (mg/m2)'), outDir = 'output/figures/20170626/tiff', goldenRatio = FALSE, fileType = 'tiff')
+
+
+include_leaf_N=TRUE
+source('scripts/transformations.R')
+
+aggplot_save_combined_3(indepvar = 'Narea_mean', logx = FALSE, proportion = FALSE, indepvarType = 'Narea', 
+                        labs =  c('Protein amount', 'Leaf N (mg/m2)'), outDir = 'output/figures/20170706/tiff', goldenRatio = FALSE, fileType = 'tiff')
+
+aggplot_save_combined_3(indepvar = 'Narea_mean', logx = FALSE, proportion = TRUE, indepvarType = 'Narea', 
+                        labs =  c('Protein amount', 'Leaf N (mg/m2)'), outDir = 'output/figures/20170706/tiff', goldenRatio = FALSE, fileType = 'tiff')
