@@ -303,6 +303,16 @@ if(include_leaf_N) {
   climate_locs_test[n] <- nrow(climate_locs)
 }
 
+# calculate P_per_area mean and SE
+
+if(include_leaf_P) {
+  Parea_mean <- climate_locs %>% group_by(ID) %>% dplyr::summarise(Parea_mean = mean(P_per_area, na.rm=TRUE), Parea_SE = SE(P_per_area), Parea_CV = CV(P_per_area))
+  climate_locs <- merge(Parea_mean, climate_locs, all.y = TRUE)
+  
+  n <- n + 1
+  climate_locs_test[n] <- nrow(climate_locs)
+}
+
 # soil and litter data
 
 soil_N <- read_csv('data/leaf_data/CNP/soil_N.csv')
@@ -339,23 +349,23 @@ if(include_d13C) {
   
   # fill in values so d13C for all leaf ages of a branch = mid value
   
-  for(i in 1:length(id)) {
-    
-    for(j in 1:3) {
-      
-      temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
-      
-      if(any(temp$leaf_age %in% 'mid')) {
-        
-        temp[temp$leaf_age %in% 'mid',]$d13C
-        
-        climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
-        
-      }
-      
-    }
-    
-  }
+#  for(i in 1:length(id)) {
+#    
+#    for(j in 1:3) {
+#      
+#      temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
+#      
+#      if(any(temp$leaf_age %in% 'mid')) {
+#        
+#        temp[temp$leaf_age %in% 'mid',]$d13C
+#        
+#        climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
+#        
+#      }
+#      
+#    }
+#    
+#  }
   
   n <- n + 1
   climate_locs_test[n] <- nrow(climate_locs)
@@ -377,7 +387,7 @@ protein_stand_D14 <- na.omit(protein_stand_D14)
 
 # cleanup
 
-rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LMA_mean, Narea_mean, 
+#rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LMA_mean, Narea_mean, 
    recent_clim, recent_clim_locs, replicates, soil_N, soil_P, d13C)
 
 gc(verbose=FALSE)
