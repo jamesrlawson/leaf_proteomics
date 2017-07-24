@@ -8,7 +8,8 @@ require(visreg)
 source('scripts/prep_data_mg_per_mm2.R')
 
 means <- data %>% group_by(ID) %>% dplyr::summarise(calv_mean = mean(calvin_cycle, na.rm=TRUE),
-                                                    phot_mean = mean(Photosystems, na.rm=TRUE)) 
+                                                    phot_mean = mean(Photosystems, na.rm=TRUE),
+                                                    etrans_mean = mean(electron_transport_minATPsynth, na.rm=TRUE) 
 data <-  full_join(data, means)
 data <- distinct(data, calv_mean, phot_mean, leafrad_mean, .keep_all=TRUE)
 
