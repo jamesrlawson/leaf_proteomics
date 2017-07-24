@@ -25,6 +25,16 @@ calv_abs <- lm(calv_mean ~ tavg + log10prec, data)
 summary(calv_abs)
 visreg2d(calv_abs, "tavg", "log10prec", plot.type="image" ,cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
 
+data$calv_frac <- data$calv_mean / data$LMA_mean / 1000
+data$calv_frac
+
+calv_abs_frac <- lm(calv_frac ~ tavg * log10prec, data)
+summary(calv_abs_frac)
+
+visreg2d(calv_abs_frac, "tavg", "log10prec", plot.type="image" ,cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+
+
 
 global_phot_abs <- lm(phot_mean ~ log10prec * leafrad_mean * tavg, data)
 global_phot_abs.dredge <- dredge(global_phot_abs, extra = c('R^2'))
