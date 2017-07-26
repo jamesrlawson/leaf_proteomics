@@ -29,13 +29,13 @@ aggplot_save_combined_4 <- function(proportion, indepvar, logx = FALSE, indepvar
   
   
   dep_means <- group_by(data, ID) %>% 
-    dplyr::summarise(calv = mean(calvin_cycle, na.rm=TRUE),     
+    dplyr::summarise(#calv = mean(calvin_cycle, na.rm=TRUE),     
                      phot = mean(Photosystems, na.rm=TRUE),
                      etrans = mean(cytochrome_b6f, na.rm=TRUE)) %>%   
     gather(key = 'funccat', value = 'protein_mean', -ID)
   
   dep_means <- group_by(data, ID) %>% 
-    dplyr::summarise(calv = SE(calvin_cycle),     
+    dplyr::summarise(#calv = SE(calvin_cycle),     
                      phot = SE(Photosystems),
                      etrans = SE(cytochrome_b6f)) %>%
     gather(key = 'funccat', value = 'protein_SE', -ID) %>%  
@@ -44,19 +44,19 @@ aggplot_save_combined_4 <- function(proportion, indepvar, logx = FALSE, indepvar
     distinct(ID, funccat, .keep_all=TRUE) 
   
   if(logx) { # get significance TRUE/FALSE for model, depending on if logx or not
-    sig_calv <- summary(lm(dep_means[dep_means$funccat %in% 'calv',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'calv',][[indepvar]])))$coefficients[,4][2] < 0.05  
+  #  sig_calv <- summary(lm(dep_means[dep_means$funccat %in% 'calv',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'calv',][[indepvar]])))$coefficients[,4][2] < 0.05  
     sig_phot <- summary(lm(dep_means[dep_means$funccat %in% 'phot',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'phot',][[indepvar]])))$coefficients[,4][2] < 0.05 
     sig_etrans <- summary(lm(dep_means[dep_means$funccat %in% 'etrans',]$protein_mean ~ log10(dep_means[dep_means$funccat %in% 'etrans',][[indepvar]])))$coefficients[,4][2] < 0.05 
     
   } else {
-    sig_calv <- summary(lm(dep_means[dep_means$funccat %in% 'calv',]$protein_mean ~ dep_means[dep_means$funccat %in% 'calv',][[indepvar]]))$coefficients[,4][2] < 0.05 
+  #  sig_calv <- summary(lm(dep_means[dep_means$funccat %in% 'calv',]$protein_mean ~ dep_means[dep_means$funccat %in% 'calv',][[indepvar]]))$coefficients[,4][2] < 0.05 
     sig_phot <- summary(lm(dep_means[dep_means$funccat %in% 'phot',]$protein_mean ~ dep_means[dep_means$funccat %in% 'phot',][[indepvar]]))$coefficients[,4][2] < 0.05
     sig_etrans <- summary(lm(dep_means[dep_means$funccat %in% 'etrans',]$protein_mean ~ dep_means[dep_means$funccat %in% 'etrans',][[indepvar]]))$coefficients[,4][2] < 0.05
     
   }
   
   dep_means$sig <- NA 
-  dep_means[dep_means$funccat == 'calv',]$sig <- sig_calv                                
+ # dep_means[dep_means$funccat == 'calv',]$sig <- sig_calv                                
   dep_means[dep_means$funccat == 'phot',]$sig <- sig_phot 
   dep_means[dep_means$funccat == 'etrans',]$sig <- sig_etrans 
   
