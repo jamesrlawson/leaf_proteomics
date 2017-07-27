@@ -1,0 +1,101 @@
+Protein,NAME,mean
+eucgr.a01047.1.p,'PS.lightreaction.photosystem II.LHC-II',92.9754180976142
+eucgr.a01769.1.p,'PS.lightreaction.cytochrome b6/f',96.7599026985226
+eucgr.a01933.1.p,'protein.degradation.metalloprotease',53.312613897817
+eucgr.a02039.1.p,'PS.lightreaction.photosystem II.PSII polypeptide subunits',210.509059651946
+eucgr.a02249.1.p,'N-metabolism.ammonia metabolism.glutamate synthase.ferredoxin dependent',145.534166976582
+eucgr.b00144.1.p,'glycolysis.cytosolic branch.glyceraldehyde 3-phosphate dehydrogenase (GAP-DH)',57.2674568222894
+eucgr.b00523.1.p,'PS.lightreaction.photosystem I.LHC-I',104.145276198179
+eucgr.b01088.1.p,'PS.lightreaction.photosystem I.PSI polypeptide subunits',116.333891315614
+eucgr.b01163.2.p,'N-metabolism.ammonia metabolism.glutamine synthetase',108.202937669568
+eucgr.b02310.1.p,'PS.calvin cycle.rubisco interacting',61.9232830783127
+eucgr.b02532.1.p,"'PS.calvin cycle.rubisco interacting', 'protein.folding'",57.844272789499
+eucgr.b02755.2.p,'PS.calvin cycle.FBPase',45.6509367112719
+eucgr.b03013.1.p,'PS.calvin cycle.rubisco small subunit',744.794623042756
+eucgr.b03593.2.p,'protein.folding',62.71278634287
+eucgr.b03691.1.p,'S-assimilation.sulfite redox',47.863582730184
+eucgr.b03720.1.p,"'PS.photorespiration.aminotransferases peroxisomal', 'amino acid metabolism.synthesis.central amino acid metabolism.alanine.alanine-glyoxylate aminotransferase', 'amino acid metabolism.synthesis.serine-glycine-cysteine group.glycine.serine glyoxylate aminotransferase'",188.217727833988
+eucgr.c00646.1.p,"'PS.photorespiration.glycine cleavage.P subunit', 'C1-metabolism'",40.6039864179298
+eucgr.c03047.1.p,"'PS.photorespiration.glycine cleavage.P subunit', 'C1-metabolism'",268.76100396398
+eucgr.c03525.1.p,'PS.calvin cycle.rubisco large subunit',41.6170162459613
+eucgr.c03537.1.p,'stress.abiotic.unspecified',40.5597047011911
+eucgr.d00320.1.p,'PS.lightreaction.photosystem II.LHC-II',102.544000467805
+eucgr.d00322.1.p,'PS.lightreaction.photosystem II.LHC-II',237.584575638059
+eucgr.d00854.1.p,'PS.lightreaction.photosystem II.PSII polypeptide subunits',233.817998462828
+eucgr.d02179.2.p,'PS.photorespiration.glycine cleavage.H protein',61.5993301305041
+eucgr.d02466.1.p,"'PS.calvin cycle.transketolase', 'OPP.non-reductive PP.transketolase'",73.4311040068575
+eucgr.d02467.1.p,"'PS.calvin cycle.transketolase', 'OPP.non-reductive PP.transketolase'",394.553638488531
+eucgr.e01261.1.p,'PS.calvin cycle.PRK',146.803602824622
+eucgr.e02381.1.p,'PS.lightreaction.photosystem II.LHC-II',104.15996244348
+eucgr.e04053.1.p,'PS.lightreaction.ATP synthase.gamma chain',91.7499618672623
+eucgr.f01413.1.p,'PS.photorespiration.glycolate oxydase',158.702109683352
+eucgr.f01476.1.p,'PS.calvin cycle.phosphoglycerate kinase',420.846221021843
+eucgr.f01776.1.p,'redox.dismutases and catalases',52.0122806626407
+eucgr.f01793.1.p,'PS.calvin cycle.GAP',795.540215735811
+eucgr.f02017.1.p,"'PS.calvin cycle.aldolase', 'glycolysis.cytosolic branch.aldolase'",58.0115216139644
+eucgr.f02872.1.p,'N-metabolism.ammonia metabolism.glutamine synthetase',56.7805604809924
+eucgr.f03557.1.p,'redox.dismutases and catalases',58.5065793540342
+eucgr.f03673.1.p,'stress.abiotic.heat',40.4692429208293
+eucgr.f03789.1.p,'PS.lightreaction.photosystem II.PSII polypeptide subunits',122.101493727473
+eucgr.f04099.1.p,'PS.lightreaction.photosystem II.LHC-II',462.25282235218
+eucgr.f04149.1.p,'PS.lightreaction.ATP synthase.delta chain',57.0808755711023
+eucgr.f04417.1.p,'stress.abiotic.unspecified',70.9672350910515
+eucgr.f04463.1.p,'glycolysis.cytosolic branch.3-phosphoglycerate kinase (PGK)',74.0434989181768
+eucgr.g00235.1.p,'stress.abiotic.heat',84.456808825436
+eucgr.g00777.1.p,'PS.lightreaction.photosystem II.LHC-II',46.3746634072791
+eucgr.g01559.1.p,'RNA.regulation of transcription.unclassified',49.1705435758757
+eucgr.g01726.1.p,'PS.calvin cycle.aldolase',356.824702060569
+eucgr.g02224.1.p,'mitochondrial electron transport / ATP synthesis.F1-ATPase',91.823176398621
+eucgr.g02807.1.p,'protein.synthesis.elongation',138.32107379686
+eucgr.g03060.1.p,'PS.lightreaction.photosystem II.LHC-II',199.909819533055
+eucgr.h00144.2.p,'cell.organisation',66.9332404075928
+eucgr.h00199.1.p,'not assigned.unknown',52.6981550189676
+eucgr.h01172.1.p,'misc.glutathione S transferases',41.9614700668864
+eucgr.h01479.1.p,'RNA.regulation of transcription.unclassified',61.5480421945464
+eucgr.h02358.3.p,'gluconeogenesis / glyoxylate cycle.Malate DH',81.553051200256
+eucgr.h03311.1.p,'not assigned.unknown',70.6709958087957
+eucgr.h04086.1.p,'TCA / org transformation.TCA.pyruvate DH.E3',47.7244264101638
+eucgr.i00200.2.p,'PS.lightreaction.photosystem I.PSI polypeptide subunits',48.2952803491549
+eucgr.i00580.1.p,"'PS.photorespiration.serine hydroxymethyltransferase', 'C1-metabolism.glycine hydroxymethyltransferase'",116.601489854712
+eucgr.i01025.1.p,'PS.lightreaction.photosystem II.PSII polypeptide subunits',440.040356068736
+eucgr.i01326.2.p,'PS.calvin cycle.aldolase',107.14407568472
+eucgr.i01423.1.p,"'PS.photorespiration.hydroxypyruvate reductase', 'amino acid metabolism.degradation.serine-glycine-cysteine group.glycine'",64.0813679116984
+eucgr.i01564.1.p,'PS.calvin cycle.GAP',336.439902823743
+eucgr.i01790.1.p,'TCA / org transformation.carbonic anhydrases',532.286025604524
+eucgr.i02340.1.p,'PS.lightreaction.other electron carrier (ox/red).ferredoxin reductase',158.857165083894
+eucgr.i02744.1.p,'PS.lightreaction.other electron carrier (ox/red).ferredoxin',76.2567379795455
+eucgr.i02771.1.p,'stress.abiotic.heat',88.4039417065705
+eucgr.j00025.1.p,"'stress.abiotic.heat', 'protein.folding'",114.326933707056
+eucgr.j00242.1.p,'PS.calvin cycle.seduheptulose bisphosphatase',90.5676268629155
+eucgr.j00820.1.p,'hormone metabolism.jasmonate.synthesis-degradation.lipoxygenase',84.0370771139701
+eucgr.j00965.2.p,'redox.ascorbate and glutathione.ascorbate',55.3286430123075
+eucgr.j01096.1.p,'PS.lightreaction.photosystem I.LHC-I',65.6116330544043
+eucgr.j01234.1.p,'PS.calvin cycle.rubisco interacting',120.016371862505
+eucgr.j01502.1.p,'PS.calvin cycle.rubisco small subunit',150.347851831138
+eucgr.j01502.2.p,'PS.calvin cycle.rubisco small subunit',2085.99597816259
+eucgr.j02030.1.p,'PS.calvin cycle.rubisco interacting',549.921933666976
+eucgr.k00389.1.p,'PS.lightreaction.photosystem I.PSI polypeptide subunits',84.1325243046734
+eucgr.k00881.1.p,'secondary metabolism.isoprenoids.terpenoids',42.4856015403948
+eucgr.k01045.1.p,'transport.metabolite transporters at the mitochondrial membrane',58.9289372665466
+eucgr.k01362.1.p,'PS.lightreaction.photosystem I.LHC-I',108.610258376852
+eucgr.k02198.1.p,'protein.degradation.serine protease',45.2161979008954
+eucgr.k02223.1.p,'PS.calvin cycle.rubisco small subunit',131.587819957215
+eucgr.k02606.1.p,'redox.peroxiredoxin.BAS1',188.456652517556
+eucgr.k02786.1.p,'protein.synthesis.elongation',55.7258376729826
+eucgr.k02983.1.p,'PS.lightreaction.photosystem II.LHC-II',126.203009067612
+eucgr.l00271.3.p,'transport.H+ transporting pyrophosphatase',44.3403329116586
+eucgr.l02144.1.p,"'DNA.synthesis/chromatin structure.histone.core.H2A', 'DNA.synthesis/chromatin structure.histone.core.H2B'",43.8809792119368
+eucgr.l02773.1.p,'amino acid metabolism.degradation.serine-glycine-cysteine group.glycine',119.852520825596
+sp|p05492|atpam_oenbi,'mitochondrial electron transport / ATP synthesis.F1-ATPase',83.721877777266
+tr|q7m2g6|q7m2g6_oenvi,'mitochondrial electron transport / ATP synthesis.F1-ATPase',63.3556151235994
+tr|t1qke2|t1qke2_eucgl,'PS.lightreaction.photosystem II.PSII polypeptide subunits',231.598117258108
+tr|t1qkk1|t1qkk1_eucgl,'PS.lightreaction.photosystem II.PSII polypeptide subunits',345.485393998403
+tr|t1qkk4|t1qkk4_eucgl,'PS.calvin cycle.rubisco large subunit',2960.58812149423
+tr|t1qkm1|t1qkm1_eucgl,'PS.lightreaction.cytochrome b6/f.apocytochrome f (CYF)',92.115854676184
+tr|t1ql58|t1ql58_eucgl,'PS.lightreaction.photosystem II.PSII polypeptide subunits',187.99813195255
+tr|t1ql63|t1ql63_eucgl,'PS.lightreaction.ATP synthase.alpha subunit',608.668089547215
+tr|t1ql72|t1ql72_eucgl,'PS.lightreaction.photosystem II.PSII polypeptide subunits',316.005450326632
+tr|t1ql77|t1ql77_eucgl,'PS.lightreaction.photosystem I.PSI polypeptide subunits',187.525172205744
+tr|t1qlb6|t1qlb6_eucgl,'PS.lightreaction.photosystem I.PSI polypeptide subunits',155.143526330829
+tr|t1qld1|t1qld1_eucgl,'PS.lightreaction.cytochrome b6/f.cytochrome b6 (CYB6)',42.1420485634479
+tr|t1qlq3|t1qlq3_eucgl,'PS.lightreaction.ATP synthase.beta subunit',558.652079725293
