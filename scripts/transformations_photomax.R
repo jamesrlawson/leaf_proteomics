@@ -349,23 +349,23 @@ if(include_d13C) {
   
   # fill in values so d13C for all leaf ages of a branch = mid value
   
-#  for(i in 1:length(id)) {
-#    
-#    for(j in 1:3) {
-#      
-#      temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
-#      
-#      if(any(temp$leaf_age %in% 'mid')) {
-#        
-#        temp[temp$leaf_age %in% 'mid',]$d13C
-#        
-#        climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
-#        
-#      }
-#      
-#    }
-#    
-#  }
+  for(i in 1:length(id)) {
+    
+    for(j in 1:3) {
+      
+      temp <- climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]  
+      
+      if(any(temp$leaf_age %in% 'mid')) {
+        
+        temp[temp$leaf_age %in% 'mid',]$d13C
+        
+        climate_locs[climate_locs$ID %in% id[i] & climate_locs$biological_rep %in% j,]$d13C <- temp[temp$leaf_age %in% 'mid',]$d13C
+        
+      }
+      
+    }
+    
+  }
   
   n <- n + 1
   climate_locs_test[n] <- nrow(climate_locs)
@@ -387,7 +387,7 @@ protein_stand_D14 <- na.omit(protein_stand_D14)
 
 # cleanup
 
-#rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LMA_mean, Narea_mean, 
+rm(chl, gap_mean, irradiance, leaf_age, leaf_CN, leaf_P, leafrad_mean, licor, LMA_mean, Narea_mean, 
    recent_clim, recent_clim_locs, replicates, soil_N, soil_P, d13C)
 
 gc(verbose=FALSE)

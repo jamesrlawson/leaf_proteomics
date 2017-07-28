@@ -1,6 +1,5 @@
 # other things to add to the heatmap
 
-
 rbact <- protein_samples_D14[protein_samples_D14$Protein %in% c('eucgr.j02030.1.p', 'eucgr.j01234.1.p'),]
 rbact_ <- t(rbact[,2:327])
 
@@ -25,13 +24,14 @@ require(Hmisc)
 
 # uses 291 observations / 224
 
-inc_photosynthesis = FALSE  # different from include_photosynthesis so it doesn't immediately affect transformations.R
-include_d13C = FALSE
+inc_photosynthesis = TRUE  # different from include_photosynthesis so it doesn't immediately affect transformations.R
+include_photosynthesis = TRUE
+include_d13C = TRUE
 include_leaf_N = TRUE
 include_leaf_P = TRUE
 include_soil_N = TRUE
 include_soil_P = TRUE
-include_chlorophyll = FALSE
+include_chlorophyll = TRUE
 
 env_vars <- c('prec',
               'tavg',
@@ -86,7 +86,7 @@ prot_vars <- c('total_protein_mean',
 
 cor_vars <- c(env_vars, trait_vars, prot_vars)
 
-source('scripts/transformations.R')
+source('scripts/transformations_photomax.R')
 
 source('scripts/prep_data.R')
 
@@ -108,7 +108,7 @@ means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(calvin_cycle_mean = m
                                                            isoprene_synthase_mean = mean(isoprene_synthase, na.rm=TRUE))
 data <-  full_join(data, means)
 data <- distinct(data, calvin_cycle_mean, rubisco_mean, photosystems_mean, ATP_synthase_chloroplastic_mean, electron_transport_mean, photorespiration_mean, protein_mean, 
-                 stress_mean, rbact_mean, isoprene_synthase_mean, .keep_all=TRUE)
+                 heatstress_mean, rbact_mean, isoprene_synthase_mean, .keep_all=TRUE)
 
 prot <- data
 prot$calvin_cycle_mean <- prot$calvin_cycle_mean - prot$rubisco_mean
@@ -133,7 +133,8 @@ means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(calvin_cycle_mean = m
                                                            isoprene_synthase_mean = mean(isoprene_synthase, na.rm=TRUE))
 data <-  full_join(data, means)
 data <- distinct(data, calvin_cycle_mean, rubisco_mean, photosystems_mean, ATP_synthase_chloroplastic_mean, electron_transport_mean, photorespiration_mean, protein_mean, 
-                 stress_mean, rbact_mean, isoprene_synthase_mean, .keep_all=TRUE)
+                 heatstress_mean, rbact_mean, isoprene_synthase_mean, .keep_all=TRUE)
+
 prot <- data
 prot$calvin_cycle_mean <- prot$calvin_cycle_mean - prot$rubisco_mean
 prot$prec <- log10(prot$prec)
