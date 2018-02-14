@@ -32,10 +32,12 @@ protein_per_LMA <- lm(leaf_protein_content ~ log10prec * tavg, data)
 summary(protein_per_LMA)
 visreg2d(protein_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
 
+visreg2d_(protein_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+plot(data$tavg, data$log10prec)
+
 LMA <- lm(LMA_mean ~ tavg * log10prec, data)
 summary(LMA)
 visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
-
 
 # for Calvin cycle protein only
 
