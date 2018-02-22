@@ -69,10 +69,13 @@ ion_areas <- ion_areas[-grep('RRRRR', ion_areas$Protein),]
 
 protein_areas <-  ion_areas %>% 
   group_by(Peptide, Protein) %>% 
-  summarise_at(vars(10:ncol(ion_areas)), top2) 
+  #summarise_at(vars(10:ncol(ion_areas)), top2)
+  summarise_at(vars(KG077:YG118), top2) 
+
 
 protein_areas <- protein_areas %>%
   group_by(Protein) %>%
-  summarise_at(vars(3:ncol(protein_areas)), top2avg)
+  summarise_at(vars(KG077:YG118)), top2avg)
+
 
 write_csv(protein_areas, 'data/proteomics_data/proteomics/derived/euc/protein_areas_top2top2.csv')

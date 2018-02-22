@@ -55,3 +55,21 @@ summary(LMA)
 visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
 
 
+
+# for photosystems proteins only
+
+PS <- lm(phot_mean ~ tavg * log10prec, data)
+summary(PS)
+
+visreg2d(PS, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+data$leaf_protein_content_PS <- data$phot_mean / data$LMA_mean / 1000
+PS_per_LMA <- lm(leaf_protein_content_PS ~ log10prec * tavg, data)
+summary(PS_per_LMA)
+visreg2d(PS_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+LMA <- lm(LMA_mean ~ tavg * log10prec, data)
+summary(LMA)
+visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+
