@@ -73,20 +73,19 @@ rm(funccat_sums_t)
 
 # create some custom categories
 
-  # funccat_sums$PSII_min_LHCII <- funccat_sums$photosystem_II - funccat_sums$LHC_I
-  # funccat_sums$PSI_min_LHCI <- funccat_sums$photosystem_II - funccat_sums$LHC_II
-  # funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosystem_II
-  # funccat_sums$electron_transport_minATPsynth <- funccat_sums$other_electron_carrier + funccat_sums$cytochrome_b6f
-  # funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
-  # funccat_sums$redox <- funccat_sums$redox + funccat_sums$glutathione_S_transferases
-  # funccat_sums$stress <- funccat_sums$stress + funccat_sums$glutathione_S_transferases
-  # 
-  # funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
-  # funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
-  # funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
-  # funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
-  # funccat_sums$LHCII_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
-  # funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
+  funccat_sums$PSII_min_LHCII <- funccat_sums$photosystem_II - funccat_sums$LHC_I
+  funccat_sums$PSI_min_LHCI <- funccat_sums$photosystem_II - funccat_sums$LHC_II
+  funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosystem_II
+  funccat_sums$electron_transport_minATPsynth <- funccat_sums$linear_e_flow + funccat_sums$cyclic_e_flow + funccat_sums$ferredoxin_e_carrier + funccat_sums$cytochrome_b6f
+  funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
+  funccat_sums$redox <- funccat_sums$reactive_O2_metabolism + funccat_sums$glutathione_S_transferases
+  funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
+  funccat_sums$stress <- funccat_sums$drought_response + funccat_sums$temperature_response + funccat_sums$pathogen_response + funccat_sums$DNA_damage_response
+  funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
+  funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
+  funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
+  funccat_sums$LHCII_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
+  funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
 
 # add in total (detected) protein and get relative abundances
 
