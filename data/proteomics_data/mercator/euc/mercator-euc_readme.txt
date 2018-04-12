@@ -1,10 +1,10 @@
 Files associated with Mercator/MAPMAN protein annotation
 
-  Mercator3ae3ca4c7952dc32e485a8e8e1b9db3dResult.zip
+  GFA-76264a0b42927e27ff98671e991186f9Result.zip
 
-    output of Mercator service, contains mercator_summary.png and mercator.results.txt
+    output of Mercator 4 service
 
-  D14_mercator_20170217.csv
+  D14_mercator4_20180218.csv
 
-    mercator.results.txt in csv
+    mercator.results.txt converted to csv format
 

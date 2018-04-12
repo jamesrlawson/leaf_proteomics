@@ -9,7 +9,7 @@ require(tidyr)
 
 source('scripts/functions.R')
 
-mercator <- read_csv('data/proteomics_data/mercator/euc/mercator_beta/D14_mercator4_20180218.csv')
+mercator <- read_csv('data/proteomics_data/mercator/euc/D14_mercator4_20180218.csv')
 
 # 'mg_per_m2' and 'moles' switches are defined in transformations.R
 if(mg_per_m2) {
