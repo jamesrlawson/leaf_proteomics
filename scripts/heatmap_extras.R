@@ -24,14 +24,14 @@ require(Hmisc)
 
 # uses 291 observations / 224
 
-inc_photosynthesis = TRUE  # different from include_photosynthesis so it doesn't immediately affect transformations.R
-include_photosynthesis = TRUE
-include_d13C = TRUE
+inc_photosynthesis = FALSE  # different from include_photosynthesis so it doesn't immediately affect transformations.R
+include_photosynthesis = FALSE
+include_d13C = FALSE
 include_leaf_N = TRUE
 include_leaf_P = TRUE
 include_soil_N = TRUE
 include_soil_P = TRUE
-include_chlorophyll = TRUE
+include_chlorophyll = FALSE
 
 env_vars <- c('prec',
               'tavg',
@@ -53,12 +53,12 @@ if(include_d13C) {
   trait_vars <- c(trait_vars, 'd13C') 
 }
 
+trait_vars <- c(trait_vars, 'LMA_mean')
+
+
 if(include_leaf_P) {
   trait_vars <- c(trait_vars, 'Parea_mean') 
 }
-
-trait_vars <- c(trait_vars, 'LMA_mean')
-
 
 if(include_leaf_N) {
   trait_vars <- c(trait_vars, 'Narea_mean') 
@@ -86,7 +86,11 @@ prot_vars <- c('total_protein_mean',
 
 cor_vars <- c(env_vars, trait_vars, prot_vars)
 
-source('scripts/transformations_photomax.R')
+if(include_photosynthesis) {
+  source('scripts/transformations_photomax.R')
+} else {
+  source('scripts/transformations.R')
+}
 
 source('scripts/prep_data.R')
 
@@ -102,8 +106,8 @@ means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(calvin_cycle_mean = m
                                                            ATP_synthase_chloroplastic_mean = mean(ATP_synthase_chloroplastic, na.rm=TRUE),
                                                            electron_transport_mean = mean(electron_transport_minATPsynth, na.rm=TRUE),
                                                            photorespiration_mean = mean(photorespiration,na.rm=TRUE),
-                                                           protein_mean = mean(protein, na.rm=TRUE),
-                                                           heatstress_mean = mean(stress.abiotic.heat, na.rm=TRUE),
+                                                           protein_mean = mean(protein_synth_degrad, na.rm=TRUE),
+                                                           heatstress_mean = mean(heat_shock, na.rm=TRUE),
                                                            rbact_mean = mean(rbact_sum, na.rm=TRUE),
                                                            isoprene_synthase_mean = mean(isoprene_synthase, na.rm=TRUE))
 data <-  full_join(data, means)
@@ -127,8 +131,8 @@ means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(calvin_cycle_mean = m
                                                            ATP_synthase_chloroplastic_mean = mean(ATP_synthase_chloroplastic, na.rm=TRUE),
                                                            electron_transport_mean = mean(electron_transport_minATPsynth, na.rm=TRUE),
                                                            photorespiration_mean = mean(photorespiration,na.rm=TRUE),
-                                                           protein_mean = mean(protein, na.rm=TRUE),
-                                                           heatstress_mean = mean(stress.abiotic.heat, na.rm=TRUE),
+                                                           protein_mean = mean(protein_synth_degrad, na.rm=TRUE),
+                                                           heatstress_mean = mean(heat_shock, na.rm=TRUE),
                                                            rbact_mean = mean(rbact_sum, na.rm=TRUE),
                                                            isoprene_synthase_mean = mean(isoprene_synthase, na.rm=TRUE))
 data <-  full_join(data, means)
@@ -155,13 +159,29 @@ bla <- full_join(cormat_all, cormat_all.P, by = c('Var1', 'Var2'))
 
 p <- ggplot(bla, aes(x = Var1, y = Var2))
 p <- p  + geom_raster(data = subset(bla, value.y < 0.05), aes(fill = value.x))
-p <- p + ggtitle('Correlation heatmap (lower = abs, upper = rel)')
+#p <- p + ggtitle('Correlation heatmap (lower = abs, upper = rel)')
 p <- p + scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
                               midpoint = 0, limit = c(-1,1), space = "Lab", 
                               name="Pearson\nCorrelation")
 p <- p + theme_minimal()  + theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
                                   axis.title=element_blank()) + coord_fixed()
-p
+p <- p + scale_x_discrete(limit = c("prec", "tavg", "leadrad_mean", "gap_mean", "soil_P", "soil_N", "LMA_mean", "Parea_mean", "Narea_mean",
+                                    "total_protein_mean", "rubisco_mean", "rbact_mean", "calvin_cycle_mean", "photosystems_mean", 
+                                    "ATP_synthase_chloroplastic_mean", "electron_transport_mean", "photorespiration_mean", "protein_mean", 
+                                    "heatstress_mean", "isoprene_synthase"),
+                              labels = c("MAP", "MAT", "irradiance", "canopy gap", "soil P", "soil N", "LMA", "leaf P (per area)","leaf N (per area)",
+                                         "total protein (per area)", "Rubisco (per area)", "Rubisco activase (per area)", "Light independent rxns (per area)", 
+                                         "Photosystems (per area)", "ATP synthase (chloroplastic) (per area)", "E transport (per area)", "Photorespiration (per area)", 
+                                         "Protein synth & degrad. (per area)", "Heat shock proteins (per area)", "Isoprene synthase (per area)"))
+
+p <- p + scale_y_discrete(limit = c("prec", "tavg", "leadrad_mean", "gap_mean", "soil_P", "soil_N", "LMA_mean", "Parea_mean", "Narea_mean",
+                                    "total_protein_mean", "rubisco_mean", "rbact_mean", "calvin_cycle_mean", "photosystems_mean", 
+                                    "ATP_synthase_chloroplastic_mean", "electron_transport_mean", "photorespiration_mean", "protein_mean", 
+                                    "heatstress_mean", "isoprene_synthase"),
+                          labels = c("MAP", "MAT", "irradiance", "canopy gap", "soil P", "soil N", "LMA", "leaf P (per area)", "leaf N (per area)",
+                                     "total protein (frac.)", "Rubisco (frac.)", "Rubisco activase (frac.)", "Light independent rxns (frac.)", 
+                                     "Photosystems (frac.)", "ATP synthase (chloroplastic) (frac.)", "E transport (frac.)", "Photorespiration (frac.)", 
+                                     "Protein synth & degrad. (frac.)", "Heat shock proteins (frac.)", "Isoprene synthase (frac.)"))
 
 rm(include_photosynthesis,
    include_d13C,

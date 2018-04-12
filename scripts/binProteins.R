@@ -81,6 +81,7 @@ rm(funccat_sums_t)
   funccat_sums$redox <- funccat_sums$reactive_O2_metabolism + funccat_sums$glutathione_S_transferases
   funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
   funccat_sums$stress <- funccat_sums$drought_response + funccat_sums$temperature_response + funccat_sums$pathogen_response + funccat_sums$DNA_damage_response
+  funccat_sums$protein_synth_degrad <- funccat_sums$protein_biosynthesis + funccat_sums$protein_degradation
   funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
   funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
   funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
