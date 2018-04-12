@@ -9,7 +9,7 @@ require(tidyr)
 
 source('scripts/functions.R')
 
-mercator <- read_csv('data/proteomics_data/mercator/euc/D14_mercator_20170217.csv')
+mercator <- read_csv('data/proteomics_data/mercator/euc/mercator_beta/D14_mercator4_20180218.csv')
 
 # 'mg_per_m2' and 'moles' switches are defined in transformations.R
 if(mg_per_m2) {
@@ -33,7 +33,7 @@ protein_samples_D14 <- getProteinBins(protein_samples_D14, mercator)
   # N.B. the '\' is an 'escape' and must be used because .'s are special in regular expressions and mean 'anything'. By using the escape we will actually search for the character '.'
 # search terms for top level categories can be made unique by using ' in front
 
-mercator_names <- read.csv('data/proteomics_data/mercator/mercator_names.csv', header=T, stringsAsFactors = F) 
+mercator_names <- read.csv('data/proteomics_data/mercator/mercator4_names.csv', header=T, stringsAsFactors = F) 
 mercator_names <- arrange(mercator_names, funccat)
 
 func_assigned.list <- vector('list', length(mercator_names$funccat))
@@ -46,7 +46,7 @@ for(i in 1:length(mercator_names$funccat)) {
   
   proteins <- protein_samples_D14[grep(name, protein_samples_D14$NAME),]
   
-  proteins$funccat <- mercator_names$funccat[i]
+  proteins$funccat <- name
   
   proteins <- distinct(proteins, Protein, .keep_all = TRUE)
   
@@ -73,20 +73,20 @@ rm(funccat_sums_t)
 
 # create some custom categories
 
-funccat_sums$PSII_min_LHCII <- funccat_sums$photosystem_II - funccat_sums$LHC_I
-funccat_sums$PSI_min_LHCI <- funccat_sums$photosystem_II - funccat_sums$LHC_II
-funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosystem_II
-funccat_sums$electron_transport_minATPsynth <- funccat_sums$other_electron_carrier + funccat_sums$cytochrome_b6f
-funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
-funccat_sums$redox <- funccat_sums$redox + funccat_sums$glutathione_S_transferases
-funccat_sums$stress <- funccat_sums$stress + funccat_sums$glutathione_S_transferases
-
-funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
-funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
-funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
-funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
-funccat_sums$LHCII_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
-funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
+  # funccat_sums$PSII_min_LHCII <- funccat_sums$photosystem_II - funccat_sums$LHC_I
+  # funccat_sums$PSI_min_LHCI <- funccat_sums$photosystem_II - funccat_sums$LHC_II
+  # funccat_sums$Photosystems <- funccat_sums$photosystem_I + funccat_sums$photosystem_II
+  # funccat_sums$electron_transport_minATPsynth <- funccat_sums$other_electron_carrier + funccat_sums$cytochrome_b6f
+  # funccat_sums$Rubisco <- funccat_sums$rubisco_large_subunit + funccat_sums$rubisco_small_subunit
+  # funccat_sums$redox <- funccat_sums$redox + funccat_sums$glutathione_S_transferases
+  # funccat_sums$stress <- funccat_sums$stress + funccat_sums$glutathione_S_transferases
+  # 
+  # funccat_sums$electron_transport <- funccat_sums$electron_transport_minATPsynth + funccat_sums$ATP_synthase_chloroplastic
+  # funccat_sums$LHC <- funccat_sums$LHC_I + funccat_sums$LHC_II
+  # funccat_sums$Photosystems_min_LHC <- funccat_sums$Photosystems - funccat_sums$LHC
+  # funccat_sums$LHCI_per_PSI <- funccat_sums$LHC_I / funccat_sums$PSI_min_LHCI
+  # funccat_sums$LHCII_per_PSII <- funccat_sums$LHC_II / funccat_sums$PSII_min_LHCII
+  # funccat_sums$LHC_per_PS <- funccat_sums$LHC / funccat_sums$Photosystems
 
 # add in total (detected) protein and get relative abundances
 
