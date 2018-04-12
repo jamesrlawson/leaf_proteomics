@@ -146,7 +146,12 @@ cormat.prot_abs <- Hmisc::rcorr(as.matrix(prot[,cor_vars]), type = 'pearson')
 
 
 cormat_all <- cormat.prot_abs$r
+
+   #      rownames(cormat_all) <- labels_perarea
+
 cormat_all[upper.tri(cormat_all)] <- cormat.prot_rel$r[upper.tri(cormat.prot_rel$r)]
+
+
 cormat_all <- melt(cormat_all, na.rm=TRUE)
 
 cormat_all.P <- cormat.prot_abs$P
@@ -157,6 +162,19 @@ cormat_all.P[is.na(cormat_all.P$value),]$value <- 0
 bla <- full_join(cormat_all, cormat_all.P, by = c('Var1', 'Var2'))
 
 
+# pretty axis labels
+
+labels_perarea = c("MAP", "MAT", "Irradiance", "Canopy gap", "Soil P", "Soil N", "LMA", "Leaf P (per area)","Leaf N (per area)",
+                   "Total protein (per area)", "Rubisco (per area)", "Rubisco activase (per area)", "Light independent rxns (per area)", 
+                   "Photosystems (per area)", "ATP synthase (chloroplastic) (per area)", "E transport (per area)", "Photorespiration (per area)", 
+                   "Protein synth & degrad. (per area)", "Heat shock proteins (per area)", "Isoprene synthase (per area)")
+
+labels_frac = c("MAP", "MAT", "Irradiance", "Canopy gap", "Soil P", "Soil N", "LMA", "Leaf P (per area)", "Leaf N (per area)",
+                "Total protein (frac.)", "Rubisco (frac.)", "Rubisco activase (frac.)", "Light independent rxns (frac.)", 
+                "Photosystems (frac.)", "ATP synthase (chloroplastic) (frac.)", "E transport (frac.)", "Photorespiration (frac.)", 
+                "Protein synth & degrad. (frac.)", "Heat shock proteins (frac.)", "Isoprene synthase (frac.)")
+
+
 p <- ggplot(bla, aes(x = Var1, y = Var2))
 p <- p  + geom_raster(data = subset(bla, value.y < 0.05), aes(fill = value.x))
 #p <- p + ggtitle('Correlation heatmap (lower = abs, upper = rel)')
@@ -165,23 +183,9 @@ p <- p + scale_fill_gradient2(low = "blue", high = "red", mid = "white",
                               name="Pearson\nCorrelation")
 p <- p + theme_minimal()  + theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
                                   axis.title=element_blank()) + coord_fixed()
-p <- p + scale_x_discrete(limit = c("prec", "tavg", "leadrad_mean", "gap_mean", "soil_P", "soil_N", "LMA_mean", "Parea_mean", "Narea_mean",
-                                    "total_protein_mean", "rubisco_mean", "rbact_mean", "calvin_cycle_mean", "photosystems_mean", 
-                                    "ATP_synthase_chloroplastic_mean", "electron_transport_mean", "photorespiration_mean", "protein_mean", 
-                                    "heatstress_mean", "isoprene_synthase"),
-                              labels = c("MAP", "MAT", "irradiance", "canopy gap", "soil P", "soil N", "LMA", "leaf P (per area)","leaf N (per area)",
-                                         "total protein (per area)", "Rubisco (per area)", "Rubisco activase (per area)", "Light independent rxns (per area)", 
-                                         "Photosystems (per area)", "ATP synthase (chloroplastic) (per area)", "E transport (per area)", "Photorespiration (per area)", 
-                                         "Protein synth & degrad. (per area)", "Heat shock proteins (per area)", "Isoprene synthase (per area)"))
+p <- p  + scale_x_discrete(labels= labels_perarea) + scale_y_discrete(labels = labels_frac)
 
-p <- p + scale_y_discrete(limit = c("prec", "tavg", "leadrad_mean", "gap_mean", "soil_P", "soil_N", "LMA_mean", "Parea_mean", "Narea_mean",
-                                    "total_protein_mean", "rubisco_mean", "rbact_mean", "calvin_cycle_mean", "photosystems_mean", 
-                                    "ATP_synthase_chloroplastic_mean", "electron_transport_mean", "photorespiration_mean", "protein_mean", 
-                                    "heatstress_mean", "isoprene_synthase"),
-                          labels = c("MAP", "MAT", "irradiance", "canopy gap", "soil P", "soil N", "LMA", "leaf P (per area)", "leaf N (per area)",
-                                     "total protein (frac.)", "Rubisco (frac.)", "Rubisco activase (frac.)", "Light independent rxns (frac.)", 
-                                     "Photosystems (frac.)", "ATP synthase (chloroplastic) (frac.)", "E transport (frac.)", "Photorespiration (frac.)", 
-                                     "Protein synth & degrad. (frac.)", "Heat shock proteins (frac.)", "Isoprene synthase (frac.)"))
+plot(p)
 
 rm(include_photosynthesis,
    include_d13C,
