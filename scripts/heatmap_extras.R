@@ -140,7 +140,7 @@ data <- distinct(data, calvin_cycle_mean, rubisco_mean, photosystems_mean, ATP_s
                  heatstress_mean, rbact_mean, isoprene_synthase_mean, .keep_all=TRUE)
 
 prot <- data
-prot$calvin_cycle_mean <- prot$calvin_cycle_mean - prot$rubisco_mean
+#prot$calvin_cycle_mean <- prot$calvin_cycle_mean - prot$rubisco_mean
 prot$prec <- log10(prot$prec)
 cormat.prot_abs <- Hmisc::rcorr(as.matrix(prot[,cor_vars]), type = 'pearson')
 
@@ -160,7 +160,8 @@ cormat_all.P <- melt(cormat_all.P, na.rm=FALSE)
 cormat_all.P[is.na(cormat_all.P$value),]$value <- 0
 
 bla <- full_join(cormat_all, cormat_all.P, by = c('Var1', 'Var2'))
-
+bla[bla$value.x == 1,] <- NA
+bla[bla$value.y == 0,] <- NA
 
 # pretty axis labels
 
@@ -175,6 +176,13 @@ labels_frac = c("MAP", "MAT", "Irradiance", "Canopy gap", "Soil P", "Soil N", "L
                 "Protein synth & degrad. (frac.)", "Heat shock proteins (frac.)", "Isoprene synthase (frac.)")
 
 
+labels = c("MAP", "MAT", "Irradiance", "Canopy gap", "Soil P", "Soil N", "LMA", "Leaf P (per area)", "Leaf N (per area)",
+           "Total protein", "Rubisco", "Rubisco activase", "Light independent rxns", 
+           "Photosystems", "ATP synthase (chloroplastic)", "E transport", "Photorespiration", 
+           "Protein synth & degrad.", "Heat shock proteins", "Isoprene synthase")
+
+
+
 p <- ggplot(bla, aes(x = Var1, y = Var2))
 p <- p  + geom_raster(data = subset(bla, value.y < 0.05), aes(fill = value.x))
 #p <- p + ggtitle('Correlation heatmap (lower = abs, upper = rel)')
@@ -183,7 +191,7 @@ p <- p + scale_fill_gradient2(low = "blue", high = "red", mid = "white",
                               name="Pearson\nCorrelation")
 p <- p + theme_minimal()  + theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
                                   axis.title=element_blank()) + coord_fixed()
-p <- p  + scale_x_discrete(labels= labels_perarea) + scale_y_discrete(labels = labels_frac)
+p <- p  + scale_x_discrete(labels= labels) + scale_y_discrete(labels = labels)
 
 plot(p)
 
