@@ -1,0 +1,247 @@
+---
+title: "leaf_proteomics_results"
+author: "James Lawson"
+date: "23 April 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(broom)
+library(visreg)
+```
+
+## Scatterplots
+
+###mg/m2 protein vs precip
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'prec', logx = TRUE, proportion = FALSE, indepvarType = 'standard', 
+                        labs =  c('Protein amount', 'Mean annual precip. (m/yr)'), 
+                        outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE, 
+                        fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=TRUE))
+```
+
+###frac protein vs precip
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'prec', logx = TRUE, proportion = TRUE, indepvarType = 'standard', 
+                        labs =  c('Protein amount', 'Mean annual precip. (m/yr)'), 
+                        outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE, 
+                        fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=TRUE))
+```
+
+
+###mg/m2 protein vs irradiance
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'leafrad_mean', logx = FALSE, proportion = FALSE, indepvarType = 'leafrad', 
+                               labs =  c('Protein amount', 'Irradiance (MJ/m2/year)'), 
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+###frac protein vs irradiance
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'leafrad_mean', logx = FALSE, proportion = TRUE, indepvarType = 'leafrad', 
+                               labs =  c('Protein amount', 'Irradiance (MJ/m2/year)'), 
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+###mg/m2 protein vs MAT
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'tavg', logx = FALSE, proportion = FALSE, indepvarType = 'standard', 
+                               labs =  c('Protein amount', 'Mean annual temperature (oC)'),
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+###frac protein vs MAT
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'tavg', logx = FALSE, proportion = TRUE, indepvarType = 'standard', 
+                               labs =  c('Protein amount', 'Mean annual temperature (oC)'),
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+###mg/m2 protein vs LMA
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'LMA_mean', logx = FALSE, proportion = FALSE, indepvarType = 'LMA', 
+                               labs =  c('Protein amount', 'LMA (g/m2)'),
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+###frac protein vs LMA
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'LMA_mean', logx = FALSE, proportion = FALSE, indepvarType = 'LMA', 
+                               labs =  c('Protein amount', 'LMA (g/m2)'),
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+
+###mg/m2 protein vs total protein
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'total_protein_mean', logx = FALSE, proportion = FALSE, indepvarType = 'total_protein', 
+                               labs =  c('Protein amount', 'total protein (mg/m2)'),
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+###frac protein vs total protein
+
+```{r echo=FALSE, message=FALSE}
+setwd('../')
+out <- aggplot_save_combined_4(indepvar = 'total_protein_mean', logx = FALSE, proportion = FALSE, indepvarType = 'total_protein', 
+                               labs =  c('Protein amount', 'total protein (mg/m2)'),
+                               outDir = 'output/figures/20171101/tiff', goldenRatio = FALSE,
+                               fileType ='tiff', output_list = TRUE, save=FALSE, yaxis=TRUE)
+
+```
+
+Model summaries
+
+```{r echo=FALSE}
+kable(lmSummary(out, logx=FALSE))
+```
+
+##multiple regressions
+
+```{r echo=FALSE, message=FALSE}
+means <- data %>% dplyr::group_by(ID) %>% dplyr::summarise(calv_mean = mean(calvin_cycle, na.rm=TRUE),
+                                                           phot_mean = mean(Photosystems, na.rm=TRUE)) 
+data <-  dplyr::full_join(data, means)
+data <- dplyr::distinct(data, calv_mean, phot_mean, leafrad_mean, .keep_all=TRUE)
+
+data$log10prec <- log10(data$prec)
+
+require(MuMIn)
+options(na.action = "na.fail")
+```
+
+###total protein
+
+```{r echo=FALSE}
+total_prot <- lm(total_protein_mean ~ tavg + log10prec, data)
+summary(total_prot)
+visreg2d(total_prot, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+data$leaf_protein_content <- data$total_protein_mean / data$LMA_mean / 1000
+protein_per_LMA <- lm(leaf_protein_content ~ log10prec * tavg, data)
+summary(protein_per_LMA)
+visreg2d(protein_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+LMA <- lm(LMA_mean ~ tavg * log10prec, data)
+summary(LMA)
+visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+```
+
+### Calvin cycle protein only
+
+```{r echo=FALSE}
+calv <- lm(calv_mean ~ tavg + log10prec, data)
+summary(calv)
+visreg2d(calv, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+data$leaf_protein_content_calv <- data$calv_mean / data$LMA_mean / 1000
+calv_per_LMA <- lm(leaf_protein_content_calv ~ log10prec * tavg, data)
+summary(calv_per_LMA)
+visreg2d(calv_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+LMA <- lm(LMA_mean ~ tavg * log10prec, data)
+summary(LMA)
+visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+```
+
+
+### photosystems proteins only
+
+```{r echo=FALSE}
+PS <- lm(phot_mean ~ tavg * log10prec, data)
+summary(PS)
+
+visreg2d(PS, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+data$leaf_protein_content_PS <- data$phot_mean / data$LMA_mean / 1000
+PS_per_LMA <- lm(leaf_protein_content_PS ~ log10prec * tavg, data)
+summary(PS_per_LMA)
+visreg2d(PS_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+
+LMA <- lm(LMA_mean ~ tavg * log10prec, data)
+summary(LMA)
+visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+```
