@@ -161,7 +161,7 @@ cormat_all.P[is.na(cormat_all.P$value),]$value <- 0
 
 bla <- full_join(cormat_all, cormat_all.P, by = c('Var1', 'Var2'))
 bla[bla$value.x == 1,] <- NA
-bla[bla$value.y == 0,] <- NA
+#bla[bla$value.y == 0,] <- NA
 
 # pretty axis labels
 
@@ -195,10 +195,10 @@ p <- p  + scale_x_discrete(labels= labels) + scale_y_discrete(labels = labels)
 
 plot(p)
 
-rm(include_photosynthesis,
-   include_d13C,
-   include_leaf_N,
-   include_leaf_P,
-   include_soil_N,
-   include_soil_P,
-   include_chlorophyll)
+# rm(include_photosynthesis,
+#    include_d13C,
+#    include_leaf_N,
+#    include_leaf_P,
+#    include_soil_N,
+#    include_soil_P,
+#    include_chlorophyll)

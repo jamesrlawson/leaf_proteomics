@@ -11,6 +11,12 @@ library(broom)
 library(visreg)
 ```
 
+## Correlation heatmap
+
+```{r echo=FALSE, message=FALSE}
+plot(p)
+```
+
 ## Scatterplots
 
 ###mg/m2 protein vs precip
@@ -26,7 +32,7 @@ out <- aggplot_save_combined_4(indepvar = 'prec', logx = TRUE, proportion = FALS
 Model summaries
 
 ```{r echo=FALSE}
-kable(lmSummary(out, logx=TRUE))
+kable(lmSummary(out, logx=TRUE)) 
 ```
 
 ###frac protein vs precip
@@ -197,34 +203,34 @@ options(na.action = "na.fail")
 
 ```{r echo=FALSE}
 total_prot <- lm(total_protein_mean ~ tavg + log10prec, data)
-summary(total_prot)
 visreg2d(total_prot, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(total_prot)
 
 data$leaf_protein_content <- data$total_protein_mean / data$LMA_mean / 1000
 protein_per_LMA <- lm(leaf_protein_content ~ log10prec * tavg, data)
-summary(protein_per_LMA)
 visreg2d(protein_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(protein_per_LMA)
 
 LMA <- lm(LMA_mean ~ tavg * log10prec, data)
-summary(LMA)
 visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(LMA)
 ```
 
 ### Calvin cycle protein only
 
 ```{r echo=FALSE}
 calv <- lm(calv_mean ~ tavg + log10prec, data)
-summary(calv)
 visreg2d(calv, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(calv)
 
 data$leaf_protein_content_calv <- data$calv_mean / data$LMA_mean / 1000
 calv_per_LMA <- lm(leaf_protein_content_calv ~ log10prec * tavg, data)
-summary(calv_per_LMA)
 visreg2d(calv_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(calv_per_LMA)
 
 LMA <- lm(LMA_mean ~ tavg * log10prec, data)
-summary(LMA)
 visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(LMA)
 ```
 
 
@@ -232,16 +238,17 @@ visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex
 
 ```{r echo=FALSE}
 PS <- lm(phot_mean ~ tavg * log10prec, data)
-summary(PS)
-
 visreg2d(PS, 'tavg', 'log10prec', plot.type ='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(PS)
 
 data$leaf_protein_content_PS <- data$phot_mean / data$LMA_mean / 1000
 PS_per_LMA <- lm(leaf_protein_content_PS ~ log10prec * tavg, data)
-summary(PS_per_LMA)
 visreg2d(PS_per_LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(PS_per_LMA)
 
 LMA <- lm(LMA_mean ~ tavg * log10prec, data)
-summary(LMA)
 visreg2d(LMA, 'tavg', 'log10prec', plot.type='image', cex.lab=2, cex.axis=2, cex.main=2, cex.sub=2)
+summary(LMA)
 ```
+
+
